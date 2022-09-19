@@ -1,0 +1,1 @@
+#include "../../core/qhashfunctions.h"

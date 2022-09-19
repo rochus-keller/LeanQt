@@ -1,0 +1,259 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources* : SourceSet {
+	.sources += [
+		./qbytearray.cpp
+		./qarraydata.cpp
+		./qbytearraymatcher.cpp
+		./qbuffer.cpp
+		./qiodevice.cpp
+		./qlogging.cpp
+		./qloggingcategory.cpp
+		./qloggingregistry.cpp
+		./qstring.cpp 
+		./qglobal.cpp
+		./qglobalstatic.cpp
+		./qstring_compat.cpp
+		./qregexp.cpp
+		./qmap.cpp
+		./qlist.cpp
+		./qhash.cpp
+		./qtextstream.cpp
+		./qtextcodec.cpp
+		./qsimplecodec.cpp
+		./qutfcodec.cpp
+		./qlatincodec.cpp
+		./qcoreglobaldata.cpp
+		./qlocale.cpp
+		./qlocale_tools.cpp
+		./qdatetime.cpp
+		./qtimezone.cpp
+		./qtimezoneprivate.cpp
+		./qvariant.cpp
+		./qmetatype.cpp
+		./qdebug.cpp
+		./qipaddress.cpp
+		./qstringlist.cpp
+		./qdatetimeparser.cpp
+		./qnumeric.cpp
+		./qmalloc.cpp
+		./quuid.cpp
+		./qcryptographichash.cpp
+		./qbitarray.cpp
+		./qatomic.cpp
+		./qbytearraylist.cpp
+		./qcollator.cpp
+		./qcontiguouscache.cpp
+		./qelapsedtimer.cpp
+		./qhooks.cpp
+		./qmath.cpp
+		./qrefcount.cpp
+		./qscopedpointer.cpp
+		./qshareddata.cpp
+		./qsharedpointer.cpp
+		./qstack.cpp
+		./qstringbuilder.cpp
+		./qvector.cpp
+		./qversiontagging.cpp
+		./qqueue.cpp
+		./qvsnprintf.cpp
+		./qlinkedlist.cpp
+		./qsystemerror.cpp
+	]
+	
+	if ^HAVE_GEOM {
+		.sources += [
+			./qline.cpp
+			./qpoint.cpp
+			./qrect.cpp
+			./qmargins.cpp
+			./qsize.cpp
+		]
+	}else{
+		.defines += "QT_NO_GEOM_VARIANT"
+	}
+	
+	if ^HAVE_URL {
+		.sources += [
+			./qurl.cpp
+			./qtldurl.cpp
+			./qurlrecode.cpp
+			./qurlidna.cpp
+			./qurlquery.cpp
+		]
+	}else{
+		.defines += "QT_NO_URL_VARIANT"
+	}
+
+	if ^HAVE_RE {
+		if !trycompile("#include <pcre.h>") {
+			error("HAVE_RE required but the pcre headers are not available")
+		}
+		.sources += ./qregularexpression.cpp
+	}else{
+		.defines += "QT_NO_REGULAREXPRESSION"
+	}
+	
+	if ^HAVE_JSON {
+		.sources += [
+			./qjsonarray.cpp  ./qjsondocument.cpp  ./qjsonparser.cpp  ./qjsonwriter.cpp
+			./qjson.cpp       ./qjsonobject.cpp    ./qjsonvalue.cpp
+		]
+	}else{
+		.defines += "QT_NO_JSON"
+	}
+
+	if ^HAVE_XML {
+		.sources += [
+			./qxmlstream.cpp ./qxmlutils.cpp
+		]
+	}
+	
+	if ^HAVE_DSTREAM {
+		.sources += ./qdatastream.cpp
+	}else{
+		.defines += "QT_NO_DATASTREAM"
+	}
+	
+	if ^HAVE_CMDLINE {
+		.sources += [
+			./qcommandlineoption.cpp ./qcommandlineparser.cpp
+		]
+	}
+	
+	if ^HAVE_FILEIO {
+		.sources += [
+			./qfile.cpp
+			./qdir.cpp
+			./qfileinfo.cpp
+			./qfiledevice.cpp
+			./qfilesystemengine.cpp
+			./qfilesystementry.cpp
+			./qabstractfileengine.cpp
+			./qtemporaryfile.cpp
+			./qfsfileengine.cpp
+			./qringbuffer.cpp 
+			./qfsfileengine_iterator.cpp
+			./qdiriterator.cpp
+			./qstandardpaths.cpp
+			./qlibraryinfo.cpp
+			./qsettings.cpp
+			./qlockfile.cpp
+			./qsavefile.cpp
+			./qresource.cpp
+			./qresource_iterator.cpp
+			./qtemporarydir.cpp
+			./qfileselector.cpp
+		]
+		if target_os == `win32 {
+			.sources += [ ./qfilesystemengine_win.cpp ./qfsfileengine_win.cpp ./qfilesystemiterator_win.cpp 
+						  ./qstandardpaths_win.cpp ./qsettings_win.cpp ./qlockfile_win.cpp ./qsimd.cpp ]
+		}else{
+			.sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp 
+						  ./qstandardpaths_unix.cpp ./qlockfile_unix.cpp ]
+			if target_os == `macos {
+				.sources += [ ./qstandardpaths_mac.mm ./qsettings_mac.cpp ]
+			}
+		}
+	}else{
+		.defines += "QT_NO_FILEENGINE"
+	}
+	
+	if ^HAVE_OBJECT {
+		# TODO: events don't seem to make sense without QObject
+		.sources += [
+			./qcoreevent.cpp
+		]
+	}else{
+		.defines += "QT_NO_QOBJECT"
+		.sources += [
+			./NoObject.cpp
+		]
+	}
+	
+	if ^HAVE_COREAPP {
+		.sources += [
+			./qcoreapplication.cpp
+		]
+		if target_os == `win32 {
+			.sources += ./qcoreapplication_win.cpp
+		}else if target_os == `macos {
+			.sources += ./qcoreapplication_mac.cpp
+		}
+	}else{
+		.defines += "QT_NO_COREAPPLICATION"
+	}
+
+	if target_os == `linux {
+		.sources += [ 
+			./qtimezoneprivate_tz.cpp
+			./qlocale_unix.cpp
+			./qatomic_unix.cpp
+			./qcollator_posix.cpp
+			./qcore_unix.cpp
+			./qelapsedtimer_unix.cpp
+		]
+	}
+	if target_os == `win32 {
+		.sources += [ 
+			./qsystemlibrary.cpp
+			./qwindowscodec.cpp
+			./qlocale_win.cpp
+			./qcollator_win.cpp
+			./qelapsedtimer_win.cpp
+			./qtimezoneprivate_win.cpp
+		]
+		.defines += [ "UNICODE" "_UNICODE" ]
+		if target_toolchain == `msvc {
+			.sources += [
+				./qvector_msvc.cpp
+			]
+			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+		}
+	}
+	.include_dirs += [
+		../includes ../includes/QtCore .
+	]
+	.defines += [
+		# these are official Qt defines
+		"QT_NO_THREAD"
+		"QT_NO_BIG_CODECS"
+		"QT_NO_ICONV"
+		"QT_NO_ANIMATION"
+		#"QT_USE_QSTRINGBUILDER" # not used in the Qt 5 installations I'm using
+		#"QT_RESTRICTED_CAST_FROM_ASCII"
+		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
+		"QT_NO_COMPRESS"
+		"QT_NO_LIBRARY"
+		"QT_ATOMIC_FORCE_NO_CXX11"
+		"QT_BUILD_CORE_LIB" # required to make resource system work at all
+	]
+	
+	.defines += [
+		# these are my defines
+		"QT_NO_ITEMMODELS"
+	]
+}
+
+
+/*
+# not yet supported
+qcoreevent.cpp, associated with events
+qmetaobject.cpp, associated with QObject
+qmutex.cpp, + platform impls, associated with threads
+qobject.cpp, associated with QObject
+qpointer.cpp, -> QObject
+qpointer.cpp, -> QThread
+qsemaphore.cpp, -> QThread
+qthread.cpp, qthreadstorage.cpp, -> threads
+qwaitcondition_unix.cpp, qwaitcondition_win.cpp
+qbasictimer.cpp, -> events
+qtimer.cpp, -> objects
+qprocess.cpp -> objects, threads
+QFileSystemWatcher -> objects, events, files
+*/
+
+
+
+

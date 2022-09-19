@@ -1,0 +1,50 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+param HAVE_GEOM = false 	# include geometry classes like QRect, QPoint etc.
+param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp
+param HAVE_JSON = false		# include QJsonObject and friends
+param HAVE_XML = false		# include QXmlReader and friends
+param HAVE_URL = false		# include QUrl and support classes
+param HAVE_DSTREAM = false  # include QDataStream
+param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
+param HAVE_COREAPP = false  # include QCoreApplication
+param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
+param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
+
+submod core
+
+let sources * = core.sources
+
+let client_config * : Config {
+	if target_toolchain == `msvc {
+		.lib_names = [
+			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
+		]
+		.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+	} else {
+		.lib_names += [ "stdc++" "m" ]
+		.ldflags += "-shared-libgcc"
+	}
+	.include_dirs += [
+		abspath() + ./includes 
+		abspath() + ./includes/QtCore
+	]
+	.defines = core.sources.defines
+}
+
+submod tools
+
+let rcc * = tools.rcc
+
+let qtcore_static * : Library {
+	.deps += [ core.sources ]
+	.lib_type = `static
+	.name = "qtcore"
+}
+
+let test ! : Executable {
+	.sources += ./test.cpp
+	.deps += [ core.sources ]
+	.configs += client_config
+}

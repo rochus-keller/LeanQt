@@ -1,0 +1,1 @@
+#include "../../core/qnamespace.h"

@@ -1,0 +1,1 @@
+#include "../../core/qresource.h"

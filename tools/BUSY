@@ -1,0 +1,29 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let rcc * : Executable {
+	.sources += [
+		./rcc/main.cpp
+		./rcc/rcc.cpp
+	]
+	.deps += ^sources
+	if !^HAVE_FILEIO {
+		error("rcc requires HAVE_FILEIO")
+	}
+	if !^HAVE_COREAPP {
+		error("rcc requires HAVE_COREAPP")
+	}
+	if !^HAVE_XML {
+		.sources += [
+			../core/qxmlstream.cpp ../core/qxmlutils.cpp
+		]
+	}
+	if !^HAVE_CMDLINE {
+		.sources += [
+			../core/qcommandlineoption.cpp ../core/qcommandlineparser.cpp
+		]
+	}
+	.configs += ^client_config;
+	.defines = ^sources.defines;
+	.include_dirs += ./rcc
+}

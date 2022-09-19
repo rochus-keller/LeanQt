@@ -1,0 +1,1 @@
+#include "../../core/qlocale.h"

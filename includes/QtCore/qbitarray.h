@@ -1,0 +1,1 @@
+#include "../../core/qbitarray.h"
