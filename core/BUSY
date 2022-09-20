@@ -82,6 +82,9 @@ let sources* : SourceSet {
 			./qurlidna.cpp
 			./qurlquery.cpp
 		]
+        if target_os == `macos {
+             .sources += ./qurl_mac.mm
+        }
 	}else{
 		.defines += "QT_NO_URL_VARIANT"
 	}
@@ -150,11 +153,12 @@ let sources* : SourceSet {
 			.sources += [ ./qfilesystemengine_win.cpp ./qfsfileengine_win.cpp ./qfilesystemiterator_win.cpp 
 						  ./qstandardpaths_win.cpp ./qsettings_win.cpp ./qlockfile_win.cpp ./qsimd.cpp ]
 		}else{
-			.sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp 
-						  ./qstandardpaths_unix.cpp ./qlockfile_unix.cpp ]
+            .sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp ./qlockfile_unix.cpp ]
 			if target_os == `macos {
 				.sources += [ ./qstandardpaths_mac.mm ./qsettings_mac.cpp ]
-			}
+            }else{
+                 .sources += ./qstandardpaths_unix.cpp
+            }
 		}
 	}else{
 		.defines += "QT_NO_FILEENGINE"
@@ -194,8 +198,7 @@ let sources* : SourceSet {
 			./qcore_unix.cpp
 			./qelapsedtimer_unix.cpp
 		]
-	}
-	if target_os == `win32 {
+	}else if target_os == `win32 {
 		.sources += [ 
 			./qsystemlibrary.cpp
 			./qwindowscodec.cpp
@@ -211,7 +214,19 @@ let sources* : SourceSet {
 			]
 			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
 		}
-	}
+	}else if target_os == `macos {
+        .defines += "QT_NO_THREADSAFE_CLOEXEC"
+        .sources += [
+            ./qelapsedtimer_mac.cpp
+            ./qdatetime_mac.mm
+            ./qlocale_mac.mm
+            ./qstring_mac.mm
+            ./qtimezoneprivate_mac.mm
+            ./qcollator_macx.cpp
+            ./qcore_mac.cpp
+            ./qcore_mac_objc.mm
+        ]
+    }
 	.include_dirs += [
 		../includes ../includes/QtCore .
 	]

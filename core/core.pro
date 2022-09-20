@@ -18,7 +18,6 @@ INCLUDEPATH += ../includes ../includes/QtCore
 
 SOURCES += \
     archdetect.cpp \
-    moc_qbuffer.cpp \
     qarraydata.cpp \
     qatomic_sparc.cpp \
     qatomic_unix.cpp \

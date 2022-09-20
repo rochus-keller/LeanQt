@@ -25,6 +25,9 @@ let client_config * : Config {
 	} else {
 		.lib_names += [ "stdc++" "m" ]
 		.ldflags += "-shared-libgcc"
+		if target_os == `macos {
+			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
+		}
 	}
 	.include_dirs += [
 		abspath() + ./includes 

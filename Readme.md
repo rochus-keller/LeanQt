@@ -2,7 +2,7 @@
 
 LeanQt is a stripped-down Qt version which includes the essential features and is easy to build from source and to integrate with an application.
 
-My primary motivation for LeanQt was to make my Oberon compiler (and also the IDE in future) easier to compile and deploy on all relevant platforms with as few dependencies as possible. My tools are based on Qt 5, which is an excellent framework that provides all the necessary features in a platform-independent way. Qt 5 has low requirements for the C++ compiler, is available virtually on all platforms where there is a C++98 compiler. 
+My primary motivation for LeanQt was to make my Oberon compiler (and also the IDE in future) easier to compile and deploy on all relevant platforms with as few dependencies as possible. My tools are based on Qt 5, which is an excellent framework that provides all the necessary features in a platform-independent way. Qt 5 has low requirements for the C++ compiler and is available virtually on all platforms where there is a C++98 compiler. 
 
 Unfortunately, there has been a certain proliferation over the years where Qt has been bloated with all sorts of features with questionable value. The standard binary installation of Qt swallows several gigabytes and requires a login to a commercial company server, which discourages many people. The non-essential features make the build even more complicated. The now initiated development with Qt 6 makes even higher demands on compiler and system, and follows a development that I cannot make sense of.
 
@@ -10,7 +10,7 @@ For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available u
 
 ### State of development
 
-This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux and Windows; macOS and other Linux architectures are work in progress.
+This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS; other Linux architectures are work in progress.
 
 The following features are available: 
 
@@ -55,7 +55,7 @@ The following features are available:
 - dbus
 - sql
 - svg
-- nvc
+- nfc
 - bluetooth
 - multimedia
 - web and browser stuff
