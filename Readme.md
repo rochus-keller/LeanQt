@@ -10,7 +10,7 @@ For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available u
 
 ### State of development
 
-This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS; other Linux architectures are work in progress.
+This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS; other Linux architectures and mac M1 are work in progress.
 
 The following features are available: 
 
@@ -31,7 +31,7 @@ The following features are available:
 
 ### Planned or work-in-progress features
 
-- [ ] core threads
+- [x] core threads
 - [ ] core objects and events, moc
 - [ ] core mimetypes
 - [ ] plugin support

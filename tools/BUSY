@@ -1,17 +1,18 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
+let err : Message {
+	.text = "rcc can only be built if HAVE_FILEIO and HAVE_COREAPP are set"
+}
+
 let rcc * : Executable {
 	.sources += [
 		./rcc/main.cpp
 		./rcc/rcc.cpp
 	]
 	.deps += ^sources
-	if !^HAVE_FILEIO {
-		error("rcc requires HAVE_FILEIO")
-	}
-	if !^HAVE_COREAPP {
-		error("rcc requires HAVE_COREAPP")
+	if !^HAVE_FILEIO || !^HAVE_COREAPP {
+		.deps += err
 	}
 	if !^HAVE_XML {
 		.sources += [
@@ -24,6 +25,5 @@ let rcc * : Executable {
 		]
 	}
 	.configs += ^client_config;
-	.defines = ^sources.defines;
 	.include_dirs += ./rcc
 }

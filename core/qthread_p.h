@@ -47,7 +47,11 @@
 #ifndef QT_NO_COREAPPLICATION
 #include "QtCore/qcoreapplication.h"
 #endif
+#ifndef QT_NO_QOBJECT
 #include "private/qobject_p.h"
+#else
+#include "NoObject.h"
+#endif
 
 #include <algorithm>
 
@@ -63,6 +67,7 @@ namespace ABI {
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_QOBJECT
 class QAbstractEventDispatcher;
 class QEventLoop;
 
@@ -126,6 +131,7 @@ private:
     using QVector<QPostEvent>::append;
     using QVector<QPostEvent>::insert;
 };
+#endif
 
 #ifndef QT_NO_THREAD
 
@@ -191,7 +197,7 @@ public:
     void deref()
     {
         if (!quitLockRef.deref() && running) {
-#ifndef QT_NO_COREAPPLICATION
+#if !defined(QT_NO_COREAPPLICATION) && !defined(QT_NO_QOBJECT)
             QCoreApplication::instance()->postEvent(q_ptr, new QEvent(QEvent::Quit));
 #endif
         }
@@ -212,12 +218,16 @@ public:
 
     void ref();
     void deref();
+#ifndef QT_NO_QOBJECT
     inline bool hasEventDispatcher() const
     { return eventDispatcher.load() != 0; }
+#endif
 
     bool canWaitLocked()
     {
+#ifndef QT_NO_QOBJECT
         QMutexLocker locker(&postEventList.mutex);
+#endif
         return canWait;
     }
 
@@ -247,11 +257,13 @@ private:
 public:
     int loopLevel;
 
+#ifndef QT_NO_QOBJECT
     QStack<QEventLoop *> eventLoops;
     QPostEventList postEventList;
+    QAtomicPointer<QAbstractEventDispatcher> eventDispatcher;
+#endif
     QAtomicPointer<QThread> thread;
     Qt::HANDLE threadId;
-    QAtomicPointer<QAbstractEventDispatcher> eventDispatcher;
     QVector<void *> tls;
     FlaggedDebugSignatures flaggedSignatures;
 

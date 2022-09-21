@@ -910,7 +910,7 @@ QT_BEGIN_INCLUDE_NAMESPACE
 #include <stdlib.h> // for RAND_MAX
 QT_END_INCLUDE_NAMESPACE
 
-#if !defined(QT_BOOTSTRAPPED) && defined(Q_OS_UNIX) && !defined(QT_NO_THREAD)
+#if !defined(QT_BOOTSTRAPPED) && defined(Q_OS_UNIX) && !defined(QT_NO_THREAD) && !defined(QT_NO_FILEENGINE)
 Q_GLOBAL_STATIC(QThreadStorage<QFile *>, devUrandomStorage);
 #endif
 
@@ -919,7 +919,7 @@ QUuid QUuid::createUuid()
     QUuid result;
     uint *data = &(result.data1);
 
-#if defined(Q_OS_UNIX) && !defined(QT_NO_THREAD)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_THREAD) && !defined(QT_NO_FILEENGINE)
     QFile *devUrandom;
 #  if !defined(QT_BOOTSTRAPPED)
     devUrandom = devUrandomStorage()->localData();
@@ -953,7 +953,7 @@ QUuid QUuid::createUuid()
         // Seed the PRNG once per thread with a combination of current time, a
         // stack address and a serial counter (since thread stack addresses are
         // re-used).
-#if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_THREAD)
+#if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_THREAD) && !defined(QT_NO_FILEENGINE)
         static QThreadStorage<int *> uuidseed;
         if (!uuidseed.hasLocalData())
         {

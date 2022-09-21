@@ -183,7 +183,9 @@ SOURCES += \
     qtemporarydir.cpp \
     qtranslator.cpp \
     qcommandlineoption.cpp \
-    qcommandlineparser.cpp
+    qcommandlineparser.cpp \
+    qrunnable.cpp \
+    qthreadpool.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -403,6 +405,19 @@ HEADERS += \
     qtranslator.h \
     qatomic_bootstrap.h \
     qcommandlineoption.h \
-    qcommandlineparser.h
+    qcommandlineparser.h \
+    qrunnable.h \
+    qthreadpool_p.h \
+    qthreadpool.h
+
+OBJECTIVE_SOURCES += \
+    qbytearray_mac.mm \
+    qcore_mac_objc.mm \
+    qdatetime_mac.mm \
+    qlocale_mac.mm \
+    qstandardpaths_mac.mm \
+    qstring_mac.mm \
+    qtimezoneprivate_mac.mm \
+    qurl_mac.mm
 
 

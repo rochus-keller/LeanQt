@@ -13,6 +13,11 @@ QObjectPrivate::~QObjectPrivate()
 
 }
 
+QObjectPrivate *QObjectPrivate::get(QObject *o)
+{
+    return o->d_func();
+}
+
 void QObjectPrivate::setParent_helper(QObject *o)
 {
 	Q_Q(QObject);
@@ -57,6 +62,11 @@ const QObjectList & QObject::children() const
 void QObject::setObjectName(const QString & name)
 {
 	d_ptr->name = name;
+}
+
+QString QObject::objectName() const
+{
+    return d_ptr->name;
 }
 
 void QObject::setParent(QObject *parent)

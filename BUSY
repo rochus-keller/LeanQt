@@ -11,29 +11,35 @@ param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings
 param HAVE_COREAPP = false  # include QCoreApplication
 param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
+param HAVE_THREADS = false  # include QThread and friends
+
+if HAVE_OBJECT && !HAVE_COREAPP {
+	message("enabling HAVE_COREAPP required by HAVE_OBJECT")
+	HAVE_COREAPP = true
+}
 
 submod core
 
 let sources * = core.sources
 
 let client_config * : Config {
+	# have linker flags and libs from here
 	if target_toolchain == `msvc {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
 		]
-		.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
 	} else {
 		.lib_names += [ "stdc++" "m" ]
 		.ldflags += "-shared-libgcc"
+		if HAVE_THREADS {
+			.lib_names += "pthread"
+		}
 		if target_os == `macos {
 			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
 		}
 	}
-	.include_dirs += [
-		abspath() + ./includes 
-		abspath() + ./includes/QtCore
-	]
-	.defines = core.sources.defines
+	# have compiler flags and defines from here
+	.configs += core.core_config
 }
 
 submod tools

@@ -1,6 +1,75 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
+let core_config * : Config {
+	.include_dirs += [
+		abspath() + ../includes 
+		abspath() + ../includes/QtCore
+		abspath()
+	]
+	.defines += [
+		# these are official Qt defines
+		"QT_NO_BIG_CODECS"
+		"QT_NO_ICONV"
+		"QT_NO_ANIMATION"
+		#"QT_USE_QSTRINGBUILDER" # not used in the Qt 5 installations I'm using
+		#"QT_RESTRICTED_CAST_FROM_ASCII"
+		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
+		"QT_NO_COMPRESS"
+		"QT_NO_LIBRARY"
+		"QT_ATOMIC_FORCE_NO_CXX11"
+		"QT_BUILD_CORE_LIB" # required to make resource system work at all
+	]
+	.defines += [
+		# these are my defines
+		"QT_NO_ITEMMODELS"
+	]
+	if !^HAVE_GEOM {
+		.defines += "QT_NO_GEOM_VARIANT"
+	}
+	
+	if !^HAVE_URL {
+		.defines += "QT_NO_URL_VARIANT"
+	}
+
+	if !^HAVE_RE {
+		.defines += "QT_NO_REGULAREXPRESSION"
+	}
+	
+	if !^HAVE_JSON {
+		.defines += "QT_NO_JSON"
+	}
+	
+	if !^HAVE_DSTREAM {
+		.defines += "QT_NO_DATASTREAM"
+	}
+	
+	if !^HAVE_FILEIO {
+		.defines += "QT_NO_FILEENGINE"
+	}
+	
+	if !^HAVE_OBJECT {
+		.defines += "QT_NO_QOBJECT"
+	}
+	
+	if !^HAVE_COREAPP {
+		.defines += "QT_NO_COREAPPLICATION"
+	}
+	
+	if !^HAVE_THREADS {
+		.defines += "QT_NO_THREAD"
+	}
+
+	if target_os == `win32 {
+		.defines += [ "UNICODE" "_UNICODE" ]
+		if target_toolchain == `msvc {
+			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+		}
+	}else if target_os == `macos {
+        .defines += "QT_NO_THREADSAFE_CLOEXEC"
+    }
+}
+
 let sources* : SourceSet {
 	.sources += [
 		./qbytearray.cpp
@@ -70,8 +139,6 @@ let sources* : SourceSet {
 			./qmargins.cpp
 			./qsize.cpp
 		]
-	}else{
-		.defines += "QT_NO_GEOM_VARIANT"
 	}
 	
 	if ^HAVE_URL {
@@ -85,8 +152,6 @@ let sources* : SourceSet {
         if target_os == `macos {
              .sources += ./qurl_mac.mm
         }
-	}else{
-		.defines += "QT_NO_URL_VARIANT"
 	}
 
 	if ^HAVE_RE {
@@ -94,8 +159,6 @@ let sources* : SourceSet {
 			error("HAVE_RE required but the pcre headers are not available")
 		}
 		.sources += ./qregularexpression.cpp
-	}else{
-		.defines += "QT_NO_REGULAREXPRESSION"
 	}
 	
 	if ^HAVE_JSON {
@@ -103,8 +166,6 @@ let sources* : SourceSet {
 			./qjsonarray.cpp  ./qjsondocument.cpp  ./qjsonparser.cpp  ./qjsonwriter.cpp
 			./qjson.cpp       ./qjsonobject.cpp    ./qjsonvalue.cpp
 		]
-	}else{
-		.defines += "QT_NO_JSON"
 	}
 
 	if ^HAVE_XML {
@@ -115,8 +176,6 @@ let sources* : SourceSet {
 	
 	if ^HAVE_DSTREAM {
 		.sources += ./qdatastream.cpp
-	}else{
-		.defines += "QT_NO_DATASTREAM"
 	}
 	
 	if ^HAVE_CMDLINE {
@@ -153,15 +212,13 @@ let sources* : SourceSet {
 			.sources += [ ./qfilesystemengine_win.cpp ./qfsfileengine_win.cpp ./qfilesystemiterator_win.cpp 
 						  ./qstandardpaths_win.cpp ./qsettings_win.cpp ./qlockfile_win.cpp ./qsimd.cpp ]
 		}else{
-            .sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp ./qlockfile_unix.cpp ]
+		    .sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp ./qlockfile_unix.cpp ]
 			if target_os == `macos {
 				.sources += [ ./qstandardpaths_mac.mm ./qsettings_mac.cpp ]
-            }else{
-                 .sources += ./qstandardpaths_unix.cpp
-            }
+		    }else{
+		        .sources += ./qstandardpaths_unix.cpp
+		    }
 		}
-	}else{
-		.defines += "QT_NO_FILEENGINE"
 	}
 	
 	if ^HAVE_OBJECT {
@@ -170,7 +227,6 @@ let sources* : SourceSet {
 			./qcoreevent.cpp
 		]
 	}else{
-		.defines += "QT_NO_QOBJECT"
 		.sources += [
 			./NoObject.cpp
 		]
@@ -185,8 +241,28 @@ let sources* : SourceSet {
 		}else if target_os == `macos {
 			.sources += ./qcoreapplication_mac.cpp
 		}
-	}else{
-		.defines += "QT_NO_COREAPPLICATION"
+	}
+
+	if ^HAVE_THREADS {
+		.sources += [
+			./qthread.cpp
+			./qreadwritelock.cpp
+			./qmutex.cpp
+			./qthreadstorage.cpp
+			./qthreadpool.cpp
+			./qrunnable.cpp
+			./qexception.cpp
+			./qmutexpool.cpp
+			./qresultstore.cpp
+		]
+		if ^HAVE_COREAPP && ^HAVE_OBJECT {
+			.sources += [ ./qfuturewatcher.cpp ./qfutureinterface.cpp ]
+		}
+		if target_os == `win32 {
+			.sources += [ ./qthread_win.cpp ./qwaitcondition_win.cpp ]
+		}else{
+			.sources += [ ./qthread_unix.cpp ./qwaitcondition_unix.cpp ]
+		}
 	}
 
 	if target_os == `linux {
@@ -207,15 +283,12 @@ let sources* : SourceSet {
 			./qelapsedtimer_win.cpp
 			./qtimezoneprivate_win.cpp
 		]
-		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {
 			.sources += [
 				./qvector_msvc.cpp
 			]
-			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
 		}
 	}else if target_os == `macos {
-        .defines += "QT_NO_THREADSAFE_CLOEXEC"
         .sources += [
             ./qelapsedtimer_mac.cpp
             ./qdatetime_mac.mm
@@ -227,28 +300,7 @@ let sources* : SourceSet {
             ./qcore_mac_objc.mm
         ]
     }
-	.include_dirs += [
-		../includes ../includes/QtCore .
-	]
-	.defines += [
-		# these are official Qt defines
-		"QT_NO_THREAD"
-		"QT_NO_BIG_CODECS"
-		"QT_NO_ICONV"
-		"QT_NO_ANIMATION"
-		#"QT_USE_QSTRINGBUILDER" # not used in the Qt 5 installations I'm using
-		#"QT_RESTRICTED_CAST_FROM_ASCII"
-		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
-		"QT_NO_COMPRESS"
-		"QT_NO_LIBRARY"
-		"QT_ATOMIC_FORCE_NO_CXX11"
-		"QT_BUILD_CORE_LIB" # required to make resource system work at all
-	]
-	
-	.defines += [
-		# these are my defines
-		"QT_NO_ITEMMODELS"
-	]
+	.configs += core_config
 }
 
 

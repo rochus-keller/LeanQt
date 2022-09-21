@@ -43,6 +43,9 @@
 #ifndef QT_NO_QOBJECT
 #include "private/qobject_p.h"
 #endif
+#ifndef QT_NO_THREAD
+#include "QtCore/qthread.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -96,15 +99,17 @@ public:
     }
     void maybeQuit();
 
-    static QBasicAtomicPointer<QThread> theMainThread;
-    static QThread *mainThread();
-    static bool threadRequiresCoreApplication();
-
     static void sendPostedEvents(QObject *receiver, int event_type, QThreadData *data);
 
     static void checkReceiverThread(QObject *receiver);
     void cleanupThreadData();
 #endif // QT_NO_QOBJECT
+
+#ifndef QT_NO_THREAD
+    static QBasicAtomicPointer<QThread> theMainThread;
+    static QThread *mainThread();
+    static bool threadRequiresCoreApplication();
+#endif
 
     int &argc;
     char **argv;

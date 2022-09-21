@@ -48,7 +48,9 @@ class QAbstractEventDispatcher;
 #ifndef QT_NO_THREAD
 class Q_CORE_EXPORT QThread : public QObject
 {
+#ifndef QT_NO_QOBJECT
     Q_OBJECT
+#endif
 public:
     static Qt::HANDLE currentThreadId() Q_DECL_NOTHROW;
     static QThread *currentThread();
@@ -86,10 +88,12 @@ public:
 
     void exit(int retcode = 0);
 
+#ifndef QT_NO_QOBJECT
     QAbstractEventDispatcher *eventDispatcher() const;
     void setEventDispatcher(QAbstractEventDispatcher *eventDispatcher);
-
     bool event(QEvent *event) Q_DECL_OVERRIDE;
+#endif
+
     int loopLevel() const;
 
 public Q_SLOTS:
@@ -105,9 +109,11 @@ public:
     static void msleep(unsigned long);
     static void usleep(unsigned long);
 
+#ifndef QT_NO_QOBJECT
 Q_SIGNALS:
     void started(QPrivateSignal);
     void finished(QPrivateSignal);
+#endif
 
 protected:
     virtual void run();

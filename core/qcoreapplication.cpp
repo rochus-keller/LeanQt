@@ -44,7 +44,7 @@
 #include <private/qloggingregistry_p.h>
 #include <qstandardpaths.h>
 #include <qtextcodec.h>
-#ifndef QT_NO_QOBJECT
+#ifndef QT_NO_THREAD
 #include <qthread.h>
 #include <qthreadpool.h>
 #include <qthreadstorage.h>
@@ -220,7 +220,7 @@ typedef QList<QtStartUpFunction> QStartUpFuncList;
 Q_GLOBAL_STATIC(QStartUpFuncList, preRList)
 typedef QList<QtCleanUpFunction> QVFuncList;
 Q_GLOBAL_STATIC(QVFuncList, postRList)
-#ifndef QT_NO_QOBJECT
+#ifndef QT_NO_THREAD
 static QBasicMutex globalPreRoutinesMutex;
 #endif
 
@@ -530,21 +530,6 @@ void QCoreApplicationPrivate::eventDispatcherReady()
 {
 }
 
-QBasicAtomicPointer<QThread> QCoreApplicationPrivate::theMainThread = Q_BASIC_ATOMIC_INITIALIZER(0);
-QThread *QCoreApplicationPrivate::mainThread()
-{
-    Q_ASSERT(theMainThread.load() != 0);
-    return theMainThread.load();
-}
-
-bool QCoreApplicationPrivate::threadRequiresCoreApplication()
-{
-    QThreadData *data = QThreadData::current(false);
-    if (!data)
-        return true;    // default setting
-    return data->requiresCoreApplication;
-}
-
 void QCoreApplicationPrivate::checkReceiverThread(QObject *receiver)
 {
     QThread *currentThread = QThread::currentThread();
@@ -563,6 +548,23 @@ void QCoreApplicationPrivate::checkReceiverThread(QObject *receiver)
 }
 
 #endif // QT_NO_QOBJECT
+
+#ifndef QT_NO_THREAD
+QBasicAtomicPointer<QThread> QCoreApplicationPrivate::theMainThread = Q_BASIC_ATOMIC_INITIALIZER(0);
+QThread *QCoreApplicationPrivate::mainThread()
+{
+    Q_ASSERT(theMainThread.load() != 0);
+    return theMainThread.load();
+}
+
+bool QCoreApplicationPrivate::threadRequiresCoreApplication()
+{
+    QThreadData *data = QThreadData::current(false);
+    if (!data)
+        return true;    // default setting
+    return data->requiresCoreApplication;
+}
+#endif
 
 void QCoreApplicationPrivate::appendApplicationPathToLibraryPaths()
 {

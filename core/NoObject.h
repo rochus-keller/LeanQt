@@ -24,6 +24,9 @@ public:
     QObject *parent;
     QObjectList children;
     QString name;
+
+    static QObjectPrivate *get(QObject *o);
+
     
     void setParent_helper(QObject *o);
 };
@@ -35,6 +38,7 @@ public:
     virtual ~QObject();
     const QObjectList &children() const;
     void setObjectName(const QString & name);
+    QString objectName() const;
     void setParent(QObject *parent);
     QObject * parent() const;
     void deleteLater();

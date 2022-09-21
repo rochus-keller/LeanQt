@@ -38,6 +38,7 @@
 #include <private/qcoreapplication_p.h>
 #include <private/qcore_unix_p.h>
 
+#ifndef QT_NO_QOBJECT
 #if defined(Q_OS_BLACKBERRY)
 #  include <private/qeventdispatcher_blackberry_p.h>
 #elif defined(Q_OS_OSX)
@@ -48,6 +49,7 @@
 #    include "../kernel/qeventdispatcher_glib_p.h"
 #  endif
 #  include <private/qeventdispatcher_unix_p.h>
+#endif
 #endif
 
 #include "qthreadstorage.h"
@@ -251,8 +253,10 @@ QThreadData *QThreadData::current(bool createIfNecessary)
         data->deref();
         data->isAdopted = true;
         data->threadId = to_HANDLE(pthread_self());
+#ifndef QT_NO_COREAPPLICATION
         if (!QCoreApplicationPrivate::theMainThread)
             QCoreApplicationPrivate::theMainThread = data->thread.load();
+#endif
     }
     return data;
 }
@@ -274,6 +278,7 @@ typedef void*(*QtThreadCallback)(void*);
 
 void QThreadPrivate::createEventDispatcher(QThreadData *data)
 {
+#ifndef QT_NO_QOBJECT
 #if defined(Q_OS_BLACKBERRY)
     data->eventDispatcher.storeRelease(new QEventDispatcherBlackberry);
 #  elif defined(Q_OS_OSX)
@@ -295,6 +300,7 @@ void QThreadPrivate::createEventDispatcher(QThreadData *data)
 #endif
 
     data->eventDispatcher.load()->startingUp();
+#endif
 }
 
 #ifndef QT_NO_THREAD
@@ -339,10 +345,12 @@ void *QThreadPrivate::start(void *arg)
         data->quitNow = thr->d_func()->exited;
     }
 
+#ifndef QT_NO_QOBJECT
     if (data->eventDispatcher.load()) // custom event dispatcher set?
         data->eventDispatcher.load()->startingUp();
     else
         createEventDispatcher(data);
+#endif
 
 #if (defined(Q_OS_LINUX) || defined(Q_OS_MAC) || defined(Q_OS_QNX))
     {
@@ -350,14 +358,18 @@ void *QThreadPrivate::start(void *arg)
         QString objectName = thr->objectName();
 
         pthread_t thread_id = from_HANDLE<pthread_t>(data->threadId);
+#ifndef QT_NO_QOBJECT
         if (Q_LIKELY(objectName.isEmpty()))
             setCurrentThreadName(thread_id, thr->metaObject()->className());
         else
+#endif
             setCurrentThreadName(thread_id, objectName.toLocal8Bit());
     }
 #endif
 
+#ifndef QT_NO_QOBJECT
     emit thr->started(QThread::QPrivateSignal());
+#endif
 #if !defined(Q_OS_ANDROID)
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_testcancel();
@@ -380,11 +392,16 @@ void QThreadPrivate::finish(void *arg)
     d->priority = QThread::InheritPriority;
     void *data = &d->data->tls;
     locker.unlock();
+#ifndef QT_NO_QOBJECT
     emit thr->finished(QThread::QPrivateSignal());
+#endif
+#if !defined QT_NO_COREAPPLICATION && !defined QT_NO_QOBJECT
     QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+#endif
     QThreadStorageData::finish((void **)data);
     locker.relock();
 
+#ifndef QT_NO_QOBJECT
     QAbstractEventDispatcher *eventDispatcher = d->data->eventDispatcher.load();
     if (eventDispatcher) {
         d->data->eventDispatcher = 0;
@@ -393,6 +410,7 @@ void QThreadPrivate::finish(void *arg)
         delete eventDispatcher;
         locker.relock();
     }
+#endif
 
     d->running = false;
     d->finished = true;

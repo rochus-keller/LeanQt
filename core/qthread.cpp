@@ -35,12 +35,16 @@
 #include "qthreadstorage.h"
 #include "qmutex.h"
 #include "qreadwritelock.h"
+#ifndef QT_NO_QOBJECT
 #include "qabstracteventdispatcher.h"
-
 #include <qeventloop.h>
+#endif
+#include <QtDebug>
 
 #include "qthread_p.h"
+#ifndef QT_NO_COREAPPLICATION
 #include "private/qcoreapplication_p.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -50,7 +54,9 @@ QT_BEGIN_NAMESPACE
 
 QThreadData::QThreadData(int initialRefCount)
     : _ref(initialRefCount), loopLevel(0), thread(0), threadId(0),
+#ifndef QT_NO_QOBJECT
       eventDispatcher(0),
+#endif
       quitNow(false), canWait(true), isAdopted(false), requiresCoreApplication(true)
 {
     // fprintf(stderr, "QThreadData %p created\n", this);
@@ -66,15 +72,18 @@ QThreadData::~QThreadData()
     // crashing during QCoreApplicationData's global static cleanup we need to
     // safeguard the main thread here.. This fix is a bit crude, but it solves
     // the problem...
+#ifndef QT_NO_COREAPPLICATION
     if (this->thread == QCoreApplicationPrivate::theMainThread) {
        QCoreApplicationPrivate::theMainThread = 0;
        QThreadData::clearCurrentThreadData();
     }
+#endif
 
     QThread *t = thread;
     thread = 0;
     delete t;
 
+#ifndef QT_NO_QOBJECT
     for (int i = 0; i < postEventList.size(); ++i) {
         const QPostEvent &pe = postEventList.at(i);
         if (pe.event) {
@@ -83,6 +92,7 @@ QThreadData::~QThreadData()
             delete pe.event;
         }
     }
+#endif
 
     // fprintf(stderr, "QThreadData %p destroyed\n", this);
 }
@@ -496,8 +506,13 @@ int QThread::exec()
     }
     locker.unlock();
 
+#ifndef QT_NO_QOBJECT
     QEventLoop eventLoop;
     int returnCode = eventLoop.exec();
+#else
+    int returnCode = -1;
+    qCritical() << "QThread::exec not supported with QT_NO_QOBJECT";
+#endif
 
     locker.relock();
     d->exited = false;
@@ -533,10 +548,14 @@ void QThread::exit(int returnCode)
     d->exited = true;
     d->returnCode = returnCode;
     d->data->quitNow = true;
+#ifndef QT_NO_QOBJECT
     for (int i = 0; i < d->data->eventLoops.size(); ++i) {
         QEventLoop *eventLoop = d->data->eventLoops.at(i);
         eventLoop->exit(returnCode);
     }
+#else
+    qCritical() << "QThread::exit not supported with QT_NO_QOBJECT";
+#endif
 }
 
 /*!
@@ -719,7 +738,11 @@ QThread::Priority QThread::priority() const
 int QThread::loopLevel() const
 {
     Q_D(const QThread);
+#ifndef QT_NO_QOBJECT
     return d->data->eventLoops.size();
+#else
+    return 0;
+#endif
 }
 
 #else // QT_NO_THREAD
@@ -760,6 +783,7 @@ QThread::QThread(QThreadPrivate &dd, QObject *parent)
 
 #endif // QT_NO_THREAD
 
+#ifndef QT_NO_QOBJECT
 /*!
     \since 5.0
 
@@ -807,6 +831,7 @@ bool QThread::event(QEvent *event)
         return QObject::event(event);
     }
 }
+#endif // NO_QOBJECT
 
 /*!
     \since 5.2
@@ -826,10 +851,12 @@ void QThread::requestInterruption()
     QMutexLocker locker(&d->mutex);
     if (!d->running || d->finished || d->isInFinish)
         return;
+#ifndef QT_NO_QOBJECT
     if (this == QCoreApplicationPrivate::theMainThread) {
         qWarning("QThread::requestInterruption has no effect on the main thread");
         return;
     }
+#endif
     d->interruptionRequested = true;
 }
 
@@ -882,7 +909,9 @@ QDaemonThread::QDaemonThread(QObject *parent)
     : QThread(parent)
 {
     // QThread::started() is emitted from the thread we start
+#ifndef QT_NO_QOBJECT
     connect(this, &QThread::started, setThreadDoesNotRequireCoreApplication);
+#endif
 }
 
 QDaemonThread::~QDaemonThread()
