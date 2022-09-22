@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -45,7 +37,7 @@
 #include <errno.h>
 #endif
 
-#if defined(QT_BUILD_CORE_LIB)
+#if defined(QT_BUILD_CORE_LIB) && !defined(QT_NO_COREAPPLICATION)
 #include "qcoreapplication.h"
 #endif
 
@@ -124,7 +116,7 @@ static bool createFileFromTemplate(NativeFileHandle &file,
     {
         Char *rIter = placeholderEnd;
 
-#if defined(QT_BUILD_CORE_LIB)
+#if defined(QT_BUILD_CORE_LIB) && !defined(QT_NO_COREAPPLICATION)
         quint64 pid = quint64(QCoreApplication::applicationPid());
         do {
             *--rIter = Latin1Char((pid % 10) + '0');
@@ -430,7 +422,7 @@ void QTemporaryFilePrivate::resetFileEngine() const
 QString QTemporaryFilePrivate::defaultTemplateName()
 {
     QString baseName;
-#if defined(QT_BUILD_CORE_LIB)
+#if defined(QT_BUILD_CORE_LIB) && !defined(QT_NO_COREAPPLICATION)
     baseName = QCoreApplication::applicationName();
     if (baseName.isEmpty())
 #endif

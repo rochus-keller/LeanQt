@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -40,10 +32,12 @@
 #include <qpointer.h>
 
 #include <private/qcoreapplication_p.h>
+#ifndef QT_NO_QOBJECT
 #ifndef Q_OS_WINRT
 #include <private/qeventdispatcher_win_p.h>
 #else
 #include <private/qeventdispatcher_winrt_p.h>
+#endif
 #endif
 
 #include <qt_windows.h>
@@ -138,11 +132,14 @@ QThreadData *QThreadData::current(bool createIfNecessary)
         threadData->isAdopted = true;
         threadData->threadId = reinterpret_cast<Qt::HANDLE>(quintptr(GetCurrentThreadId()));
 
+#ifndef QT_NO_COREAPPLICATION
         if (!QCoreApplicationPrivate::theMainThread) {
             QCoreApplicationPrivate::theMainThread = threadData->thread.load();
             // TODO: is there a way to reflect the branch's behavior using
             // WinRT API?
-        } else {
+        } else 
+#endif
+		{
             HANDLE realHandle = INVALID_HANDLE_VALUE;
 #if !defined(Q_OS_WINCE) || (defined(_WIN32_WCE) && (_WIN32_WCE>=0x600))
             DuplicateHandle(GetCurrentProcess(),
@@ -340,6 +337,7 @@ void qt_set_thread_name(HANDLE threadId, LPCSTR threadName)
 
 void QThreadPrivate::createEventDispatcher(QThreadData *data)
 {
+#ifndef QT_NO_QOBJECT
 #ifndef Q_OS_WINRT
     QEventDispatcherWin32 *theEventDispatcher = new QEventDispatcherWin32;
 #else
@@ -347,6 +345,7 @@ void QThreadPrivate::createEventDispatcher(QThreadData *data)
 #endif
     data->eventDispatcher.storeRelease(theEventDispatcher);
     theEventDispatcher->startingUp();
+#endif
 }
 
 #ifndef QT_NO_THREAD
@@ -367,20 +366,27 @@ unsigned int __stdcall QT_ENSURE_STACK_ALIGNED_FOR_SSE QThreadPrivate::start(voi
         data->quitNow = thr->d_func()->exited;
     }
 
+#ifndef QT_NO_QOBJECT
     if (data->eventDispatcher.load()) // custom event dispatcher set?
         data->eventDispatcher.load()->startingUp();
     else
         createEventDispatcher(data);
+#endif
 
 #if !defined(QT_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINCE) && !defined(Q_OS_WINRT)
     // sets the name of the current thread.
     QByteArray objectName = thr->objectName().toLocal8Bit();
-    qt_set_thread_name((HANDLE)-1,
-                       objectName.isEmpty() ?
-                       thr->metaObject()->className() : objectName.constData());
+#ifndef QT_NO_QOBJECT
+	if( objectName.isEmpty() )
+		qt_set_thread_name((HANDLE)-1, thr->metaObject()->className());
+	else
+#endif
+		qt_set_thread_name((HANDLE)-1,objectName.constData());
 #endif
 
+#ifndef QT_NO_QOBJECT
     emit thr->started(QThread::QPrivateSignal());
+#endif
     QThread::setTerminationEnabled(true);
     thr->run();
 
@@ -398,11 +404,16 @@ void QThreadPrivate::finish(void *arg, bool lockAnyway)
     d->priority = QThread::InheritPriority;
     void **tls_data = reinterpret_cast<void **>(&d->data->tls);
     locker.unlock();
+#ifndef QT_NO_QOBJECT
     emit thr->finished(QThread::QPrivateSignal());
+#endif
+#if !defined(QT_NO_QOBJECT) && !defined(QT_NO_COREAPPLICATION)
     QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
+#endif
     QThreadStorageData::finish(tls_data);
     locker.relock();
 
+#ifndef QT_NO_QOBJECT
     QAbstractEventDispatcher *eventDispatcher = d->data->eventDispatcher.load();
     if (eventDispatcher) {
         d->data->eventDispatcher = 0;
@@ -411,6 +422,7 @@ void QThreadPrivate::finish(void *arg, bool lockAnyway)
         delete eventDispatcher;
         locker.relock();
     }
+#endif
 
     d->running = false;
     d->finished = true;

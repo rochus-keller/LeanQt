@@ -24,6 +24,8 @@
 **
 ****************************************************************************/
 
+#define QT_USE_QSTRINGBUILDER
+
 #include "private/qlockfile_p.h"
 
 #include "QtCore/qtemporaryfile.h"

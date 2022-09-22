@@ -101,7 +101,7 @@ HINSTANCE QSystemLibrary::load(const wchar_t *libraryName, bool onlySystemDirect
 {
     QStringList searchOrder;
 
-#if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_FILEENGINE)
+#if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_FILEENGINE) && !defined(QT_NO_COREAPPLICATION)
     if (!onlySystemDirectory)
         searchOrder << QFileInfo(qAppFileName()).path();
 #endif

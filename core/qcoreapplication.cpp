@@ -2124,7 +2124,7 @@ QString QCoreApplication::applicationFilePath()
     if (QCoreApplicationPrivate::cachedApplicationFilePath)
         return *QCoreApplicationPrivate::cachedApplicationFilePath;
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_NO_FILEENGINE)
     QCoreApplicationPrivate::setApplicationFilePath(QFileInfo(qAppFileName()).filePath());
     return *QCoreApplicationPrivate::cachedApplicationFilePath;
 #elif defined(Q_OS_BLACKBERRY)

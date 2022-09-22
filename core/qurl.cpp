@@ -387,6 +387,8 @@
     \since 5.2
 */
 
+#define QT_USE_QSTRINGBUILDER
+
 #include "qurl.h"
 #include "qurl_p.h"
 #include "qplatformdefs.h"

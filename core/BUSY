@@ -12,8 +12,7 @@ let core_config * : Config {
 		"QT_NO_BIG_CODECS"
 		"QT_NO_ICONV"
 		"QT_NO_ANIMATION"
-		#"QT_USE_QSTRINGBUILDER" # not used in the Qt 5 installations I'm using
-		#"QT_RESTRICTED_CAST_FROM_ASCII"
+		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file if needed
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
 		"QT_NO_COMPRESS"
 		"QT_NO_LIBRARY"
@@ -210,7 +209,7 @@ let sources* : SourceSet {
 		]
 		if target_os == `win32 {
 			.sources += [ ./qfilesystemengine_win.cpp ./qfsfileengine_win.cpp ./qfilesystemiterator_win.cpp 
-						  ./qstandardpaths_win.cpp ./qsettings_win.cpp ./qlockfile_win.cpp ./qsimd.cpp ]
+						  ./qstandardpaths_win.cpp ./qsettings_win.cpp ./qlockfile_win.cpp ]
 		}else{
 		    .sources += [ ./qfilesystemengine_unix.cpp ./qfsfileengine_unix.cpp ./qfilesystemiterator_unix.cpp ./qlockfile_unix.cpp ]
 			if target_os == `macos {
@@ -282,6 +281,7 @@ let sources* : SourceSet {
 			./qcollator_win.cpp
 			./qelapsedtimer_win.cpp
 			./qtimezoneprivate_win.cpp
+			./qsimd.cpp
 		]
 		if target_toolchain == `msvc {
 			.sources += [

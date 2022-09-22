@@ -260,7 +260,7 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
                 appendOrganizationAndApp(programData);
             dirs.append(programData);
         }
-#  ifndef QT_BOOTSTRAPPED
+#  if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_COREAPPLICATION)
         dirs.append(QCoreApplication::applicationDirPath());
         dirs.append(QCoreApplication::applicationDirPath() + QLatin1String("/data"));
 #  endif // !QT_BOOTSTRAPPED

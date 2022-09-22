@@ -23,6 +23,8 @@
 **
 ****************************************************************************/
 
+#define QT_USE_QSTRINGBUILDER
+
 #include "qipaddress_p.h"
 #include "private/qlocale_tools_p.h"
 #include "private/qtools_p.h"

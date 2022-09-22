@@ -13,6 +13,9 @@ param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
 param HAVE_THREADS = false  # include QThread and friends
 
+# NOTE: not all possible combinations on all platforms have been tested; 
+#       patches are welcome, in case you find a combination which doesn't work
+
 if HAVE_OBJECT && !HAVE_COREAPP {
 	message("enabling HAVE_COREAPP required by HAVE_OBJECT")
 	HAVE_COREAPP = true
@@ -53,6 +56,7 @@ let qtcore_static * : Library {
 }
 
 let test ! : Executable {
+	#.cflags_cc += "-g"
 	.sources += ./test.cpp
 	.deps += [ core.sources ]
 	.configs += client_config
