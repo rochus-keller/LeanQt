@@ -10,7 +10,7 @@ For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available u
 
 ### State of development
 
-This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS, as well as macOS M1; other Linux architectures.
+This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS, as well as macOS M1; other Linux architectures are work in progress.
 
 The following features are available: 
 
