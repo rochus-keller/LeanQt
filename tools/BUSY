@@ -1,29 +1,8 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
-let err : Message {
-	.text = "rcc can only be built if HAVE_FILEIO and HAVE_COREAPP are set"
-}
+submod bootstrap -
+submod rcc *
+submod moc *
 
-let rcc * : Executable {
-	.sources += [
-		./rcc/main.cpp
-		./rcc/rcc.cpp
-	]
-	.deps += ^sources
-	if !^HAVE_FILEIO || !^HAVE_COREAPP {
-		.deps += err
-	}
-	if !^HAVE_XML {
-		.sources += [
-			../core/qxmlstream.cpp ../core/qxmlutils.cpp
-		]
-	}
-	if !^HAVE_CMDLINE {
-		.sources += [
-			../core/qcommandlineoption.cpp ../core/qcommandlineparser.cpp
-		]
-	}
-	.configs += ^client_config;
-	.include_dirs += ./rcc
-}
+

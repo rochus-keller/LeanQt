@@ -27,7 +27,7 @@ let sources * = core.sources
 
 let client_config * : Config {
 	# have linker flags and libs from here
-	if target_toolchain == `msvc {
+	if target_os == `win32 {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
 		]
@@ -47,10 +47,11 @@ let client_config * : Config {
 
 submod tools
 
-let rcc * = tools.rcc
+let rcc * = tools.rcc.rcc
+let moc * = tools.moc.moc
 
 let qtcore_static * : Library {
-	.deps += [ core.sources ]
+	.deps += core.sources;
 	.lib_type = `static
 	.name = "qtcore"
 }

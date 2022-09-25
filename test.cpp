@@ -10,7 +10,7 @@
 #include <QThread>
 #include <QTextStream>
 
-#ifndef QT_NO_THREADS
+#ifndef QT_NO_THREAD
 
 class TestThread : public QThread
 {
@@ -28,7 +28,7 @@ protected:
 		}
 	} 
 };
-
+ 
 #endif
 
 int main(int argc, char *argv[])
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	qDebug() << hello << QDateTime::currentDateTime().toString(Qt::ISODate) << str << l; // << v;
     std::cout << str.toUtf8().constData() << " Hello World " << hello.constData() << std::endl;
     
-#ifndef QT_NO_THREADS
+#ifndef QT_NO_THREAD
 	TestThread a("A"), b("B"), c("C");
 	a.start();
 	b.start();

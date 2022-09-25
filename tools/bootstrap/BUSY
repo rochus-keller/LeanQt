@@ -1,0 +1,197 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	# have linker flags and libs from here
+    if target_os == `win32 {
+		.defines += [ "UNICODE" "_UNICODE" ]
+		.lib_names = [
+			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
+		]
+		if target_toolchain == `msvc {
+			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+		}
+	} else {
+		.lib_names += [ "stdc++" "m" ]
+		.ldflags += "-shared-libgcc"
+		if target_os == `macos {
+			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
+        	.defines += "QT_NO_THREADSAFE_CLOEXEC"
+		}
+	}
+
+	# have compiler flags and defines from here
+	.include_dirs += [
+		../../includes 
+		../../includes/QtCore
+	]
+	.defines += [
+		# these are official Qt defines
+		"QT_NO_BIG_CODECS"
+		"QT_NO_ICONV"
+		"QT_NO_ANIMATION"
+		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" 
+		"QT_NO_COMPRESS"
+		"QT_NO_LIBRARY"
+		"QT_ATOMIC_FORCE_NO_CXX11"
+		"QT_BUILD_CORE_LIB" 
+		"QT_NO_ITEMMODELS"
+		"QT_NO_GEOM_VARIANT"
+		"QT_NO_URL_VARIANT"
+		"QT_NO_REGULAREXPRESSION"
+		"QT_NO_JSON"
+		"QT_NO_DATASTREAM"
+		"QT_NO_THREAD"
+		"QT_NO_QOBJECT"
+	]
+}
+
+let sources* : SourceSet {
+	.sources += [
+		../../core/qbytearray.cpp
+		../../core/qarraydata.cpp
+		../../core/qbytearraymatcher.cpp
+		../../core/qbuffer.cpp
+		../../core/qiodevice.cpp
+		../../core/qlogging.cpp
+		../../core/qloggingcategory.cpp
+		../../core/qloggingregistry.cpp
+		../../core/qstring.cpp 
+		../../core/qglobal.cpp
+		../../core/qglobalstatic.cpp
+		../../core/qstring_compat.cpp
+		../../core/qregexp.cpp
+		../../core/qmap.cpp
+		../../core/qlist.cpp
+		../../core/qhash.cpp
+		../../core/qtextstream.cpp
+		../../core/qtextcodec.cpp
+		../../core/qsimplecodec.cpp
+		../../core/qutfcodec.cpp
+		../../core/qlatincodec.cpp
+		../../core/qcoreglobaldata.cpp
+		../../core/qlocale.cpp
+		../../core/qlocale_tools.cpp
+		../../core/qdatetime.cpp
+		../../core/qtimezone.cpp
+		../../core/qtimezoneprivate.cpp
+		../../core/qvariant.cpp
+		../../core/qmetatype.cpp
+		../../core/qdebug.cpp
+		../../core/qipaddress.cpp
+		../../core/qstringlist.cpp
+		../../core/qdatetimeparser.cpp
+		../../core/qnumeric.cpp
+		../../core/qmalloc.cpp
+		../../core/quuid.cpp
+		../../core/qcryptographichash.cpp
+		../../core/qbitarray.cpp
+		../../core/qatomic.cpp
+		../../core/qbytearraylist.cpp
+		../../core/qcollator.cpp
+		../../core/qcontiguouscache.cpp
+		../../core/qelapsedtimer.cpp
+		../../core/qhooks.cpp
+		../../core/qmath.cpp
+		../../core/qrefcount.cpp
+		../../core/qscopedpointer.cpp
+		../../core/qshareddata.cpp
+		../../core/qsharedpointer.cpp
+		../../core/qstack.cpp
+		../../core/qstringbuilder.cpp
+		../../core/qvector.cpp
+		../../core/qversiontagging.cpp
+		../../core/qqueue.cpp
+		../../core/qvsnprintf.cpp
+		../../core/qlinkedlist.cpp
+		../../core/qsystemerror.cpp
+	]
+	
+	# OBJECT
+	.sources += ../../core/NoObject.cpp
+	
+	# FILEIO
+	.sources += [
+		../../core/qfile.cpp
+		../../core/qdir.cpp
+		../../core/qfileinfo.cpp
+		../../core/qfiledevice.cpp
+		../../core/qfilesystemengine.cpp
+		../../core/qfilesystementry.cpp
+		../../core/qabstractfileengine.cpp
+		../../core/qtemporaryfile.cpp
+		../../core/qfsfileengine.cpp
+		../../core/qringbuffer.cpp 
+		../../core/qfsfileengine_iterator.cpp
+		../../core/qdiriterator.cpp
+		../../core/qstandardpaths.cpp
+		../../core/qlibraryinfo.cpp
+		../../core/qsettings.cpp
+		../../core/qlockfile.cpp
+		../../core/qsavefile.cpp
+		../../core/qresource.cpp
+		../../core/qresource_iterator.cpp
+		../../core/qtemporarydir.cpp
+		../../core/qfileselector.cpp
+	]
+	if target_os == `win32 {
+		.sources += [ ../../core/qfilesystemengine_win.cpp ../../core/qfsfileengine_win.cpp ../../core/qfilesystemiterator_win.cpp 
+					  ../../core/qstandardpaths_win.cpp ../../core/qsettings_win.cpp ../../core/qlockfile_win.cpp ]
+	}else{
+	    .sources += [ ../../core/qfilesystemengine_unix.cpp ../../core/qfsfileengine_unix.cpp 
+	    			  ../../core/qfilesystemiterator_unix.cpp ../../core/qlockfile_unix.cpp ]
+		if target_os == `macos {
+			.sources += [ ../../core/qstandardpaths_mac.mm ../../core/qsettings_mac.cpp ]
+	    }else{
+	        .sources += ../../core/qstandardpaths_unix.cpp
+	    }
+	}
+	
+	# COREAPP
+	.sources += [
+		../../core/qcoreapplication.cpp
+	]
+	if target_os == `win32 {
+		.sources += ../../core/qcoreapplication_win.cpp
+	}else if target_os == `macos {
+		.sources += ../../core/qcoreapplication_mac.cpp
+	}
+
+	if target_os == `linux {
+		.sources += [ 
+			../../core/qtimezoneprivate_tz.cpp
+			../../core/qlocale_unix.cpp
+			../../core/qatomic_unix.cpp
+			../../core/qcollator_posix.cpp
+			../../core/qcore_unix.cpp
+			../../core/qelapsedtimer_unix.cpp
+		]
+	}else if target_os == `win32 {
+		.sources += [ 
+			../../core/qsystemlibrary.cpp
+			../../core/qwindowscodec.cpp
+			../../core/qlocale_win.cpp
+			../../core/qcollator_win.cpp
+			../../core/qelapsedtimer_win.cpp
+			../../core/qtimezoneprivate_win.cpp
+			../../core/qsimd.cpp
+		]
+		if target_toolchain == `msvc {
+			.sources += [
+				../../core/qvector_msvc.cpp
+			]
+		}
+	}else if target_os == `macos {
+        .sources += [
+            ../../core/qelapsedtimer_mac.cpp
+            ../../core/qdatetime_mac.mm
+            ../../core/qlocale_mac.mm
+            ../../core/qstring_mac.mm
+            ../../core/qtimezoneprivate_mac.mm
+            ../../core/qcollator_macx.cpp
+            ../../core/qcore_mac.cpp
+            ../../core/qcore_mac_objc.mm
+        ]
+    }
+    .configs += config
+}
