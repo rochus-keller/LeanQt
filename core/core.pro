@@ -19,7 +19,6 @@ INCLUDEPATH += ../includes ../includes/QtCore
 SOURCES += \
     archdetect.cpp \
     qarraydata.cpp \
-    qatomic_sparc.cpp \
     qatomic_unix.cpp \
     qatomic.cpp \
     qbitarray.cpp \
@@ -185,7 +184,24 @@ SOURCES += \
     qcommandlineoption.cpp \
     qcommandlineparser.cpp \
     qrunnable.cpp \
-    qthreadpool.cpp
+    qthreadpool.cpp \
+    qabstracteventdispatcher.cpp \
+    qabstractnativeeventfilter.cpp \
+    qeventdispatcher_unix.cpp \
+    qeventdispatcher_win.cpp \
+    qeventloop.cpp \
+    qexception.cpp \
+    qfutureinterface.cpp \
+    qfuturewatcher.cpp \
+    qmutexpool.cpp \
+    qresultstore.cpp \
+    qsocketnotifier.cpp \
+    qtimerinfo_unix.cpp \
+    qfilesystemwatcher_inotify.cpp \
+    qfilesystemwatcher_kqueue.cpp \
+    qfilesystemwatcher_polling.cpp \
+    qfilesystemwatcher_win.cpp \
+    qfilesystemwatcher.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -408,7 +424,36 @@ HEADERS += \
     qcommandlineparser.h \
     qrunnable.h \
     qthreadpool_p.h \
-    qthreadpool.h
+    qthreadpool.h \
+    qabstracteventdispatcher_p.h \
+    qabstracteventdispatcher.h \
+    qabstractnativeeventfilter.h \
+    qbuffer_p.h \
+    qeventdispatcher_cf_p.h \
+    qeventdispatcher_unix_p.h \
+    qeventdispatcher_win_p.h \
+    qeventloop_p.h \
+    qeventloop.h \
+    qexception.h \
+    qfuture.h \
+    qfutureinterface_p.h \
+    qfutureinterface.h \
+    qfuturesynchronizer.h \
+    qfuturewatcher_p.h \
+    qfuturewatcher.h \
+    qmetaobject_moc_p.h \
+    qmutexpool_p.h \
+    qpodlist_p.h \
+    qresultstore.h \
+    qsocketnotifier.h \
+    qtimerinfo_unix_p.h \
+    qfilesystemwatcher_fsevents_p.h \
+    qfilesystemwatcher_inotify_p.h \
+    qfilesystemwatcher_kqueue_p.h \
+    qfilesystemwatcher_p.h \
+    qfilesystemwatcher_polling_p.h \
+    qfilesystemwatcher_win_p.h \
+    qfilesystemwatcher.h
 
 OBJECTIVE_SOURCES += \
     qbytearray_mac.mm \
@@ -418,6 +463,28 @@ OBJECTIVE_SOURCES += \
     qstandardpaths_mac.mm \
     qstring_mac.mm \
     qtimezoneprivate_mac.mm \
+    qurl_mac.mm \
+    qbytearray_mac.mm \
+    qcore_mac_objc.mm \
+    qdatetime_mac.mm \
+    qeventdispatcher_cf.mm \
+    qlocale_mac.mm \
+    qstandardpaths_mac.mm \
+    qstring_mac.mm \
+    qtimezoneprivate_mac.mm \
+    qurl_mac.mm \
+    qbytearray_mac.mm \
+    qcore_mac_objc.mm \
+    qdatetime_mac.mm \
+    qeventdispatcher_cf.mm \
+    qfilesystemwatcher_fsevents.mm \
+    qlocale_mac.mm \
+    qstandardpaths_mac.mm \
+    qstring_mac.mm \
+    qtimezoneprivate_mac.mm \
     qurl_mac.mm
+
+DISTFILES += \
+    BUSY
 
 

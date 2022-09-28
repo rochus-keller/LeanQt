@@ -10,6 +10,27 @@
 #include <QThread>
 #include <QTextStream>
 
+#ifndef QT_NO_QOBJECT
+#include <QObject>
+#include <QTimer>
+#include <QPointer>
+
+class A : public QObject
+{
+public:
+	A(QObject* p):QObject(p){}
+	~A() { qDebug() << "A destructed"; }
+};
+
+class B : public QObject
+{
+public:
+	B(QObject* p):QObject(p){}
+	~B() { qDebug() << "B destructed"; }
+};
+
+#endif
+
 #ifndef QT_NO_THREAD
 
 class TestThread : public QThread
@@ -49,7 +70,7 @@ int main(int argc, char *argv[])
 	qDebug() << hello << QDateTime::currentDateTime().toString(Qt::ISODate) << str << l; // << v;
     std::cout << str.toUtf8().constData() << " Hello World " << hello.constData() << std::endl;
     
-#ifndef QT_NO_THREAD
+#if 0 //ndef QT_NO_THREAD
 	TestThread a("A"), b("B"), c("C");
 	a.start();
 	b.start();
@@ -59,6 +80,29 @@ int main(int argc, char *argv[])
 	c.wait();
 	qDebug() << "threads done";
 #endif
-  
-    return 0;
+ 
+#ifndef QT_NO_QOBJECT
+	QPointer<A> ap = new A(0);
+	QPointer<B> bp = new B(ap);
+	
+	qDebug() << "translate" << A::tr("Ürgöl");
+	
+	QTimer t1;
+	t1.setSingleShot(true);
+	t1.connect(&t1,SIGNAL(timeout()),qApp,SLOT(quit()));
+	t1.start(2000);
+
+	QTimer t2;
+	t2.setSingleShot(true);
+	t2.connect(&t2,SIGNAL(timeout()),bp,SLOT(deleteLater()));
+	t2.start(1000);
+
+    int res = app.exec();
+    qDebug() << "quitting";
+    Q_ASSERT( !ap.isNull());
+    Q_ASSERT( bp.isNull());
+    return res;
+#else
+	return 0;
+#endif
 }

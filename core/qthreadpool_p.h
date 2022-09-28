@@ -42,6 +42,7 @@
 #include "QtCore/qwaitcondition.h"
 #include "QtCore/qset.h"
 #include "QtCore/qqueue.h"
+#include "QtCore/qthreadpool.h"
 #ifndef QT_NO_QOBJECT
 #include "private/qobject_p.h"
 #else

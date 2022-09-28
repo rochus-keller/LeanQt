@@ -15,14 +15,23 @@ let core_config * : Config {
 		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file if needed
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
 		"QT_NO_COMPRESS"
-		"QT_NO_LIBRARY"
 		"QT_ATOMIC_FORCE_NO_CXX11"
 		"QT_BUILD_CORE_LIB" # required to make resource system work at all
 	]
 	.defines += [
-		# these are my defines
 		"QT_NO_ITEMMODELS"
+		"QT_NO_PLUGINS" # plugins require HAVE_OBJECTS and HAVE_JSON
 	]
+	
+	if !^HAVE_LIBRARY {
+		.defines += "QT_NO_LIBRARY"
+	}
+	
+	if ^HAVE_SHARED {
+		.defines += "QT_SHARED"
+		# QT_STATIC is automatically set in qconfig.h
+	}
+	
 	if !^HAVE_GEOM {
 		.defines += "QT_NO_GEOM_VARIANT"
 	}
@@ -220,20 +229,27 @@ let sources* : SourceSet {
 		}
 	}
 	
-	if ^HAVE_OBJECT {
-		# TODO: events don't seem to make sense without QObject
+	if ^HAVE_LIBRARY {
 		.sources += [
-			./qcoreevent.cpp
+			./qlibrary.cpp
+			./qelfparser_p.cpp
+			./qmachparser.cpp
 		]
-	}else{
-		.sources += [
-			./NoObject.cpp
-		]
+		if target_os == `win32 {
+			.sources += ./qlibrary_win.cpp
+		}else{
+			if target_os == `macos {
+			}else{
+			}
+			.sources += ./qlibrary_unix.cpp
+		}
+		
 	}
 	
 	if ^HAVE_COREAPP {
 		.sources += [
 			./qcoreapplication.cpp
+			./qtranslator.cpp
 		]
 		if target_os == `win32 {
 			.sources += ./qcoreapplication_win.cpp
@@ -253,6 +269,7 @@ let sources* : SourceSet {
 			./qexception.cpp
 			./qmutexpool.cpp
 			./qresultstore.cpp
+			./qsemaphore.cpp
 		]
 		if ^HAVE_COREAPP && ^HAVE_OBJECT {
 			.sources += [ ./qfuturewatcher.cpp ./qfutureinterface.cpp ]
@@ -300,25 +317,205 @@ let sources* : SourceSet {
             ./qcore_mac_objc.mm
         ]
     }
+    
+    if ^HAVE_OBJECT {
+		# includes events which don't seem to make sense without QObject
+		.sources += [
+			./qcoreevent.cpp
+			./qobject.cpp
+			./qmetaobject.cpp
+			./qeventloop.cpp
+			./qabstracteventdispatcher.cpp
+			./qsocketnotifier.cpp
+			./qbasictimer.cpp
+			./qtimer.cpp
+			./qfreelist.cpp
+			./qabstractnativeeventfilter.cpp
+		]
+		if ^HAVE_FILEIO {
+			.sources += [ 
+				./qfilesystemwatcher.cpp
+				./qfilesystemwatcher_polling.cpp
+			]
+			if target_os == `win32 {
+				.sources += [ ./qfilesystemwatcher_win.cpp ]
+			}else if target_os == `macos {
+				.sources += [  
+					./qfilesystemwatcher_kqueue.cpp
+					./qfilesystemwatcher_fsevents.mm
+				]
+			}else{
+				.sources += [ ./qfilesystemwatcher_inotify.cpp ]
+			}
+		}
+		if target_os == `win32 {
+			.sources += [ ./qeventdispatcher_win.cpp ]
+		}else if target_os == `macos {
+			.sources += [ ./qeventdispatcher_cf.mm ./qcfsocketnotifier.cpp ]
+		}else{
+			.sources += [ 
+				./qeventdispatcher_unix.cpp 
+				./qtimerinfo_unix.cpp
+			]
+		}
+	}else{
+		.sources += [
+			./NoObject.cpp
+		]
+	}
+	
+
 	.configs += core_config
 }
 
+let run_moc : LuaScriptForeach {
+	.script = abspath() + ../tools/execute.lua
+	let name = "{{source_name_part}}"
+	.args += [
+		tostring( root_build_dir + ./tools/moc/moc )
+		"{{source}}"
+		"-b"
+		name + "_p.h"
+		"-p"
+		"{{source_dir}}"
+		"-o"
+		tostring( root_build_dir + relpath() + topath("moc_"+name+".cpp") )
+	]
+	.sources += [
+		./qbuffer.h
+		./qobject.h
+		./qthread.h
+		./qiodevice.h
+		./qcoreapplication.h
+		./qeventloop.h
+		./qabstracteventdispatcher.h
+		./qthreadpool.h
+		./qlocale.h
+		./qfuturewatcher.h
+		./qtranslator.h
+	]
+	if ^HAVE_FILEIO {
+		.sources += [ 
+			./qfileselector.h 
+			./qfile.h
+			./qfiledevice.h
+			./qsettings.h
+			./qsavefile.h
+			./qtemporaryfile.h
+			./qfilesystemwatcher.h
+		]
+	}
+	if ^HAVE_LIBRARY {
+		.sources += ./qlibrary.h
+	}
+}
+
+let run_moc_special : LuaScriptForeach {
+	.script = abspath() + ../tools/execute.lua
+	let name = "{{source_name_part}}"
+	.args += [
+		tostring( root_build_dir + ./tools/moc/moc )
+		"{{source}}"
+		"-p"
+		"{{source_dir}}"
+		"-o"
+		tostring( root_build_dir + relpath() + topath("moc_"+name+".cpp") )
+	]
+	.sources += [
+		./qtextstream_p.h
+		./qnamespace.h
+		./qsocketnotifier.h
+		./qtimer.h
+	]
+	if target_os == `win32 {
+		.sources += [  ]
+	}else if target_os == `macos {
+		.sources += [  ]
+	}else{
+		.sources += [ ./qeventdispatcher_unix_p.h ]
+	}
+	if ^HAVE_FILEIO {
+		.sources += [ 
+			./qfilesystemwatcher_p.h
+			./qfilesystemwatcher_polling_p.h
+		]
+		if target_os == `win32 {
+			.sources += [ ./qfilesystemwatcher_win_p.h ]
+		}else if target_os == `macos {
+			.sources += [ ./qfilesystemwatcher_kqueue_p.h ./qfilesystemwatcher_fsevents_p.h ]
+		}else{
+			.sources += [ ./qfilesystemwatcher_inotify_p.h ]
+		}
+	}
+}
+
+let moced_sources * : SourceSet {
+	let dir = root_build_dir + relpath()
+	.sources += [
+		dir + ./moc_qbuffer.cpp
+		dir + ./moc_qobject.cpp
+		dir + ./moc_qthread.cpp
+		dir + ./moc_qiodevice.cpp
+		dir + ./moc_qcoreapplication.cpp
+		dir + ./moc_qeventloop.cpp
+		dir + ./moc_qabstracteventdispatcher.cpp
+		dir + ./moc_qthreadpool.cpp
+		dir + ./moc_qlocale.cpp
+		dir + ./moc_qtextstream_p.cpp
+		dir + ./moc_qnamespace.cpp
+		dir + ./moc_qsocketnotifier.cpp
+		dir + ./moc_qfuturewatcher.cpp
+		dir + ./moc_qtimer.cpp
+		dir + ./moc_qtranslator.cpp
+	]
+	if target_os == `win32 {
+		.sources += [  ]
+	}else if target_os == `macos {
+		.sources += [  ]
+	}else{
+		.sources += [ dir + ./moc_qeventdispatcher_unix_p.cpp ]
+	}
+	if ^HAVE_FILEIO {
+		.sources += [ 
+			dir + ./moc_qfileselector.cpp 
+			dir + ./moc_qfile.cpp
+			dir + ./moc_qfiledevice.cpp
+			dir + ./moc_qsettings.cpp
+			dir + ./moc_qsavefile.cpp
+			dir + ./moc_qtemporaryfile.cpp
+			dir + ./moc_qfilesystemwatcher.cpp
+			dir + ./moc_qfilesystemwatcher_p.cpp
+			dir + ./moc_qfilesystemwatcher_polling_p.cpp
+		]
+		if target_os == `win32 {
+			.sources += [ dir + ./moc_qfilesystemwatcher_win_p.cpp ]
+		}else if target_os == `macos {
+			.sources += [ 
+				dir + ./moc_qfilesystemwatcher_kqueue_p.cpp 
+				dir + ./moc_qfilesystemwatcher_fsevents_p.cpp
+			]
+		}else{
+			.sources += [ 
+				dir + ./moc_qfilesystemwatcher_inotify_p.cpp 
+			]
+		}
+	}
+	if ^HAVE_LIBRARY {
+		.sources += dir + ./moc_qlibrary.cpp
+	}
+
+	.configs += core_config;
+	.deps += [ run_moc run_moc_special ]
+}
 
 /*
 # not yet supported
-qcoreevent.cpp, associated with events
-qmetaobject.cpp, associated with QObject
-qmutex.cpp, + platform impls, associated with threads
-qobject.cpp, associated with QObject
-qpointer.cpp, -> QObject
-qpointer.cpp, -> QThread
-qsemaphore.cpp, -> QThread
-qthread.cpp, qthreadstorage.cpp, -> threads
-qwaitcondition_unix.cpp, qwaitcondition_win.cpp
-qbasictimer.cpp, -> events
-qtimer.cpp, -> objects
-qprocess.cpp -> objects, threads
-QFileSystemWatcher -> objects, events, files
+qprocess.cpp -> objects, threads, using fileio
+qsharedmemory_* -> kernel, used by plugins
+qsystemsemaphore_* -> used by shared memory
+qwindowspipereader/writer -> used by qprocess_win and qlocalsocket_win
+qstorageinfo -> fileio, option
+qfactoryloader -> plugins
 */
 
 

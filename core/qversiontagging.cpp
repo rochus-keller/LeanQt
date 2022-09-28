@@ -46,6 +46,7 @@
 #endif
 #define make_versioned_symbol(sym, m, n, separator)    make_versioned_symbol2(sym, m, n, separator)
 
+#if 0
 extern "C" {
 #if QT_VERSION_MINOR > 0
 make_versioned_symbol(SYM, QT_VERSION_MAJOR, 0, "@");
@@ -84,3 +85,4 @@ make_versioned_symbol(SYM, QT_VERSION_MAJOR, 9, "@");
 // the default version:
 make_versioned_symbol(SYM, QT_VERSION_MAJOR, QT_VERSION_MINOR, "@@");
 }
+#endif

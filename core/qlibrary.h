@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -34,7 +26,11 @@
 #ifndef QLIBRARY_H
 #define QLIBRARY_H
 
+#ifndef QT_NO_QOBJECT
 #include <QtCore/qobject.h>
+#else
+#include <QtCore/NoObject.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -44,9 +40,11 @@ class QLibraryPrivate;
 
 class Q_CORE_EXPORT QLibrary : public QObject
 {
+#ifndef QT_NO_QOBJECT
     Q_OBJECT
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
     Q_PROPERTY(LoadHints loadHints READ loadHints WRITE setLoadHints)
+#endif
 public:
     enum LoadHint {
         ResolveAllSymbolsHint = 0x01,
@@ -56,8 +54,10 @@ public:
         DeepBindHint = 0x10
     };
     Q_DECLARE_FLAGS(LoadHints, LoadHint)
+#ifndef QT_NO_QOBJECT
     Q_FLAG(LoadHint)
     Q_FLAG(LoadHints)
+#endif
 
     explicit QLibrary(QObject *parent = Q_NULLPTR);
     explicit QLibrary(const QString& fileName, QObject *parent = Q_NULLPTR);

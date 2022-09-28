@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -37,8 +29,11 @@
 
 #ifndef QT_NO_TRANSLATION
 
+#ifndef QT_NO_FILEENGINE
 #include "qfileinfo.h"
 #include "qfile.h"
+#include "qresource.h"
+#endif
 #include "qstring.h"
 #include "qstringlist.h"
 #include "qcoreapplication.h"
@@ -49,7 +44,6 @@
 #include "qtranslator_p.h"
 #include "qlocale.h"
 #include "qendian.h"
-#include "qresource.h"
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_INTEGRITY)
 #define QT_USE_MMAP
@@ -287,7 +281,10 @@ public:
 #if defined(QT_USE_MMAP)
           used_mmap(0),
 #endif
-          unmapPointer(0), unmapLength(0), resource(0),
+          unmapPointer(0), unmapLength(0),
+      #ifndef QT_NO_FILEENGINE
+          resource(0),
+      #endif
           messageArray(0), offsetArray(0), contextArray(0), numerusRulesArray(0),
           messageLength(0), offsetLength(0), contextLength(0), numerusRulesLength(0) {}
 
@@ -298,7 +295,9 @@ public:
     quint32 unmapLength;
 
     // The resource object in case we loaded the translations from a resource
+#ifndef QT_NO_FILEENGINE
     QResource *resource;
+#endif
 
     // used if the translator has dependencies
     QList<QTranslator*> subTranslators;
@@ -470,6 +469,7 @@ bool QTranslator::load(const QString & filename, const QString & directory,
                        const QString & search_delimiters,
                        const QString & suffix)
 {
+#ifndef QT_NO_FILEENGINE
     Q_D(QTranslator);
     d->clear();
 
@@ -514,10 +514,14 @@ bool QTranslator::load(const QString & filename, const QString & directory,
 
     // realname is now the fully qualified name of a readable file.
     return d->do_load(realname, directory);
+#else
+    return false;
+#endif
 }
 
 bool QTranslatorPrivate::do_load(const QString &realname, const QString &directory)
 {
+#ifndef QT_NO_FILEENGINE
     QTranslatorPrivate *d = this;
     bool ok = false;
 
@@ -611,7 +615,9 @@ bool QTranslatorPrivate::do_load(const QString &realname, const QString &directo
     d->resource = 0;
     d->unmapPointer = 0;
     d->unmapLength = 0;
-
+#else
+    qWarning() << "QTranslation::load: to enable loading translation files set HAVE_FILEIO=true";
+#endif
     return false;
 }
 
@@ -621,6 +627,7 @@ static QString find_translation(const QLocale & locale,
                                 const QString & directory,
                                 const QString & suffix)
 {
+#ifndef QT_NO_FILEENGINE
     QString path;
     if (QFileInfo(filename).isRelative()) {
         path = directory;
@@ -698,7 +705,7 @@ static QString find_translation(const QLocale & locale,
     fi.setFile(realname);
     if (fi.isReadable() && fi.isFile())
         return realname;
-
+#endif
     return QString();
 }
 
@@ -1063,12 +1070,18 @@ void QTranslatorPrivate::clear()
             munmap(unmapPointer, unmapLength);
         } else
 #endif
+#ifndef QT_NO_FILEENGINE
         if (!resource)
             delete [] unmapPointer;
+#else
+            ;
+#endif
     }
 
+#ifndef QT_NO_FILEENGINE
     delete resource;
     resource = 0;
+#endif
     unmapPointer = 0;
     unmapLength = 0;
     messageArray = 0;

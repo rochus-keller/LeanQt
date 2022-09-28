@@ -31,54 +31,46 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qatomic.h>
+#ifndef QFILESYSTEMWATCHER_H
+#define QFILESYSTEMWATCHER_H
 
-#include <limits.h>
-#include <sched.h>
+#include <QtCore/qobject.h>
 
-extern "C" {
+#ifndef QT_NO_FILESYSTEMWATCHER
 
-int q_atomic_trylock_int(volatile int *addr);
-int q_atomic_trylock_ptr(volatile void *addr);
+QT_BEGIN_NAMESPACE
 
-Q_CORE_EXPORT int q_atomic_lock_int(volatile int *addr)
+
+class QFileSystemWatcherPrivate;
+
+class Q_CORE_EXPORT QFileSystemWatcher : public QObject
 {
-    int returnValue = q_atomic_trylock_int(addr);
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QFileSystemWatcher)
 
-    if (returnValue == INT_MIN) {
-        do {
-            // spin until we think we can succeed
-            do {
-                sched_yield();
-                returnValue = *addr;
-            } while (returnValue == INT_MIN);
+public:
+    QFileSystemWatcher(QObject *parent = Q_NULLPTR);
+    QFileSystemWatcher(const QStringList &paths, QObject *parent = Q_NULLPTR);
+    ~QFileSystemWatcher();
 
-            // try again
-            returnValue = q_atomic_trylock_int(addr);
-        } while (returnValue == INT_MIN);
-    }
+    bool addPath(const QString &file);
+    QStringList addPaths(const QStringList &files);
+    bool removePath(const QString &file);
+    QStringList removePaths(const QStringList &files);
 
-    return returnValue;
-}
+    QStringList files() const;
+    QStringList directories() const;
 
-Q_CORE_EXPORT int q_atomic_lock_ptr(volatile void *addr)
-{
-    int returnValue = q_atomic_trylock_ptr(addr);
+Q_SIGNALS:
+    void fileChanged(const QString &path, QPrivateSignal);
+    void directoryChanged(const QString &path, QPrivateSignal);
 
-    if (returnValue == -1) {
-        do {
-            // spin until we think we can succeed
-            do {
-                sched_yield();
-                returnValue = *reinterpret_cast<volatile int *>(addr);
-            } while (returnValue == -1);
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_fileChanged(const QString &path, bool removed))
+    Q_PRIVATE_SLOT(d_func(), void _q_directoryChanged(const QString &path, bool removed))
+};
 
-            // try again
-            returnValue = q_atomic_trylock_ptr(addr);
-        } while (returnValue == -1);
-    }
+QT_END_NAMESPACE
 
-    return returnValue;
-}
-
-} // extern "C"
+#endif // QT_NO_FILESYSTEMWATCHER
+#endif // QFILESYSTEMWATCHER_H

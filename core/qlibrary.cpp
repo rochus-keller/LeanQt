@@ -2,21 +2,13 @@
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Copyright (C) 2013 Intel Corporation
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -53,8 +45,10 @@
 #include <qvector.h>
 #include <qdir.h>
 #include <qendian.h>
+#ifndef QT_NO_JSON
 #include <qjsondocument.h>
 #include <qjsonvalue.h>
+#endif
 #include "qelfparser_p.h"
 #include "qmachparser_p.h"
 
@@ -301,6 +295,7 @@ static bool findPatternUnloaded(const QString &library, QLibraryPrivate *lib)
 
     if (pos >= 0) {
         if (hasMetaData) {
+#ifndef QT_NO_JSON
             const char *data = filedata + pos;
             QJsonDocument doc = QLibraryPrivate::fromRawMetaData(data);
             lib->metaData = doc.object();
@@ -308,6 +303,7 @@ static bool findPatternUnloaded(const QString &library, QLibraryPrivate *lib)
                 qWarning("Found metadata in lib %s, metadata=\n%s\n",
                          library.toLocal8Bit().constData(), doc.toJson().constData());
             ret = !doc.isNull();
+#endif
         }
     }
 
@@ -479,7 +475,10 @@ inline void QLibraryStore::releaseLibrary(QLibraryPrivate *lib)
 }
 
 QLibraryPrivate::QLibraryPrivate(const QString &canonicalFileName, const QString &version, QLibrary::LoadHints loadHints)
-    : pHnd(0), fileName(canonicalFileName), fullVersion(version), instance(0),
+    : pHnd(0), fileName(canonicalFileName), fullVersion(version),
+      #ifndef QT_NO_QOBJECT
+      instance(0),
+      #endif
       libraryRefCount(0), libraryUnloadCount(0), pluginState(MightBeAPlugin)
 {
     loadHintsInt.store(loadHints);
@@ -548,7 +547,9 @@ bool QLibraryPrivate::unload(UnloadFlag flag)
     if (!pHnd)
         return false;
     if (libraryUnloadCount.load() > 0 && !libraryUnloadCount.deref()) { // only unload if ALL QLibrary instance wanted to
+#ifndef QT_NO_QOBJECT
         delete inst.data();
+#endif
         if (flag == NoUnloadSys || unload_sys()) {
             if (qt_debug_component())
                 qWarning() << "QLibraryPrivate::unload succeeded on" << fileName
@@ -557,7 +558,9 @@ bool QLibraryPrivate::unload(UnloadFlag flag)
             //can get deleted
             libraryRefCount.deref();
             pHnd = 0;
+#ifndef QT_NO_QOBJECT
             instance = 0;
+#endif
         }
     }
 
@@ -569,6 +572,7 @@ void QLibraryPrivate::release()
     QLibraryStore::releaseLibrary(this);
 }
 
+#ifndef QT_NO_QOBJECT
 bool QLibraryPrivate::loadPlugin()
 {
     if (instance) {
@@ -586,6 +590,7 @@ bool QLibraryPrivate::loadPlugin()
     pluginState = IsNotAPlugin;
     return false;
 }
+#endif
 
 /*!
     Returns \c true if \a fileName has a valid suffix for a loadable
@@ -675,11 +680,15 @@ static bool qt_get_metadata(QtPluginQueryVerificationDataFunction pfn, QLibraryP
     if (!szData)
         return false;
 
+#ifndef QT_NO_JSON
     QJsonDocument doc = QLibraryPrivate::fromRawMetaData(szData);
     if (doc.isNull())
         return false;
     priv->metaData = doc.object();
     return true;
+#else
+    return false;
+#endif
 }
 
 bool QLibraryPrivate::isPlugin()
@@ -736,8 +745,13 @@ void QLibraryPrivate::updatePluginState()
 
     pluginState = IsNotAPlugin; // be pessimistic
 
+#ifndef QT_NO_PLUGINS
     uint qt_version = (uint)metaData.value(QLatin1String("version")).toDouble();
     bool debug = metaData.value(QLatin1String("debug")).toBool();
+#else
+    uint qt_version = 5.63;
+    bool debug = false;
+#endif
     if ((qt_version & 0x00ff00) > (QT_VERSION & 0x00ff00) || (qt_version & 0xff0000) != (QT_VERSION & 0xff0000)) {
         if (qt_debug_component()) {
             qWarning("In %s:\n"

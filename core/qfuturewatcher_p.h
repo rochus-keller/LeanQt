@@ -39,6 +39,7 @@
 
 #include "qfutureinterface_p.h"
 #include <qlist.h>
+#include "qfuturewatcher.h"
 
 #ifndef QT_NO_QFUTURE
 

@@ -7,23 +7,50 @@ param HAVE_JSON = false		# include QJsonObject and friends
 param HAVE_XML = false		# include QXmlReader and friends
 param HAVE_URL = false		# include QUrl and support classes
 param HAVE_DSTREAM = false  # include QDataStream
-param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
-param HAVE_COREAPP = false  # include QCoreApplication
-param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
+
 param HAVE_THREADS = false  # include QThread and friends
+param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
+param HAVE_COREAPP = false  # include QCoreApplication, QTranslator
+param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
+param HAVE_LIBRARY = false  # include QLibrary
+
+param HAVE_SHARED = false   # if true build shared instead of static library and export symbols
+param HAVE_ALL = false		# switches on all flags which add code
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
+
+if HAVE_ALL {
+	HAVE_GEOM = true HAVE_JSON = true HAVE_XML = true HAVE_URL = true HAVE_DSTREAM = true
+	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
+	HAVE_LIBRARY = true
+	# HAVE_RE missing
+}
+
+if HAVE_LIBRARY && !HAVE_FILEIO {
+	message("enabling HAVE_FILEIO required by HAVE_LIBRARY")
+	HAVE_FILEIO = true
+}
+
+if HAVE_SHARED && !HAVE_COREAPP {
+	message("enabling HAVE_COREAPP required by HAVE_SHARED")
+	HAVE_COREAPP = true
+}
 
 if HAVE_OBJECT && !HAVE_COREAPP {
 	message("enabling HAVE_COREAPP required by HAVE_OBJECT")
 	HAVE_COREAPP = true
 }
 
+if HAVE_OBJECT && !HAVE_THREADS {
+	message("enabling HAVE_THREADS required by HAVE_OBJECT")
+	HAVE_THREADS = true
+}
+
 submod core
 
-let sources * = core.sources
+let core_sources - = core.sources
 
 let client_config * : Config {
 	# have linker flags and libs from here
@@ -36,6 +63,9 @@ let client_config * : Config {
 		.ldflags += "-shared-libgcc"
 		if HAVE_THREADS {
 			.lib_names += "pthread"
+		}
+		if HAVE_LIBRARY {
+			.lib_names += "dl"
 		}
 		if target_os == `macos {
 			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
@@ -50,15 +80,27 @@ submod tools
 let rcc * = tools.rcc.rcc
 let moc * = tools.moc.moc
 
-let qtcore_static * : Library {
-	.deps += core.sources;
-	.lib_type = `static
+let sources * : Group {
+	.deps += core_sources
+	if HAVE_OBJECT {
+		.deps += [ moc core.moced_sources ]
+	}
+	
+}
+
+let libqtcore * : Library {
+	.deps += sources;
+	if HAVE_SHARED {
+		.lib_type = `shared
+	}else{
+		.lib_type = `static
+	}
 	.name = "qtcore"
 }
 
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
-	.deps += [ core.sources ]
+	.deps += libqtcore;
 	.configs += client_config
 }

@@ -396,6 +396,8 @@ void QFileSelectorPrivate::addStatics(const QStringList &statics)
 
 QT_END_NAMESPACE
 
+#if 0
 #ifndef QT_NO_QOBJECT
 #include "moc_qfileselector.cpp"
+#endif
 #endif

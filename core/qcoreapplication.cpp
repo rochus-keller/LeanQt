@@ -2595,7 +2595,9 @@ void QCoreApplication::setLibraryPaths(const QStringList &paths)
         coreappdata()->manual_libpaths.reset(new QStringList(paths));
 
     locker.unlock();
+#ifndef QT_NO_PLUGINS
     QFactoryLoader::refreshAll();
+#endif
 }
 
 /*!
@@ -2640,7 +2642,9 @@ void QCoreApplication::addLibraryPath(const QString &path)
 
     libpaths->prepend(canonicalPath);
     locker.unlock();
+#ifndef QT_NO_PLUGINS
     QFactoryLoader::refreshAll();
+#endif
 }
 
 /*!
@@ -2679,7 +2683,9 @@ void QCoreApplication::removeLibraryPath(const QString &path)
     }
 
     locker.unlock();
+#ifndef QT_NO_PLUGINS
     QFactoryLoader::refreshAll();
+#endif
 }
 
 #endif //QT_NO_LIBRARY

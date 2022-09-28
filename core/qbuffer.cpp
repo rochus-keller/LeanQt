@@ -25,39 +25,9 @@
 
 #include "qbuffer.h"
 #include <QtCore/qmetaobject.h>
-#include "private/qiodevice_p.h"
+#include "qbuffer_p.h"
 
 QT_BEGIN_NAMESPACE
-
-/** QBufferPrivate **/
-class QBufferPrivate : public QIODevicePrivate
-{
-    Q_DECLARE_PUBLIC(QBuffer)
-
-public:
-    QBufferPrivate()
-    : buf(0)
-#ifndef QT_NO_QOBJECT
-        , writtenSinceLastEmit(0), signalConnectionCount(0), signalsEmitted(false)
-#endif
-    { }
-    ~QBufferPrivate() { }
-
-    QByteArray *buf;
-    QByteArray defaultBuf;
-
-    virtual qint64 peek(char *data, qint64 maxSize) Q_DECL_OVERRIDE;
-    virtual QByteArray peek(qint64 maxSize) Q_DECL_OVERRIDE;
-
-#ifndef QT_NO_QOBJECT
-    // private slots
-    void _q_emitSignals();
-
-    qint64 writtenSinceLastEmit;
-    int signalConnectionCount;
-    bool signalsEmitted;
-#endif
-};
 
 #ifndef QT_NO_QOBJECT
 void QBufferPrivate::_q_emitSignals()
@@ -447,7 +417,9 @@ void QBuffer::disconnectNotify(const QMetaMethod &signal)
 
 QT_END_NAMESPACE
 
+#if 0 // separate compilation object
 #ifndef QT_NO_QOBJECT
 # include "moc_qbuffer.cpp"
+#endif
 #endif
 

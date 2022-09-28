@@ -10,7 +10,7 @@ let rcc * : Executable {
 		./main.cpp
 		./rcc.cpp
 	]
-	.deps += ^sources
+	.deps += ^core_sources
 	if !^HAVE_FILEIO || !^HAVE_COREAPP {
 		.deps += err
 	}
