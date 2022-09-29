@@ -39,6 +39,8 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_JSON
+
 class QDebug;
 class QVariant;
 class QJsonArray;
@@ -212,6 +214,8 @@ public:
 
 #if !defined(QT_NO_DEBUG_STREAM) && !defined(QT_JSON_READONLY)
 Q_CORE_EXPORT QDebug operator<<(QDebug, const QJsonValue &);
+#endif
+
 #endif
 
 QT_END_NAMESPACE

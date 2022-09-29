@@ -75,7 +75,9 @@ private:
     Q_DECLARE_PRIVATE(QBuffer)
     Q_DISABLE_COPY(QBuffer)
 
+#ifndef QT_NO_QOBJECT
     Q_PRIVATE_SLOT(d_func(), void _q_emitSignals())
+#endif
 };
 
 inline void QBuffer::setData(const char *adata, int alen)

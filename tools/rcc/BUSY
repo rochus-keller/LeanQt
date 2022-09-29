@@ -10,20 +10,28 @@ let rcc * : Executable {
 		./main.cpp
 		./rcc.cpp
 	]
-	.deps += ^core_sources
-	if !^HAVE_FILEIO || !^HAVE_COREAPP {
-		.deps += err
-	}
-	if !^HAVE_XML {
+	if ^HAVE_SHARED && ( target_toolchain == `msvc ) {
+		.deps += ^bootstrap.sources;
+		.configs += [ ^bootstrap.config ^linker_config ]
 		.sources += [
 			../../core/qxmlstream.cpp ../../core/qxmlutils.cpp
 		]
+	}else{
+		.deps += ^core_sources;
+		.configs += ^client_config
+		if !^HAVE_FILEIO || !^HAVE_COREAPP {
+			.deps += err
+		}
+		if !^HAVE_XML {
+			.sources += [
+				../../core/qxmlstream.cpp ../../core/qxmlutils.cpp
+			]
+		}
+		if !^HAVE_CMDLINE {
+			.sources += [
+				../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp
+			]
+		}
 	}
-	if !^HAVE_CMDLINE {
-		.sources += [
-			../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp
-		]
-	}
-	.configs += ^client_config;
 	.include_dirs += .
 }

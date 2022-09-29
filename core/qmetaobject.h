@@ -40,6 +40,7 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_QOBJECT
 
 template <typename T> class QList;
 
@@ -308,6 +309,7 @@ private:
 };
 Q_DECLARE_TYPEINFO(QMetaClassInfo, Q_MOVABLE_TYPE);
 
+#endif
 QT_END_NAMESPACE
 
 #endif // QMETAOBJECT_H

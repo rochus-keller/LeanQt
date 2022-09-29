@@ -2,24 +2,6 @@
 # licensed under GPL/LGPL
 
 let config * : Config {
-	# have linker flags and libs from here
-    if target_os == `win32 {
-		.defines += [ "UNICODE" "_UNICODE" ]
-		.lib_names = [
-			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
-		]
-		if target_toolchain == `msvc {
-			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
-		}
-	} else {
-		.lib_names += [ "stdc++" "m" ]
-		.ldflags += "-shared-libgcc"
-		if target_os == `macos {
-			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
-        	.defines += "QT_NO_THREADSAFE_CLOEXEC"
-		}
-	}
-
 	# have compiler flags and defines from here
 	.include_dirs += [
 		../../includes 
@@ -44,6 +26,14 @@ let config * : Config {
 		"QT_NO_THREAD"
 		"QT_NO_QOBJECT"
 	]
+	if target_os == `win32 {
+		.defines += [ "UNICODE" "_UNICODE" ]
+		if target_toolchain == `msvc {
+			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+		}
+	}else if target_os == `macos {
+        .defines += "QT_NO_THREADSAFE_CLOEXEC"
+    }
 }
 
 let sources* : SourceSet {
@@ -156,6 +146,10 @@ let sources* : SourceSet {
 	}else if target_os == `macos {
 		.sources += ../../core/qcoreapplication_mac.cpp
 	}
+	
+	# CMDLINE
+	.sources += [ ../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp ]
+
 
 	if target_os == `linux {
 		.sources += [ 

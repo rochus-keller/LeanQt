@@ -43,6 +43,8 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_JSON
+
 class QDebug;
 template <class Key, class T> class QMap;
 typedef QMap<QString, QVariant> QVariantMap;
@@ -230,6 +232,8 @@ private:
 
 #if !defined(QT_NO_DEBUG_STREAM) && !defined(QT_JSON_READONLY)
 Q_CORE_EXPORT QDebug operator<<(QDebug, const QJsonObject &);
+#endif
+
 #endif
 
 QT_END_NAMESPACE

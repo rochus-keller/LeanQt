@@ -404,6 +404,9 @@ void QTextStreamPrivate::reset()
 /*!
     \internal
 */
+#if defined(Q_OS_WIN)
+class QFile;
+#endif
 bool QTextStreamPrivate::fillReadBuffer(qint64 maxBytes)
 {
     // no buffer next to the QString itself; this function should only
@@ -423,6 +426,8 @@ bool QTextStreamPrivate::fillReadBuffer(qint64 maxBytes)
     // On Windows, there is no non-blocking stdin - so we fall back to reading
     // lines instead. If there is no QOBJECT, we read lines for all sequential
     // devices; otherwise, we read lines only for stdin.
+    QFile *file = 0;
+    Q_UNUSED(file);
     if (device->isSequential()
 #if !defined(QT_NO_QOBJECT) && !defined(QT_NO_FILEENGINE)
         && (file = qobject_cast<QFile *>(device)) && file->handle() == 0

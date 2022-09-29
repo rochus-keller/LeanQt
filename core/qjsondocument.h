@@ -38,6 +38,8 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_JSON
+
 class QDebug;
 
 namespace QJsonPrivate {
@@ -145,6 +147,7 @@ private:
 Q_CORE_EXPORT QDebug operator<<(QDebug, const QJsonDocument &);
 #endif
 
+#endif
 QT_END_NAMESPACE
 
 #endif // QJSONDOCUMENT_H

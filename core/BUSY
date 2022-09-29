@@ -1,6 +1,12 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_CORE_LIB" # required to make resource system work at all
+	]
+}
+
 let core_config * : Config {
 	.include_dirs += [
 		abspath() + ../includes 
@@ -16,7 +22,7 @@ let core_config * : Config {
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
 		"QT_NO_COMPRESS"
 		"QT_ATOMIC_FORCE_NO_CXX11"
-		"QT_BUILD_CORE_LIB" # required to make resource system work at all
+		"QT_NO_VERSION_TAGGING"
 	]
 	.defines += [
 		"QT_NO_ITEMMODELS"
@@ -349,7 +355,7 @@ let sources* : SourceSet {
 			}
 		}
 		if target_os == `win32 {
-			.sources += [ ./qeventdispatcher_win.cpp ]
+			.sources += [ ./qeventdispatcher_win.cpp ./qwineventnotifier.cpp ]
 		}else if target_os == `macos {
 			.sources += [ ./qeventdispatcher_cf.mm ./qcfsocketnotifier.cpp ]
 		}else{
@@ -365,7 +371,7 @@ let sources* : SourceSet {
 	}
 	
 
-	.configs += core_config
+	.configs += [ core_config lib_config ]
 }
 
 let run_moc : LuaScriptForeach {
@@ -428,7 +434,7 @@ let run_moc_special : LuaScriptForeach {
 		./qtimer.h
 	]
 	if target_os == `win32 {
-		.sources += [  ]
+		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
 	}else if target_os == `macos {
 		.sources += [  ]
 	}else{
@@ -469,7 +475,10 @@ let moced_sources * : SourceSet {
 		dir + ./moc_qtranslator.cpp
 	]
 	if target_os == `win32 {
-		.sources += [  ]
+		.sources += [ 
+			dir + ./moc_qwineventnotifier.cpp 
+			dir + ./moc_qeventdispatcher_win_p.cpp
+		]
 	}else if target_os == `macos {
 		.sources += [  ]
 	}else{
@@ -488,7 +497,9 @@ let moced_sources * : SourceSet {
 			dir + ./moc_qfilesystemwatcher_polling_p.cpp
 		]
 		if target_os == `win32 {
-			.sources += [ dir + ./moc_qfilesystemwatcher_win_p.cpp ]
+			.sources += [ 
+				dir + ./moc_qfilesystemwatcher_win_p.cpp 
+			]
 		}else if target_os == `macos {
 			.sources += [ 
 				dir + ./moc_qfilesystemwatcher_kqueue_p.cpp 
@@ -504,7 +515,7 @@ let moced_sources * : SourceSet {
 		.sources += dir + ./moc_qlibrary.cpp
 	}
 
-	.configs += core_config;
+	.configs += [ core_config lib_config ]
 	.deps += [ run_moc run_moc_special ]
 }
 

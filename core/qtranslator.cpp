@@ -26,6 +26,7 @@
 #include "qplatformdefs.h"
 
 #include "qtranslator.h"
+#include <QtDebug>
 
 #ifndef QT_NO_TRANSLATION
 

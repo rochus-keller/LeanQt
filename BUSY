@@ -52,8 +52,7 @@ submod core
 
 let core_sources - = core.sources
 
-let client_config * : Config {
-	# have linker flags and libs from here
+let linker_config - : Config {
 	if target_os == `win32 {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
@@ -71,8 +70,10 @@ let client_config * : Config {
 			.frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
 		}
 	}
-	# have compiler flags and defines from here
-	.configs += core.core_config
+}
+
+let client_config * : Config {
+	.configs += [ core.core_config linker_config ]
 }
 
 submod tools
@@ -92,6 +93,7 @@ let libqtcore * : Library {
 	.deps += sources;
 	if HAVE_SHARED {
 		.lib_type = `shared
+		.configs += client_config
 	}else{
 		.lib_type = `static
 	}

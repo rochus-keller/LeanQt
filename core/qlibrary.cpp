@@ -45,7 +45,7 @@
 #include <qvector.h>
 #include <qdir.h>
 #include <qendian.h>
-#ifndef QT_NO_JSON
+#ifndef QT_NO_PLUGINS
 #include <qjsondocument.h>
 #include <qjsonvalue.h>
 #endif
@@ -295,7 +295,7 @@ static bool findPatternUnloaded(const QString &library, QLibraryPrivate *lib)
 
     if (pos >= 0) {
         if (hasMetaData) {
-#ifndef QT_NO_JSON
+#ifndef QT_NO_PLUGINS
             const char *data = filedata + pos;
             QJsonDocument doc = QLibraryPrivate::fromRawMetaData(data);
             lib->metaData = doc.object();
@@ -680,7 +680,7 @@ static bool qt_get_metadata(QtPluginQueryVerificationDataFunction pfn, QLibraryP
     if (!szData)
         return false;
 
-#ifndef QT_NO_JSON
+#ifndef QT_NO_PLUGINS
     QJsonDocument doc = QLibraryPrivate::fromRawMetaData(szData);
     if (doc.isNull())
         return false;
