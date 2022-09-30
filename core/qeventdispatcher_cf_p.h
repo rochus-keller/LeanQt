@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -260,6 +252,34 @@ private:
 
     void updateTimers();
     void invalidateTimer();
+};
+
+class RunLoopDebugger : public QObject
+{
+    Q_OBJECT
+
+    Q_ENUMS(Activity)
+    Q_ENUMS(Result)
+
+public:
+
+    #define Q_MIRROR_ENUM(name) name = name
+
+    enum Activity {
+        Q_MIRROR_ENUM(kCFRunLoopEntry),
+        Q_MIRROR_ENUM(kCFRunLoopBeforeTimers),
+        Q_MIRROR_ENUM(kCFRunLoopBeforeSources),
+        Q_MIRROR_ENUM(kCFRunLoopBeforeWaiting),
+        Q_MIRROR_ENUM(kCFRunLoopAfterWaiting),
+        Q_MIRROR_ENUM(kCFRunLoopExit)
+    };
+
+    enum Result {
+        Q_MIRROR_ENUM(kCFRunLoopRunFinished),
+        Q_MIRROR_ENUM(kCFRunLoopRunStopped),
+        Q_MIRROR_ENUM(kCFRunLoopRunTimedOut),
+        Q_MIRROR_ENUM(kCFRunLoopRunHandledSource)
+    };
 };
 
 QT_END_NAMESPACE

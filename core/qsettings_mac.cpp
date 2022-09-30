@@ -31,7 +31,9 @@
 #include "qdir.h"
 #include "qvarlengtharray.h"
 #include "private/qcore_mac_p.h"
+#ifndef QT_NO_COREAPPLICATION
 #include "qcoreapplication.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -610,7 +612,7 @@ QSettingsPrivate *QSettingsPrivate::create(QSettings::Format format,
                                            const QString &organization,
                                            const QString &application)
 {
-#ifndef QT_BOOTSTRAPPED
+#if !defined(QT_BOOTSTRAPPED) && !defined(QT_NO_COREAPPLICATION)
     if (organization == QLatin1String("Qt"))
     {
         QString organizationDomain = QCoreApplication::organizationDomain();

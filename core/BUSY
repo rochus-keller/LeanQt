@@ -321,7 +321,8 @@ let sources* : SourceSet {
             ./qcollator_macx.cpp
             ./qcore_mac.cpp
             ./qcore_mac_objc.mm
-        ]
+ 	     ./qcore_unix.cpp
+       ]
     }
     
     if ^HAVE_OBJECT {
@@ -356,9 +357,11 @@ let sources* : SourceSet {
 		}
 		if target_os == `win32 {
 			.sources += [ ./qeventdispatcher_win.cpp ./qwineventnotifier.cpp ]
-		}else if target_os == `macos {
-			.sources += [ ./qeventdispatcher_cf.mm ./qcfsocketnotifier.cpp ]
 		}else{
+			if target_os == `macos {
+				.defines += "QT_NO_EVENTFD"
+				.sources += [ ./qeventdispatcher_cf.mm ./qcfsocketnotifier.cpp ]
+			}
 			.sources += [ 
 				./qeventdispatcher_unix.cpp 
 				./qtimerinfo_unix.cpp
@@ -374,7 +377,7 @@ let sources* : SourceSet {
 	.configs += [ core_config lib_config ]
 }
 
-let run_moc : LuaScriptForeach {
+let run_moc1 : LuaScriptForeach {
 	.script = abspath() + ../tools/execute.lua
 	let name = "{{source_name_part}}"
 	.args += [
@@ -416,7 +419,7 @@ let run_moc : LuaScriptForeach {
 	}
 }
 
-let run_moc_special : LuaScriptForeach {
+let run_moc2 : LuaScriptForeach {
 	.script = abspath() + ../tools/execute.lua
 	let name = "{{source_name_part}}"
 	.args += [
@@ -435,9 +438,10 @@ let run_moc_special : LuaScriptForeach {
 	]
 	if target_os == `win32 {
 		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
-	}else if target_os == `macos {
-		.sources += [  ]
-	}else{
+	}else {
+		if target_os == `macos {
+			.sources += [ ./qeventdispatcher_cf_p.h ]
+		}
 		.sources += [ ./qeventdispatcher_unix_p.h ]
 	}
 	if ^HAVE_FILEIO {
@@ -479,9 +483,10 @@ let moced_sources * : SourceSet {
 			dir + ./moc_qwineventnotifier.cpp 
 			dir + ./moc_qeventdispatcher_win_p.cpp
 		]
-	}else if target_os == `macos {
-		.sources += [  ]
-	}else{
+	}else {
+		if target_os == `macos {
+			.sources += [ dir + ./moc_qeventdispatcher_cf_p.cpp ]
+		}
 		.sources += [ dir + ./moc_qeventdispatcher_unix_p.cpp ]
 	}
 	if ^HAVE_FILEIO {
@@ -516,7 +521,7 @@ let moced_sources * : SourceSet {
 	}
 
 	.configs += [ core_config lib_config ]
-	.deps += [ run_moc run_moc_special ]
+	.deps += [ run_moc1 run_moc2 ]
 }
 
 /*

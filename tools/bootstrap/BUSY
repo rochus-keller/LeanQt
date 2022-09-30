@@ -25,15 +25,8 @@ let config * : Config {
 		"QT_NO_DATASTREAM"
 		"QT_NO_THREAD"
 		"QT_NO_QOBJECT"
+		"QT_NO_THREADSAFE_CLOEXEC"
 	]
-	if target_os == `win32 {
-		.defines += [ "UNICODE" "_UNICODE" ]
-		if target_toolchain == `msvc {
-			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
-		}
-	}else if target_os == `macos {
-        .defines += "QT_NO_THREADSAFE_CLOEXEC"
-    }
 }
 
 let sources* : SourceSet {
