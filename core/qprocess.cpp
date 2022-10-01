@@ -991,8 +991,10 @@ bool QProcessPrivate::tryReadFromChannel(Channel *channel)
     }
     if (readBytes == 0) {
         // EOF
+#ifndef QT_NO_QOBJECT
         if (channel->notifier)
             channel->notifier->setEnabled(false);
+#endif
         closeChannel(channel);
 #if defined QPROCESS_DEBUG
         qDebug("QProcessPrivate::tryReadFromChannel(%d), 0 bytes available", channel - &stdinChannel);
@@ -1014,8 +1016,10 @@ bool QProcessPrivate::tryReadFromChannel(Channel *channel)
     bool didRead = false;
     bool isStdout = channel == &stdoutChannel;
     if (readBytes == 0) {
+#ifndef QT_NO_QOBJECT
         if (channel->notifier)
             channel->notifier->setEnabled(false);
+#endif
     } else if ((processChannel == QProcess::StandardOutput) == isStdout) {
         didRead = true;
         if (!emittedReadyRead) {
@@ -1056,8 +1060,10 @@ bool QProcessPrivate::_q_canReadStandardError()
 */
 bool QProcessPrivate::_q_canWrite()
 {
+#ifndef QT_NO_QOBJECT
     if (stdinChannel.notifier)
         stdinChannel.notifier->setEnabled(false);
+#endif
 
     if (stdinChannel.buffer.isEmpty()) {
 #if defined QPROCESS_DEBUG
@@ -1068,8 +1074,10 @@ bool QProcessPrivate::_q_canWrite()
 
     const bool writeSucceeded = writeToStdin();
 
+#ifndef QT_NO_QOBJECT
     if (stdinChannel.notifier && !stdinChannel.buffer.isEmpty())
         stdinChannel.notifier->setEnabled(true);
+#endif
     if (stdinChannel.buffer.isEmpty() && stdinChannel.closed)
         closeWriteChannel();
     return writeSucceeded;
@@ -1089,8 +1097,10 @@ bool QProcessPrivate::_q_processDied()
         return false;
 #endif
 #ifdef Q_OS_WIN
+#ifndef QT_NO_QOBJECT
     if (processFinishedNotifier)
         processFinishedNotifier->setEnabled(false);
+#endif
     drainOutputPipes();
 #endif
 
@@ -1156,8 +1166,10 @@ bool QProcessPrivate::_q_startupNotification()
     qDebug("QProcessPrivate::startupNotification()");
 #endif
 
+#ifndef QT_NO_QOBJECT
     if (startupSocketNotifier)
         startupSocketNotifier->setEnabled(false);
+#endif
     QString errorMessage;
     if (processStarted(&errorMessage)) {
         q->setProcessState(QProcess::Running);
@@ -2013,8 +2025,10 @@ qint64 QProcess::writeData(const char *data, qint64 len)
         if (!d->stdinWriteTrigger->isActive())
             d->stdinWriteTrigger->start();
 #else
+#ifndef QT_NO_QOBJECT
         if (d->stdinChannel.notifier)
             d->stdinChannel.notifier->setEnabled(true);
+#endif
 #endif
 #if defined QPROCESS_DEBUG
     qDebug("QProcess::writeData(%p \"%s\", %lld) == 1 (written to buffer)",
@@ -2029,8 +2043,10 @@ qint64 QProcess::writeData(const char *data, qint64 len)
     if (!d->stdinWriteTrigger->isActive())
         d->stdinWriteTrigger->start();
 #else
+#ifndef QT_NO_QOBJECT
     if (d->stdinChannel.notifier)
         d->stdinChannel.notifier->setEnabled(true);
+#endif
 #endif
 #if defined QPROCESS_DEBUG
     qDebug("QProcess::writeData(%p \"%s\", %lld) == %lld (written to buffer)",

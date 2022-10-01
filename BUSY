@@ -61,7 +61,7 @@ let linker_config - : Config {
 	} else {
 		.lib_names += [ "stdc++" "m" ]
 		.ldflags += "-shared-libgcc"
-		if HAVE_THREADS {
+		if HAVE_THREADS || HAVE_PROCESS {
 			.lib_names += "pthread"
 		}
 		if HAVE_LIBRARY {

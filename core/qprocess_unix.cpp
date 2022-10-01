@@ -571,8 +571,10 @@ bool QProcessPrivate::processStarted(QString *errorMessage)
     ushort buf[errorBufferMax];
     int i = qt_safe_read(childStartedPipe[0], &buf, sizeof buf);
     if (startupSocketNotifier) {
+#ifndef QT_NO_QOBJECT
         startupSocketNotifier->setEnabled(false);
         startupSocketNotifier->deleteLater();
+#endif
         startupSocketNotifier = 0;
     }
     qt_safe_close(childStartedPipe[0]);

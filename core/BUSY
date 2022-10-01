@@ -552,10 +552,8 @@ let moced_sources * : SourceSet {
 
 /*
 # not yet supported
-qprocess.cpp -> objects, threads, using fileio
 qsharedmemory_* -> kernel, used by plugins
 qsystemsemaphore_* -> used by shared memory
-qwindowspipereader/writer -> used by qprocess_win and qlocalsocket_win
 qstorageinfo -> fileio, option
 qfactoryloader -> plugins
 */
