@@ -208,8 +208,7 @@ let sources* : SourceSet {
 			./qfilesystementry.cpp
 			./qabstractfileengine.cpp
 			./qtemporaryfile.cpp
-			./qfsfileengine.cpp
-			./qringbuffer.cpp 
+			./qfsfileengine.cpp 
 			./qfsfileengine_iterator.cpp
 			./qdiriterator.cpp
 			./qstandardpaths.cpp
@@ -233,6 +232,27 @@ let sources* : SourceSet {
 		        .sources += ./qstandardpaths_unix.cpp
 		    }
 		}
+	}
+	
+	if ^HAVE_PROCESS {
+		.sources += ./qprocess.cpp
+		if target_os == `win32 {
+			.sources += [
+				./qprocess_win.cpp
+				./qwindowspipereader.cpp
+				./qwindowspipewriter.cpp
+			]
+		}else{
+			.include_dirs += ../thirdparty/forkfd
+			.sources += [ 
+				./qprocess_unix.cpp
+				../thirdparty/forkfd/forkfd.c
+			]
+		}
+	}
+	
+	if ^HAVE_FILEIO || ^HAVE_PROCESS {
+		.sources += ./qringbuffer.cpp
 	}
 	
 	if ^HAVE_LIBRARY {
@@ -264,23 +284,6 @@ let sources* : SourceSet {
 		}
 	}
 	
-	if ^HAVE_PROCESS {
-		.sources += ./qprocess.cpp
-		if target_os == `win32 {
-			.sources += [
-				./qprocess_win.cpp
-				./qwindowspipereader.cpp
-				./qwindowspipewriter.cpp
-			]
-		}else{
-			.include_dirs += ../thirdparty/forkfd
-			.sources += [ 
-				./qprocess_unix.cpp
-				../thirdparty/forkfd/forkfd.c
-			]
-		}
-	}
-
 	if ^HAVE_THREADS {
 		.sources += [
 			./qthread.cpp

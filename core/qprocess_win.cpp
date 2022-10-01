@@ -29,16 +29,21 @@
 #include "qwindowspipewriter_p.h"
 
 #include <qdatetime.h>
+#ifndef QT_NO_FILEENGINE
 #include <qdir.h>
-#include <qelapsedtimer.h>
 #include <qfileinfo.h>
-#include <qregexp.h>
-#include <qwineventnotifier.h>
-#include <private/qsystemlibrary_p.h>
-#include <private/qthread_p.h>
-#include <qdebug.h>
-
 #include "private/qfsfileengine_p.h" // for longFileName
+#endif
+#include <qelapsedtimer.h>
+#include <qregexp.h>
+#ifndef QT_NO_QOBJECT
+#include <qwineventnotifier.h>
+#endif
+#include <private/qsystemlibrary_p.h>
+#ifndef QT_NO_THREAD
+#include <private/qthread_p.h>
+#endif
+#include <qdebug.h>
 
 #ifndef PIPE_REJECT_REMOTE_CLIENTS
 #define PIPE_REJECT_REMOTE_CLIENTS 0x08
@@ -203,7 +208,12 @@ bool QProcessPrivate::openChannel(Channel &channel)
             // try to open in read-only mode
             channel.pipe[1] = INVALID_Q_PIPE;
             channel.pipe[0] =
-                CreateFile((const wchar_t*)QFSFileEnginePrivate::longFileName(channel.file).utf16(),
+                CreateFile(
+				#ifndef QT_NO_FILEENGINE
+						(const wchar_t*)QFSFileEnginePrivate::longFileName(channel.file).utf16(),
+				#else
+						(const wchar_t*)channel.file.utf16(),
+				#endif		
                            GENERIC_READ,
                            FILE_SHARE_READ | FILE_SHARE_WRITE,
                            &secAtt,
@@ -220,7 +230,12 @@ bool QProcessPrivate::openChannel(Channel &channel)
             // open in write mode
             channel.pipe[0] = INVALID_Q_PIPE;
             channel.pipe[1] =
-                CreateFile((const wchar_t *)QFSFileEnginePrivate::longFileName(channel.file).utf16(),
+                CreateFile(
+				#ifndef QT_NO_FILEENGINE
+						(const wchar_t *)QFSFileEnginePrivate::longFileName(channel.file).utf16(),
+				#else
+						(const wchar_t *)channel.file.utf16(),
+				#endif
                            GENERIC_WRITE,
                            FILE_SHARE_READ | FILE_SHARE_WRITE,
                            &secAtt,
@@ -497,7 +512,12 @@ void QProcessPrivate::startProcess()
     success = CreateProcess(0, (wchar_t*)args.utf16(),
                             0, 0, TRUE, dwCreationFlags,
                             environment.isEmpty() ? 0 : envlist.data(),
-                            workingDirectory.isEmpty() ? 0 : (wchar_t*)QDir::toNativeSeparators(workingDirectory).utf16(),
+                            workingDirectory.isEmpty() ? 0 : 
+							#ifndef QT_NO_FILEENGINE
+								(wchar_t*)QDir::toNativeSeparators(workingDirectory).utf16(),
+							#else
+								(wchar_t*)workingDirectory.utf16(),
+							#endif
                             &startupInfo, pid);
     QString errorString;
     if (!success) {
@@ -835,7 +855,12 @@ static bool startDetachedUacPrompt(const QString &programIn, const QStringList &
     shellExecuteExInfo.cbSize = sizeof(SHELLEXECUTEINFOW);
     shellExecuteExInfo.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_UNICODE | SEE_MASK_FLAG_NO_UI;
     shellExecuteExInfo.lpVerb = L"runas";
-    const QString program = QDir::toNativeSeparators(programIn);
+    const QString program = 
+#ifndef QT_NO_FILEENGINE
+		QDir::toNativeSeparators(programIn);
+#else
+		programIn;
+#endif
     shellExecuteExInfo.lpFile = reinterpret_cast<LPCWSTR>(program.utf16());
     if (!args.isEmpty())
         shellExecuteExInfo.lpParameters = reinterpret_cast<LPCWSTR>(args.utf16());

@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QTextStream>
+#include <QProcess>
 
 #ifndef QT_NO_QOBJECT
 #include <QObject>
@@ -69,6 +70,50 @@ int main(int argc, char *argv[])
 	l << "alpha" << "beta" << "gamma";
 	qDebug() << hello << QDateTime::currentDateTime().toString(Qt::ISODate) << str << l; // << v;
     std::cout << str.toUtf8().constData() << " Hello World " << hello.constData() << std::endl;
+    
+#if 1
+#ifdef _WIN32
+	QProcess::execute("dir");
+#else
+	QProcess::execute("ls");
+#endif
+	QProcess gzip;
+    gzip.start("gzip", QStringList() << "-c");
+    if (!gzip.waitForStarted())
+    {
+    	qCritical() << "waitForStarted returned false";
+        return false;
+    }
+
+    gzip.write("Qt rocks!");
+    gzip.closeWriteChannel();
+
+    if (!gzip.waitForFinished())
+    {
+    	qCritical() << "waitForFinished returned false";
+        return false;
+    }
+	QByteArray compressed = gzip.readAll();
+    qDebug() << "compressed:" << compressed.toHex();
+    
+    gzip.start("gzip", QStringList() << "-d");
+    if (!gzip.waitForStarted())
+    {
+    	qCritical() << "waitForStarted returned false";
+        return false;
+    }
+
+    gzip.write(compressed);
+    gzip.closeWriteChannel();
+
+    if (!gzip.waitForFinished())
+    {
+    	qCritical() << "waitForFinished returned false";
+        return false;
+    }
+    qDebug() << "decompressed:" << gzip.readAll();
+
+#endif
     
 #if 0 //ndef QT_NO_THREAD
 	TestThread a("A"), b("B"), c("C");

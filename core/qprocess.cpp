@@ -90,7 +90,9 @@ QT_END_NAMESPACE
 #endif
 
 #ifdef Q_OS_WIN
+#ifndef QT_NO_QOBJECT
 #include <qwineventnotifier.h>
+#endif
 #else
 #include <private/qcore_unix_p.h>
 #endif
