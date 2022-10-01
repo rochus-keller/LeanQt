@@ -267,7 +267,11 @@ let sources* : SourceSet {
 	if ^HAVE_PROCESS {
 		.sources += ./qprocess.cpp
 		if target_os == `win32 {
-			.sources += ./qprocess_win.cpp
+			.sources += [
+				./qprocess_win.cpp
+				./qwindowspipereader.cpp
+				./qwindowspipewriter.cpp
+			]
 		}else{
 			.include_dirs += ../thirdparty/forkfd
 			.sources += [ 
@@ -369,7 +373,10 @@ let sources* : SourceSet {
 			}
 		}
 		if target_os == `win32 {
-			.sources += [ ./qeventdispatcher_win.cpp ./qwineventnotifier.cpp ]
+			.sources += [ 
+				./qeventdispatcher_win.cpp 
+				./qwineventnotifier.cpp 
+			]
 		}else{
 			if target_os == `macos {
 				.defines += "QT_NO_EVENTFD"

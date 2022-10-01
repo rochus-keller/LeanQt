@@ -1,21 +1,13 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 or version 3 as published by the Free
 ** Software Foundation and appearing in the file LICENSE.LGPLv21 and
 ** LICENSE.LGPLv3 included in the packaging of this file. Please review the
@@ -175,7 +167,9 @@ bool QProcessPrivate::openChannel(Channel &channel)
                         && processChannelMode != QProcess::ForwardedOutputChannel) {
                     if (!stdoutChannel.reader) {
                         stdoutChannel.reader = new QWindowsPipeReader(q);
+						#ifndef QT_NO_QOBJECT
                         q->connect(stdoutChannel.reader, SIGNAL(readyRead()), SLOT(_q_canReadStandardOutput()));
+						#endif
                     }
                 } else {
                     duplicateStdWriteChannel(channel.pipe, STD_OUTPUT_HANDLE);
@@ -185,7 +179,9 @@ bool QProcessPrivate::openChannel(Channel &channel)
                         && processChannelMode != QProcess::ForwardedErrorChannel) {
                     if (!stderrChannel.reader) {
                         stderrChannel.reader = new QWindowsPipeReader(q);
+ 						#ifndef QT_NO_QOBJECT
                         q->connect(stderrChannel.reader, SIGNAL(readyRead()), SLOT(_q_canReadStandardError()));
+						#endif
                     }
                 } else {
                     duplicateStdWriteChannel(channel.pipe, STD_ERROR_HANDLE);
@@ -535,12 +531,13 @@ void QProcessPrivate::startProcess()
     if (!pid)
         return;
 
+#ifndef QT_NO_QOBJECT
     if (threadData->hasEventDispatcher()) {
         processFinishedNotifier = new QWinEventNotifier(pid->hProcess, q);
         QObject::connect(processFinishedNotifier, SIGNAL(activated(HANDLE)), q, SLOT(_q_processDied()));
         processFinishedNotifier->setEnabled(true);
     }
-
+#endif
     _q_startupNotification();
 }
 
@@ -624,7 +621,9 @@ bool QProcessPrivate::drainOutputPipes()
         someReadyReadEmitted |= readyReadEmitted;
         if (!readOperationActive || !readyReadEmitted)
             break;
+#ifndef QT_NO_THREAD		
         QThread::yieldCurrentThread();
+#endif
     }
 
     return someReadyReadEmitted;
@@ -793,10 +792,12 @@ bool QProcessPrivate::writeToStdin()
 
     if (!stdinChannel.writer) {
         stdinChannel.writer = new QWindowsPipeWriter(stdinChannel.pipe[1], q);
+#ifndef QT_NO_QOBJECT
         QObject::connect(stdinChannel.writer, &QWindowsPipeWriter::bytesWritten,
                          q, &QProcess::bytesWritten);
         QObjectPrivate::connect(stdinChannel.writer, &QWindowsPipeWriter::canWrite,
                                 this, &QProcessPrivate::_q_canWrite);
+#endif
     } else {
         if (stdinChannel.writer->isWriteOperationActive())
             return true;

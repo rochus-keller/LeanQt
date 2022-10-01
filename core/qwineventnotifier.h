@@ -33,9 +33,12 @@
 QT_BEGIN_NAMESPACE
 
 class QWinEventNotifierPrivate;
+class QEvent;
 class Q_CORE_EXPORT QWinEventNotifier : public QObject
 {
+#ifndef QT_NO_QOBJECT
     Q_OBJECT
+#endif
     Q_DECLARE_PRIVATE(QWinEventNotifier)
     typedef Qt::HANDLE HANDLE;
 
@@ -52,8 +55,10 @@ public:
 public Q_SLOTS:
     void setEnabled(bool enable);
 
+#ifndef QT_NO_QOBJECT
 Q_SIGNALS:
     void activated(HANDLE hEvent, QPrivateSignal);
+#endif
 
 protected:
     bool event(QEvent * e);
