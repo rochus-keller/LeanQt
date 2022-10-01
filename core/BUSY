@@ -73,7 +73,7 @@ let core_config * : Config {
 	if !^HAVE_THREADS {
 		.defines += "QT_NO_THREAD"
 	}
-
+	
 	if target_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {
@@ -263,6 +263,19 @@ let sources* : SourceSet {
 			.sources += ./qcoreapplication_mac.cpp
 		}
 	}
+	
+	if ^HAVE_PROCESS {
+		.sources += ./qprocess.cpp
+		if target_os == `win32 {
+			.sources += ./qprocess_win.cpp
+		}else{
+			.include_dirs += ../thirdparty/forkfd
+			.sources += [ 
+				./qprocess_unix.cpp
+				../thirdparty/forkfd/forkfd.c
+			]
+		}
+	}
 
 	if ^HAVE_THREADS {
 		.sources += [
@@ -417,6 +430,9 @@ let run_moc1 : LuaScriptForeach {
 	if ^HAVE_LIBRARY {
 		.sources += ./qlibrary.h
 	}
+	if ^HAVE_PROCESS {
+		.sources += ./qprocess.h
+	}
 }
 
 let run_moc2 : LuaScriptForeach {
@@ -518,6 +534,9 @@ let moced_sources * : SourceSet {
 	}
 	if ^HAVE_LIBRARY {
 		.sources += dir + ./moc_qlibrary.cpp
+	}
+	if ^HAVE_PROCESS {
+		.sources += dir + ./moc_qprocess.cpp
 	}
 
 	.configs += [ core_config lib_config ]

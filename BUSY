@@ -8,6 +8,7 @@ param HAVE_XML = false		# include QXmlReader and friends
 param HAVE_URL = false		# include QUrl and support classes
 param HAVE_DSTREAM = false  # include QDataStream
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
+param HAVE_PROCESS = false  # include QProcess
 
 param HAVE_THREADS = false  # include QThread and friends
 param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
@@ -24,7 +25,7 @@ param HAVE_ALL = false		# switches on all flags which add code
 if HAVE_ALL {
 	HAVE_GEOM = true HAVE_JSON = true HAVE_XML = true HAVE_URL = true HAVE_DSTREAM = true
 	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
-	HAVE_LIBRARY = true
+	HAVE_LIBRARY = true HAVE_PROCESS = true
 	# HAVE_RE missing
 }
 

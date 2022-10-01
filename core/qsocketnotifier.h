@@ -39,9 +39,12 @@
 QT_BEGIN_NAMESPACE
 
 class QSocketNotifierPrivate;
+class QEvent;
 class Q_CORE_EXPORT QSocketNotifier : public QObject
 {
+#ifndef QT_NO_QOBJECT
     Q_OBJECT
+#endif
     Q_DECLARE_PRIVATE(QSocketNotifier)
 
 public:
@@ -58,11 +61,13 @@ public:
 public Q_SLOTS:
     void setEnabled(bool);
 
+#ifndef QT_NO_QOBJECT
 Q_SIGNALS:
     void activated(int socket, QPrivateSignal);
+#endif
 
 protected:
-    bool event(QEvent *) Q_DECL_OVERRIDE;
+    bool event(QEvent *) ; // Q_DECL_OVERRIDE;
 
 private:
     Q_DISABLE_COPY(QSocketNotifier)

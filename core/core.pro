@@ -400,7 +400,10 @@ SOURCES += \
     qstandardpaths_mac.mm \
     qstring_mac.mm \
     qtimezoneprivate_mac.mm \
-    qurl_mac.mm
+    qurl_mac.mm \
+    qprocess_unix.cpp \
+    qprocess_win.cpp \
+    qprocess.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -905,7 +908,9 @@ HEADERS += \
     qwineventnotifier.h \
     qxmlstream_p.h \
     qxmlstream.h \
-    qxmlutils_p.h
+    qxmlutils_p.h \
+    qprocess_p.h \
+    qprocess.h
 
 OBJECTIVE_SOURCES += \
     qbytearray_mac.mm \
