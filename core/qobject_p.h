@@ -57,6 +57,7 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_QOBJECT
 class QVariant;
 class QThreadData;
 class QObjectConnectionListVector;
@@ -423,6 +424,7 @@ struct Q_CORE_EXPORT QAbstractDynamicMetaObject : public QDynamicMetaObjectData,
     { return metaCall(c, _id, a); }
     virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; } // Compat overload
 };
+#endif
 
 QT_END_NAMESPACE
 

@@ -403,7 +403,19 @@ SOURCES += \
     qurl_mac.mm \
     qprocess_unix.cpp \
     qprocess_win.cpp \
-    qprocess.cpp
+    qprocess.cpp \
+    qsharedmemory_posix.cpp \
+    qsharedmemory_systemv.cpp \
+    qsharedmemory_unix.cpp \
+    qsharedmemory_win.cpp \
+    qsharedmemory.cpp \
+    qsystemsemaphore_posix.cpp \
+    qsystemsemaphore_systemv.cpp \
+    qsystemsemaphore_unix.cpp \
+    qsystemsemaphore_win.cpp \
+    qsystemsemaphore.cpp \
+    qwindowspipereader.cpp \
+    qwindowspipewriter.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -910,7 +922,13 @@ HEADERS += \
     qxmlstream.h \
     qxmlutils_p.h \
     qprocess_p.h \
-    qprocess.h
+    qprocess.h \
+    qsharedmemory_p.h \
+    qsharedmemory.h \
+    qsystemsemaphore_p.h \
+    qsystemsemaphore.h \
+    qwindowspipereader_p.h \
+    qwindowspipewriter_p.h
 
 OBJECTIVE_SOURCES += \
     qbytearray_mac.mm \

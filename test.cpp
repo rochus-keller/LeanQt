@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	qDebug() << hello << QDateTime::currentDateTime().toString(Qt::ISODate) << str << l; // << v;
     std::cout << str.toUtf8().constData() << " Hello World " << hello.constData() << std::endl;
     
-#if 1
+#if 0
 #ifdef _WIN32
 	QProcess::execute("dir");
 #else

@@ -306,6 +306,22 @@ let sources* : SourceSet {
 			.sources += [ ./qthread_unix.cpp ./qwaitcondition_unix.cpp ]
 		}
 	}
+	
+	if ^HAVE_SHAREDMEM {
+		.sources += [ ./qsharedmemory.cpp ./qsystemsemaphore.cpp ]
+		if target_os == `win32 {
+			.sources += [ ./qsharedmemory_win.cpp ./qsystemsemaphore_win.cpp ]
+		}else{
+			.sources += [ 
+				./qsharedmemory_unix.cpp
+				./qsharedmemory_systemv.cpp
+				./qsharedmemory_posix.cpp
+				./qsystemsemaphore_unix.cpp
+				./qsystemsemaphore_systemv.cpp
+				./qsystemsemaphore_posix.cpp
+			]
+		}
+	}
 
 	if target_os == `linux {
 		.sources += [ 
@@ -443,6 +459,9 @@ let run_moc1 : LuaScriptForeach {
 	if ^HAVE_PROCESS {
 		.sources += ./qprocess.h
 	}
+	if ^HAVE_SHAREDMEM {
+		.sources += ./qsharedmemory.h
+	}
 }
 
 let run_moc2 : LuaScriptForeach {
@@ -548,6 +567,9 @@ let moced_sources * : SourceSet {
 	if ^HAVE_PROCESS {
 		.sources += dir + ./moc_qprocess.cpp
 	}
+	if ^HAVE_SHAREDMEM {
+		.sources += dir + ./moc_qsharedmemory.cpp
+	}
 
 	.configs += [ core_config lib_config ]
 	.deps += [ run_moc1 run_moc2 ]
@@ -555,8 +577,6 @@ let moced_sources * : SourceSet {
 
 /*
 # not yet supported
-qsharedmemory_* -> kernel, used by plugins
-qsystemsemaphore_* -> used by shared memory
 qstorageinfo -> fileio, option
 qfactoryloader -> plugins
 */

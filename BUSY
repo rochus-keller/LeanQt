@@ -2,13 +2,14 @@
 # licensed under GPL/LGPL
 
 param HAVE_GEOM = false 	# include geometry classes like QRect, QPoint etc.
-param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp
+param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp, TODO: not yet supported
 param HAVE_JSON = false		# include QJsonObject and friends
 param HAVE_XML = false		# include QXmlReader and friends
 param HAVE_URL = false		# include QUrl and support classes
 param HAVE_DSTREAM = false  # include QDataStream
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
 param HAVE_PROCESS = false  # include QProcess
+param HAVE_SHAREDMEM = false # include QSharedMemory and QSystemSemaphore
 
 param HAVE_THREADS = false  # include QThread and friends
 param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
@@ -25,8 +26,13 @@ param HAVE_ALL = false		# switches on all flags which add code
 if HAVE_ALL {
 	HAVE_GEOM = true HAVE_JSON = true HAVE_XML = true HAVE_URL = true HAVE_DSTREAM = true
 	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
-	HAVE_LIBRARY = true HAVE_PROCESS = true
+	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true
 	# HAVE_RE missing
+}
+
+if HAVE_SHAREDMEM && !HAVE_FILEIO {
+	message("enabling HAVE_FILEIO required by HAVE_SHAREDMEM")
+	HAVE_FILEIO = true
 }
 
 if HAVE_LIBRARY && !HAVE_FILEIO {
