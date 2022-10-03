@@ -415,7 +415,8 @@ SOURCES += \
     qsystemsemaphore_win.cpp \
     qsystemsemaphore.cpp \
     qwindowspipereader.cpp \
-    qwindowspipewriter.cpp
+    qwindowspipewriter.cpp \
+    qfactoryinterface.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -928,7 +929,8 @@ HEADERS += \
     qsystemsemaphore_p.h \
     qsystemsemaphore.h \
     qwindowspipereader_p.h \
-    qwindowspipewriter_p.h
+    qwindowspipewriter_p.h \
+    qfactoryinterface.h
 
 OBJECTIVE_SOURCES += \
     qbytearray_mac.mm \

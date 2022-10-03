@@ -26,8 +26,11 @@ let core_config * : Config {
 	]
 	.defines += [
 		"QT_NO_ITEMMODELS"
-		"QT_NO_PLUGINS" # plugins require HAVE_OBJECTS and HAVE_JSON
 	]
+	
+	if !^HAVE_PLUGINS {
+		.defines += "QT_NO_PLUGINS" 
+	}
 	
 	if !^HAVE_LIBRARY {
 		.defines += "QT_NO_LIBRARY"
@@ -246,7 +249,7 @@ let sources* : SourceSet {
 			.include_dirs += ../thirdparty/forkfd
 			.sources += [ 
 				./qprocess_unix.cpp
-				../thirdparty/forkfd/forkfd.c
+				./forkfd_qt.cpp
 			]
 		}
 	}
@@ -321,6 +324,14 @@ let sources* : SourceSet {
 				./qsystemsemaphore_posix.cpp
 			]
 		}
+	}
+	
+	if ^HAVE_PLUGINS {
+		.sources += [
+			./qpluginloader.cpp
+			./qfactoryloader.cpp
+			./qfactoryinterface.cpp
+		]
 	}
 
 	if target_os == `linux {
@@ -412,7 +423,6 @@ let sources* : SourceSet {
 		]
 	}
 	
-
 	.configs += [ core_config lib_config ]
 }
 
@@ -502,6 +512,16 @@ let run_moc2 : LuaScriptForeach {
 			.sources += [ ./qfilesystemwatcher_inotify_p.h ]
 		}
 	}
+	if ^HAVE_PLUGINS {
+		.sources += ./qpluginloader.h
+		.sources += ./qfactoryloader_p.h
+	}
+	if ^HAVE_PROCESS && ( target_os == `win32 ) {
+		.sources += [
+			./qwindowspipereader_p.h
+			./qwindowspipewriter_p.h
+		]
+	}
 }
 
 let moced_sources * : SourceSet {
@@ -566,9 +586,19 @@ let moced_sources * : SourceSet {
 	}
 	if ^HAVE_PROCESS {
 		.sources += dir + ./moc_qprocess.cpp
+		if target_os == `win32 {
+			.sources += [
+				dir + ./moc_qwindowspipereader_p.cpp
+				dir + ./moc_qwindowspipewriter_p.cpp
+			]
+		}
 	}
 	if ^HAVE_SHAREDMEM {
 		.sources += dir + ./moc_qsharedmemory.cpp
+	}
+	if ^HAVE_PLUGINS {
+		.sources += dir + ./moc_qpluginloader.cpp
+		.sources += dir + ./moc_qfactoryloader_p.cpp
 	}
 
 	.configs += [ core_config lib_config ]
@@ -576,9 +606,8 @@ let moced_sources * : SourceSet {
 }
 
 /*
-# not yet supported
+# not supported
 qstorageinfo -> fileio, option
-qfactoryloader -> plugins
 */
 
 

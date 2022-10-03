@@ -958,7 +958,7 @@ void QProcessPrivate::setErrorAndEmit(QProcess::ProcessError error, const QStrin
     setError(error, description);
 #ifndef QT_NO_QOBJECT
     emit q->errorOccurred(processError);
-    emit q->error(processError);
+    // deprecated emit q->error(processError);
 #endif
 }
 

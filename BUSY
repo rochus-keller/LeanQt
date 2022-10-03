@@ -12,10 +12,11 @@ param HAVE_PROCESS = false  # include QProcess
 param HAVE_SHAREDMEM = false # include QSharedMemory and QSystemSemaphore
 
 param HAVE_THREADS = false  # include QThread and friends
-param HAVE_FILEIO = false   # include QFile QFileInfo QDir QSettings  
+param HAVE_FILEIO = false   # include QFile, QFileInfo, QDir, QSettings etc. 
 param HAVE_COREAPP = false  # include QCoreApplication, QTranslator
 param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
 param HAVE_LIBRARY = false  # include QLibrary
+param HAVE_PLUGINS = false  # include QPluginLoader
 
 param HAVE_SHARED = false   # if true build shared instead of static library and export symbols
 param HAVE_ALL = false		# switches on all flags which add code
@@ -26,8 +27,23 @@ param HAVE_ALL = false		# switches on all flags which add code
 if HAVE_ALL {
 	HAVE_GEOM = true HAVE_JSON = true HAVE_XML = true HAVE_URL = true HAVE_DSTREAM = true
 	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
-	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true
+	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true HAVE_PLUGINS = true
 	# HAVE_RE missing
+}
+
+if HAVE_PLUGINS && !HAVE_OBJECT {
+	message("enabling HAVE_OBJECT required by HAVE_PLUGINS")
+	HAVE_OBJECT = true
+}
+
+if HAVE_PLUGINS && !HAVE_LIBRARY {
+	message("enabling HAVE_LIBRARY required by HAVE_PLUGINS")
+	HAVE_LIBRARY = true
+}
+
+if HAVE_PLUGINS && !HAVE_JSON {
+	message("enabling HAVE_JSON required by HAVE_PLUGINS")
+	HAVE_JSON = true
 }
 
 if HAVE_SHAREDMEM && !HAVE_FILEIO {

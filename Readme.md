@@ -26,15 +26,16 @@ The following features are available:
 - regexp
 - logging
 - md5 and sha1 hash
-- geometry, json, xml
+- geometry, json, xmlstream, url
 - rcc (resource compiler)
-- threads
+- threads, processes
+- shared memory
+- application, command line
 
 ### Planned or work-in-progress features
 
 - [x] core objects and events, moc
-- [ ] core mimetypes
-- [ ] plugin support
+- [x] library and plugin support
 - [ ] QtNetwork
 - [ ] QtXml
 
@@ -42,9 +43,9 @@ The following features are available:
 
 - [ ] QtGui
 - [ ] QtWidgets
+- [ ] mimetypes
 - [ ] printing
 - [ ] concurrent
-- [ ] serial port
 
 ### No support planned
 

@@ -179,11 +179,6 @@ inline Q_DECL_CONSTEXPR int qMetaTypeId();
     QT_FOR_EACH_STATIC_GUI_CLASS(F)\
     QT_FOR_EACH_STATIC_WIDGETS_CLASS(F)\
 
-#ifndef QT_NO_ITEMMODELS
-#define QT_FOR_EACH_STATIC_TYPE4(F)\
-    QT_FOR_EACH_STATIC_CORE_CLASS4(F)
-#endif
-
 #define QT_DEFINE_METATYPE_ID(TypeName, Id, Name) \
     TypeName = Id,
 
