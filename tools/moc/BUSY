@@ -16,7 +16,7 @@ let moc * : Executable {
 	if ^HAVE_OBJECT {
 		# use the bootstrap version, since we need moc to compile ^sources with QObject support
 		.deps += ^bootstrap.sources;
-		.configs += [ ^bootstrap.config ^linker_config ]
+		.configs += [ ^bootstrap.config ^_core_linker_config ]
 	}else{
 		if !^HAVE_FILEIO || !^HAVE_COREAPP {
 			#
@@ -27,8 +27,8 @@ let moc * : Executable {
 				../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp
 			]
 		}
-		.deps += ^core_sources;
-		.configs += ^client_config;
+		.deps += ^_core_sources;
+		.configs += ^core_client_config;
 	}
 	.include_dirs += .
 	

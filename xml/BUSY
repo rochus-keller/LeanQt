@@ -1,0 +1,30 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_XML_LIB"
+	]
+}
+
+let config * : Config {
+	.include_dirs += [
+		abspath() + ../includes/QtXml
+		abspath()
+	]
+}
+
+let sources* : SourceSet {
+	.sources += [
+		./qdom.cpp
+		./qxml.cpp
+	]
+
+	if !^HAVE_XMLSTREAM {
+		.sources += [
+			../core/qxmlutils.cpp
+		]
+	}
+
+	.configs += [ ^_core_config lib_config config ]
+}

@@ -19,7 +19,7 @@ The following features are available:
 - collections, implicit sharing
 - date/time, time zones
 - variants/metatypes
-- codecs: utf, simple, latin
+- codecs: utf, latin
 - io device abstraction
 - file engine
 - text and data streams
@@ -31,13 +31,15 @@ The following features are available:
 - threads, processes
 - shared memory
 - application, command line
+- objects and events
+- moc (meta object compiler)
+- library and plugins
 
 ### Planned or work-in-progress features
 
-- [x] core objects and events, moc
-- [x] library and plugin support
+- [x] QtCore 
+- [x] QtXml
 - [ ] QtNetwork
-- [ ] QtXml
 
 ### Long term plan
 

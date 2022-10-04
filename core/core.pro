@@ -416,7 +416,9 @@ SOURCES += \
     qsystemsemaphore.cpp \
     qwindowspipereader.cpp \
     qwindowspipewriter.cpp \
-    qfactoryinterface.cpp
+    qfactoryinterface.cpp \
+    ../xml/qdom.cpp \
+    ../xml/qxml.cpp
 
 HEADERS += \
     qalgorithms.h \
@@ -930,7 +932,11 @@ HEADERS += \
     qsystemsemaphore.h \
     qwindowspipereader_p.h \
     qwindowspipewriter_p.h \
-    qfactoryinterface.h
+    qfactoryinterface.h \
+    ../xml/qdom.h \
+    ../xml/qtxmlglobal.h \
+    ../xml/qxml_p.h \
+    ../xml/qxml.h
 
 OBJECTIVE_SOURCES += \
     qbytearray_mac.mm \

@@ -7,7 +7,7 @@ let lib_config : Config {
 	]
 }
 
-let core_config * : Config {
+let config * : Config {
 	.include_dirs += [
 		abspath() + ../includes 
 		abspath() + ../includes/QtCore
@@ -185,7 +185,7 @@ let sources* : SourceSet {
 		]
 	}
 
-	if ^HAVE_XML {
+	if ^HAVE_XMLSTREAM {
 		.sources += [
 			./qxmlstream.cpp ./qxmlutils.cpp
 		]
@@ -423,7 +423,7 @@ let sources* : SourceSet {
 		]
 	}
 	
-	.configs += [ core_config lib_config ]
+	.configs += [ config lib_config ]
 }
 
 let run_moc1 : LuaScriptForeach {
@@ -601,7 +601,7 @@ let moced_sources * : SourceSet {
 		.sources += dir + ./moc_qfactoryloader_p.cpp
 	}
 
-	.configs += [ core_config lib_config ]
+	.configs += [ config lib_config ]
 	.deps += [ run_moc1 run_moc2 ]
 }
 

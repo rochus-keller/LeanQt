@@ -1,10 +1,12 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
+param HAVE_SHARED = false   # if true build shared instead of static library and export symbols
+
 param HAVE_GEOM = false 	# include geometry classes like QRect, QPoint etc.
 param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp, TODO: not yet supported
 param HAVE_JSON = false		# include QJsonObject and friends
-param HAVE_XML = false		# include QXmlReader and friends
+param HAVE_XMLSTREAM = false # include QXmlStreamWriter, QXmlStreamReader, etc.
 param HAVE_URL = false		# include QUrl and support classes
 param HAVE_DSTREAM = false  # include QDataStream
 param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
@@ -18,17 +20,16 @@ param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
 param HAVE_LIBRARY = false  # include QLibrary
 param HAVE_PLUGINS = false  # include QPluginLoader
 
-param HAVE_SHARED = false   # if true build shared instead of static library and export symbols
-param HAVE_ALL = false		# switches on all flags which add code
+param HAVE_CORE_ALL = false	# switches on all flags which add code
+
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
 
-if HAVE_ALL {
-	HAVE_GEOM = true HAVE_JSON = true HAVE_XML = true HAVE_URL = true HAVE_DSTREAM = true
+if HAVE_CORE_ALL {
+	HAVE_GEOM = true HAVE_JSON = true HAVE_XMLSTREAM = true HAVE_URL = true HAVE_DSTREAM = true
 	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
 	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true HAVE_PLUGINS = true
-	# HAVE_RE missing
 }
 
 if HAVE_PLUGINS && !HAVE_OBJECT {
@@ -71,11 +72,13 @@ if HAVE_OBJECT && !HAVE_THREADS {
 	HAVE_THREADS = true
 }
 
+######################################################################
 submod core
 
-let core_sources - = core.sources
+let _core_sources - = core.sources
+let _core_config - = core.config
 
-let linker_config - : Config {
+let _core_linker_config - : Config {
 	if target_os == `win32 {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
@@ -95,37 +98,58 @@ let linker_config - : Config {
 	}
 }
 
-let client_config * : Config {
-	.configs += [ core.core_config linker_config ]
+let core_client_config * : Config {
+	.configs += [ _core_config _core_linker_config ]
 }
 
+######################################################################
+submod xml
+
+let xml_sources * = xml.sources
+
+
+######################################################################
 submod tools
 
 let rcc * = tools.rcc.rcc
 let moc * = tools.moc.moc
 
-let sources * : Group {
-	.deps += core_sources
+######################################################################
+let core_sources * : Group {
+	.deps += _core_sources
 	if HAVE_OBJECT {
 		.deps += [ moc core.moced_sources ]
 	}
-	
 }
 
+######################################################################
 let libqtcore * : Library {
-	.deps += sources;
+	.deps += core_sources 
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += client_config
+		.configs += core_client_config
 	}else{
 		.lib_type = `static
 	}
 	.name = "qtcore"
 }
 
+let libqtxml * : Library {
+	.deps += xml_sources
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += core_client_config;
+		.deps += libqtcore
+	}else{
+		.lib_type = `static
+	}
+	.name = "qtxml"
+}
+
+######################################################################
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
-	.deps += libqtcore;
-	.configs += client_config
+	.deps += [ libqtcore libqtxml ]
+	.configs += core_client_config
 }
