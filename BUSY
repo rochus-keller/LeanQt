@@ -118,7 +118,7 @@ let moc * = tools.moc.moc
 let core_sources * : Group {
 	.deps += _core_sources
 	if HAVE_OBJECT {
-		.deps += [ moc core.moced_sources ]
+		.deps += [ moc core.moc_sources ]
 	}
 }
 
@@ -150,6 +150,6 @@ let libqtxml * : Library {
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
-	.deps += [ libqtcore libqtxml ]
+	.deps += [ libqtcore /* libqtxml */ ]
 	.configs += core_client_config
 }

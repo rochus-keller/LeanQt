@@ -426,19 +426,7 @@ let sources* : SourceSet {
 	.configs += [ config lib_config ]
 }
 
-let run_moc1 : LuaScriptForeach {
-	.script = abspath() + ../tools/execute.lua
-	let name = "{{source_name_part}}"
-	.args += [
-		tostring( root_build_dir + ./tools/moc/moc )
-		"{{source}}"
-		"-b"
-		name + "_p.h"
-		"-p"
-		"{{source_dir}}"
-		"-o"
-		tostring( root_build_dir + relpath() + topath("moc_"+name+".cpp") )
-	]
+let run_moc : Moc {
 	.sources += [
 		./qbuffer.h
 		./qobject.h
@@ -451,6 +439,10 @@ let run_moc1 : LuaScriptForeach {
 		./qlocale.h
 		./qfuturewatcher.h
 		./qtranslator.h
+		./qtextstream_p.h
+		./qnamespace.h
+		./qsocketnotifier.h
+		./qtimer.h
 	]
 	if ^HAVE_FILEIO {
 		.sources += [ 
@@ -461,46 +453,6 @@ let run_moc1 : LuaScriptForeach {
 			./qsavefile.h
 			./qtemporaryfile.h
 			./qfilesystemwatcher.h
-		]
-	}
-	if ^HAVE_LIBRARY {
-		.sources += ./qlibrary.h
-	}
-	if ^HAVE_PROCESS {
-		.sources += ./qprocess.h
-	}
-	if ^HAVE_SHAREDMEM {
-		.sources += ./qsharedmemory.h
-	}
-}
-
-let run_moc2 : LuaScriptForeach {
-	.script = abspath() + ../tools/execute.lua
-	let name = "{{source_name_part}}"
-	.args += [
-		tostring( root_build_dir + ./tools/moc/moc )
-		"{{source}}"
-		"-p"
-		"{{source_dir}}"
-		"-o"
-		tostring( root_build_dir + relpath() + topath("moc_"+name+".cpp") )
-	]
-	.sources += [
-		./qtextstream_p.h
-		./qnamespace.h
-		./qsocketnotifier.h
-		./qtimer.h
-	]
-	if target_os == `win32 {
-		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
-	}else {
-		if target_os == `macos {
-			.sources += [ ./qeventdispatcher_cf_p.h ]
-		}
-		.sources += [ ./qeventdispatcher_unix_p.h ]
-	}
-	if ^HAVE_FILEIO {
-		.sources += [ 
 			./qfilesystemwatcher_p.h
 			./qfilesystemwatcher_polling_p.h
 		]
@@ -512,97 +464,38 @@ let run_moc2 : LuaScriptForeach {
 			.sources += [ ./qfilesystemwatcher_inotify_p.h ]
 		}
 	}
-	if ^HAVE_PLUGINS {
-		.sources += ./qpluginloader.h
-		.sources += ./qfactoryloader_p.h
-	}
-	if ^HAVE_PROCESS && ( target_os == `win32 ) {
-		.sources += [
-			./qwindowspipereader_p.h
-			./qwindowspipewriter_p.h
-		]
-	}
-}
-
-let moced_sources * : SourceSet {
-	let dir = root_build_dir + relpath()
-	.sources += [
-		dir + ./moc_qbuffer.cpp
-		dir + ./moc_qobject.cpp
-		dir + ./moc_qthread.cpp
-		dir + ./moc_qiodevice.cpp
-		dir + ./moc_qcoreapplication.cpp
-		dir + ./moc_qeventloop.cpp
-		dir + ./moc_qabstracteventdispatcher.cpp
-		dir + ./moc_qthreadpool.cpp
-		dir + ./moc_qlocale.cpp
-		dir + ./moc_qtextstream_p.cpp
-		dir + ./moc_qnamespace.cpp
-		dir + ./moc_qsocketnotifier.cpp
-		dir + ./moc_qfuturewatcher.cpp
-		dir + ./moc_qtimer.cpp
-		dir + ./moc_qtranslator.cpp
-	]
-	if target_os == `win32 {
-		.sources += [ 
-			dir + ./moc_qwineventnotifier.cpp 
-			dir + ./moc_qeventdispatcher_win_p.cpp
-		]
-	}else {
-		if target_os == `macos {
-			.sources += [ dir + ./moc_qeventdispatcher_cf_p.cpp ]
-		}
-		.sources += [ dir + ./moc_qeventdispatcher_unix_p.cpp ]
-	}
-	if ^HAVE_FILEIO {
-		.sources += [ 
-			dir + ./moc_qfileselector.cpp 
-			dir + ./moc_qfile.cpp
-			dir + ./moc_qfiledevice.cpp
-			dir + ./moc_qsettings.cpp
-			dir + ./moc_qsavefile.cpp
-			dir + ./moc_qtemporaryfile.cpp
-			dir + ./moc_qfilesystemwatcher.cpp
-			dir + ./moc_qfilesystemwatcher_p.cpp
-			dir + ./moc_qfilesystemwatcher_polling_p.cpp
-		]
-		if target_os == `win32 {
-			.sources += [ 
-				dir + ./moc_qfilesystemwatcher_win_p.cpp 
-			]
-		}else if target_os == `macos {
-			.sources += [ 
-				dir + ./moc_qfilesystemwatcher_kqueue_p.cpp 
-				dir + ./moc_qfilesystemwatcher_fsevents_p.cpp
-			]
-		}else{
-			.sources += [ 
-				dir + ./moc_qfilesystemwatcher_inotify_p.cpp 
-			]
-		}
-	}
 	if ^HAVE_LIBRARY {
-		.sources += dir + ./moc_qlibrary.cpp
+		.sources += ./qlibrary.h
 	}
 	if ^HAVE_PROCESS {
-		.sources += dir + ./moc_qprocess.cpp
+		.sources += ./qprocess.h
 		if target_os == `win32 {
 			.sources += [
-				dir + ./moc_qwindowspipereader_p.cpp
-				dir + ./moc_qwindowspipewriter_p.cpp
+				./qwindowspipereader_p.h
+				./qwindowspipewriter_p.h
 			]
 		}
 	}
 	if ^HAVE_SHAREDMEM {
-		.sources += dir + ./moc_qsharedmemory.cpp
+		.sources += ./qsharedmemory.h
+	}
+	if target_os == `win32 {
+		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
+	}else {
+		if target_os == `macos {
+			.sources += [ ./qeventdispatcher_cf_p.h ]
+		}
+		.sources += [ ./qeventdispatcher_unix_p.h ]
 	}
 	if ^HAVE_PLUGINS {
-		.sources += dir + ./moc_qpluginloader.cpp
-		.sources += dir + ./moc_qfactoryloader_p.cpp
+		.sources += ./qpluginloader.h
+		.sources += ./qfactoryloader_p.h
 	}
+}
 
+let moc_sources * : SourceSet {
 	.configs += [ config lib_config ]
-	.deps += [ run_moc1 run_moc2 ]
+	.deps += run_moc # run_moc produces the source file compiled here
 }
 
 /*
