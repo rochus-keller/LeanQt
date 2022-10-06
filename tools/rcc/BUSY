@@ -34,5 +34,5 @@ let rcc * : Executable {
 		}
 	}
 	.include_dirs += .
-	rcc_path = root_build_dir + relpath() + ./rcc
+	rcc_path = build_dir() + ./rcc
 }

@@ -77,6 +77,10 @@ let config * : Config {
 		.defines += "QT_NO_THREAD"
 	}
 	
+	if !^HAVE_PROCESS {
+		.defines += "QT_NO_PROCESS"
+	}
+	
 	if target_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {

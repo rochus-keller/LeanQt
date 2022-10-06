@@ -26,12 +26,13 @@ The following features are available:
 - regexp
 - logging
 - md5 and sha1 hash
-- geometry, json, xmlstream, url
-- rcc (resource compiler)
+- geometry, json, url
+- xml stream, sax and dom
 - threads, processes
 - shared memory
 - application, command line
 - objects and events
+- rcc (resource compiler)
 - moc (meta object compiler)
 - library and plugins
 
@@ -77,7 +78,96 @@ The following features are available:
 1. Download https://github.com/rochus-keller/LeanQt/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "LeanQt".
 1. Download https://github.com/rochus-keller/BUSY/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "build".
 1. Open a command line in the build directory and type `cc *.c -O2 -lm -O2 -o lua` or `cl /O2 /MD /Fe:lua.exe *.c` depending on whether you are on a Unix or Windows machine; wait a few seconds until the Lua executable is built.
-1. Now type `lua build.lua ../Oberon`; wait a few minutes until the OBXMC executable is built; you find it in the output subdirectory.
+1. Now type `./lua build.lua ../Oberon` (or `lua build.lua ../Oberon` on Windows); wait a few minutes until the OBXMC executable is built; you find it in the output subdirectory.
+
+### BUSY moc support
+
+Qt includes a powerful meta-object system which extends the capabilities of C++ (see https://doc.qt.io/qt-5/metaobjects.html). The most prominent feature is the signals and slots mechanism for inter-object communication. To make signals and slots work, a QObject descendant is marked with the `Q_OBJECT`, `signals` and `slots` macros and fed to the Meta-Object Compiler (moc) to generate additional code required by the meta-object system.
+
+LeanQt can be compiled with QObject and `moc` support by setting the HAVE_OBJECT parameter to true. If so, the `moc` tool is automatically built and made available to BUSY based builds.
+
+The BUSY build system used by LeanQt includes the [predeclared `Moc` action class](http://software.rochus-keller.ch/busy_spec.html#12625). Its only field is `sources` which is a list of files which need to be processed. The Moc instance is added to the `deps` list of the `Executable` or `Library` instance which has the effect that moc is called for each entry of `sources` and the resulting new .cpp files are automatically compiled and linked with the executable or library. Here is an example:
+
+Assume we have this code in Example.h:
+
+```
+#include <QObject>
+#include <QtDebug>
+
+class Example : public QObject
+{
+	Q_OBJECT
+public:
+	Example(QObject* p = 0):QObject(p){}
+	~Example() { qDebug() << "done"; emit done(); }
+signals:
+	void done();
+public slots:
+	void hello() { qDebug() << "Hello from Example"; }
+};
+```
+
+And this is the code in Example.cpp:
+
+```
+#include "Example.h"
+#include <QCoreApplication>
+#include <QTimer>
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+    
+    qDebug() << "started";
+    
+    Example* example = new Example();
+			
+	QTimer t1;
+	t1.setSingleShot(true);
+	QObject::connect(&t1,SIGNAL(timeout()),example,SLOT(deleteLater()));
+	t1.start(2000);
+	
+	QTimer t2;
+	t2.setSingleShot(true);
+	QObject::connect(&t2,SIGNAL(timeout()),example,SLOT(hello()));
+	t2.start(1000);
+	
+	QObject::connect(example,SIGNAL(done()),&app,SLOT(quit()));
+
+    return app.exec();
+}
+```
+
+Assuming the `Example` and `LeanQt` directories are in the same root directory we only need the following BUSY file to build the application:
+
+```
+submod qt = ../LeanQt (HAVE_OBJECT)
+
+let moc : Moc {
+	.sources += ./Example.h
+}
+
+let example ! : Executable {
+	.sources += ./Example.cpp
+	.deps += [ qt.libqtcore moc ]
+	.configs += qt.core_client_config
+} 
+```
+
+Note that the space between `../LeanQt` and `(HAVE_OBJECT)` is significant (otherwise `(HAVE_OBJECT)` is considered part of the path).
+
+Assuming the BUSY `build` directory is in the same root directory as `LeanQt` and `Example` we can run the build by just executing `lua build.lua ../Example` from the `build` directory (remember that BUSY itself has to first be built, see [here for more information](https://github.com/rochus-keller/BUSY/blob/main/README.md#build-steps)). The resulting executable can then be found in the `build/output` directory and run like `output/example`.
+
+Here is a summary of the directory structure:
+```
+├─ build
+│  └─ output
+│     └─ qt
+├─ LeanQt
+└─ Example
+```
+This example links the executable with the static library version of LeanQt. If you instead prefer dynamic linking with LeanQt then just add `HAVE_SHARED` to the `submod` parameter list so it looks like `submod qt = ../LeanQt (HAVE_OBJECT,HAVE_SHARED)`. Before you rebuild, delete the `output` directory. The resulting shared library is in the `build/output/qt` directory (on Windows you have to e.g. move it to the `output` directory so the executable can find it). 
+
 
 ### Additional Credits
 

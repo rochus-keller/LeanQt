@@ -18,22 +18,30 @@
 
 class A : public QObject
 {
+	Q_OBJECT
 public:
 	A(QObject* p):QObject(p){}
 	~A() { qDebug() << "A destructed"; }
+signals:
+	void sayHello();
 };
 
 class B : public QObject
 {
+	Q_OBJECT
 public:
 	B(QObject* p):QObject(p){}
 	~B() { qDebug() << "B destructed"; }
+public slots:
+	void hello()
+	{
+		qDebug() << "hello from B";
+	}
 };
-
+#include "test.moc"
 #endif
 
 #ifndef QT_NO_THREAD
-
 class TestThread : public QThread
 {
 public:
@@ -42,15 +50,13 @@ public:
 protected:
 	void run()
 	{
-		QTextStream out(stdout);
 		for( int i = 0; i < 10; i++ )
 		{
-			out << title << " " << QDateTime::currentDateTime().toString(Qt::ISODate) << " " << i << endl << flush;
+			qDebug() << title << QDateTime::currentDateTime().toString(Qt::ISODate) << i;
 			msleep( qrand() % 1000 );
 		}
 	} 
 };
- 
 #endif
 
 int main(int argc, char *argv[])
@@ -71,7 +77,7 @@ int main(int argc, char *argv[])
 	qDebug() << hello << QDateTime::currentDateTime().toString(Qt::ISODate) << str << l; // << v;
     std::cout << str.toUtf8().constData() << " Hello World " << hello.constData() << std::endl;
     
-#if 0
+#ifndef QT_NO_PROCESS
 #ifdef _WIN32
 	QProcess::execute("dir");
 #else
@@ -115,7 +121,7 @@ int main(int argc, char *argv[])
 
 #endif
     
-#if 0 //ndef QT_NO_THREAD
+#ifndef QT_NO_THREAD
 	TestThread a("A"), b("B"), c("C");
 	a.start();
 	b.start();
@@ -130,12 +136,16 @@ int main(int argc, char *argv[])
 	QPointer<A> ap = new A(0);
 	QPointer<B> bp = new B(ap);
 	
-	qDebug() << "translate" << A::tr("Ürgöl");
+	A::connect(ap, SIGNAL(sayHello()), bp, SLOT(hello()));
+	
+	qDebug() << "translate" << A::tr("Ölförderung");
 	
 	QTimer t1;
 	t1.setSingleShot(true);
 	t1.connect(&t1,SIGNAL(timeout()),qApp,SLOT(quit()));
 	t1.start(2000);
+	
+	ap->sayHello();
 
 	QTimer t2;
 	t2.setSingleShot(true);

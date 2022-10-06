@@ -147,9 +147,18 @@ let libqtxml * : Library {
 }
 
 ######################################################################
+
+let test_moc : Moc {
+	.sources += ./test.cpp
+}
+
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
 	.deps += [ libqtcore /* libqtxml */ ]
+	if HAVE_OBJECT {
+		.deps += test_moc;
+		.include_dirs += build_dir()
+	}
 	.configs += core_client_config
 }
