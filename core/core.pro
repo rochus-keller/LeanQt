@@ -418,7 +418,8 @@ SOURCES += \
     qwindowspipewriter.cpp \
     qfactoryinterface.cpp \
     ../xml/qdom.cpp \
-    ../xml/qxml.cpp
+    ../xml/qxml.cpp \
+    forkfd_qt.cpp
 
 HEADERS += \
     qalgorithms.h \

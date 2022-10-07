@@ -150,6 +150,7 @@ let sources* : SourceSet {
 		./qvsnprintf.cpp
 		./qlinkedlist.cpp
 		./qsystemerror.cpp
+		./qsimd.cpp
 	]
 	
 	if ^HAVE_GEOM {
@@ -355,7 +356,6 @@ let sources* : SourceSet {
 			./qcollator_win.cpp
 			./qelapsedtimer_win.cpp
 			./qtimezoneprivate_win.cpp
-			./qsimd.cpp
 		]
 		if target_toolchain == `msvc {
 			.sources += [
