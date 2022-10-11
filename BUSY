@@ -22,6 +22,11 @@ param HAVE_PLUGINS = false  # include QPluginLoader
 
 param HAVE_CORE_ALL = false	# switches on all flags which add code
 
+param HAVE_SSL = false       # include QSslSocket and friends; only OpenSSL dynamic loading supported so far
+param HAVE_LOCALSOCK = false # include QLocalSocket and QLocalServer
+# TODO param HAVE_NETACCESS = false # include QNetworkAccessManager and friends
+# TODO param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends
+
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -107,6 +112,25 @@ submod xml
 
 let xml_sources * = xml.sources
 
+######################################################################
+submod net
+
+let _net_sources = net.sources
+
+let _net_linker_config - : Config {
+	if target_os == `win32 {
+		.lib_names = [
+			"Dnsapi" "Iphlpapi"
+		]
+		if HAVE_SSL {
+			.lib_names += "Crypt32"
+		}
+	}
+}
+
+let net_client_config * : Config {
+	.configs += [ net.config _net_linker_config ]
+}
 
 ######################################################################
 submod tools
@@ -120,6 +144,11 @@ let core_sources * : Group {
 	if HAVE_OBJECT {
 		.deps += [ moc core.moc_sources ]
 	}
+}
+
+let net_sources * : Group {
+	.deps += [ moc net.moc_sources ] # do this first because of .moc includes
+	.deps += _net_sources;
 }
 
 ######################################################################
@@ -146,6 +175,18 @@ let libqtxml * : Library {
 	.name = "qtxml"
 }
 
+let libqtnetwork * : Library {
+	.deps += net_sources
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += core_client_config;
+		.deps += libqtcore
+	}else{
+		.lib_type = `static
+	}
+	.name = "qtnetwork"
+}
+
 ######################################################################
 
 let test_moc : Moc {
@@ -155,10 +196,10 @@ let test_moc : Moc {
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
-	.deps += [ libqtcore /* libqtxml */ ]
+	.deps += [ libqtcore /* libqtxml */ libqtnetwork ]
 	if HAVE_OBJECT {
 		.deps += test_moc;
 		.include_dirs += build_dir()
 	}
-	.configs += core_client_config
+	.configs += [ core_client_config net_client_config ]
 }

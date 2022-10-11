@@ -35,11 +35,11 @@
 #  error "Are you sure you need the other hashing algorithms besides SHA-1?"
 #endif
  
-#ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
 // qdoc and qmake only need SHA-1
-#include "../../3rdparty/md4/md4.h"
-#include "../../3rdparty/md4/md4.cpp"
+#include "../thirdparty/md4/md4.h"
+#include "../thirdparty/md4/md4.cpp"
 
+#ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
 typedef unsigned char BitSequence;
 typedef unsigned long long DataLength;
 typedef enum { SUCCESS = 0, FAIL = 1, BAD_HASHLEN = 2 } HashReturn;
@@ -157,8 +157,8 @@ public:
     union {
         Sha1State sha1Context;
         MD5Context md5Context;
-#ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
         md4_context md4Context;
+#ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
         SHA224Context sha224Context;
         SHA256Context sha256Context;
         SHA384Context sha384Context;
@@ -232,15 +232,15 @@ void QCryptographicHash::reset()
     case Md5:
         MD5Init(&d->md5Context);
         break;
+    case Md4:
+        md4_init(&d->md4Context);
+        break;
 #ifdef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
     default:
         Q_ASSERT_X(false, "QCryptographicHash", "Method not compiled in");
         Q_UNREACHABLE();
         break;
 #else
-    case Md4:
-        md4_init(&d->md4Context);
-        break;
     case Sha224:
         SHA224Reset(&d->sha224Context);
         break;
@@ -283,15 +283,15 @@ void QCryptographicHash::addData(const char *data, int length)
     case Md5:
         MD5Update(&d->md5Context, (const unsigned char *)data, length);
         break;
+    case Md4:
+        md4_update(&d->md4Context, (const unsigned char *)data, length);
+        break;
 #ifdef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
     default:
         Q_ASSERT_X(false, "QCryptographicHash", "Method not compiled in");
         Q_UNREACHABLE();
         break;
 #else
-    case Md4:
-        md4_update(&d->md4Context, (const unsigned char *)data, length);
-        break;
     case Sha224:
         SHA224Input(&d->sha224Context, reinterpret_cast<const unsigned char *>(data), length);
         break;
@@ -376,18 +376,18 @@ QByteArray QCryptographicHash::result() const
         MD5Final(&copy, (unsigned char *)d->result.data());
         break;
     }
-#ifdef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
-    default:
-        Q_ASSERT_X(false, "QCryptographicHash", "Method not compiled in");
-        Q_UNREACHABLE();
-        break;
-#else
     case Md4: {
         md4_context copy = d->md4Context;
         d->result.resize(MD4_RESULTLEN);
         md4_final(&copy, (unsigned char *)d->result.data());
         break;
     }
+#ifdef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
+    default:
+        Q_ASSERT_X(false, "QCryptographicHash", "Method not compiled in");
+        Q_UNREACHABLE();
+        break;
+#else
     case Sha224: {
         SHA224Context copy = d->sha224Context;
         d->result.resize(SHA224HashSize);

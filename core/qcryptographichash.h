@@ -39,9 +39,7 @@ class Q_CORE_EXPORT QCryptographicHash
 {
 public:
     enum Algorithm {
-#ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
         Md4,
-#endif
         Md5,
         Sha1 = 2,
 #ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1

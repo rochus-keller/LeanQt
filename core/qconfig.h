@@ -78,10 +78,12 @@
 # define QT_NO_LIBPROXY
 #endif
 
+#if 0
 #if defined(QT_NO_OPENSSL) && defined(QT_OPENSSL)
 # undef QT_NO_OPENSSL
 #elif !defined(QT_NO_OPENSSL) && !defined(QT_OPENSSL)
 # define QT_NO_OPENSSL
+#endif
 #endif
 
 #if defined(QT_NO_OPENVG) && defined(QT_OPENVG)
@@ -96,10 +98,12 @@
 # define QT_NO_PULSEAUDIO
 #endif
 
+#if 0
 #if defined(QT_NO_SSL) && defined(QT_SSL)
 # undef QT_NO_SSL
 #elif !defined(QT_NO_SSL) && !defined(QT_SSL)
 # define QT_NO_SSL
+#endif
 #endif
 
 #if defined(QT_NO_STYLE_GTK) && defined(QT_STYLE_GTK)

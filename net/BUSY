@@ -1,0 +1,217 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_NETWORK_LIB"
+	]
+}
+
+let config * : Config {
+	.include_dirs += [
+		abspath() + ../includes/QtNetwork
+		abspath()
+	]
+	if !^HAVE_SSL {
+		.defines += "QT_NO_SSL"
+	}else{
+		.include_dirs += ../thirdparty
+	}
+	if !^HAVE_PLUGINS {
+		.defines += "QT_NO_BEARERMANAGEMENT"
+	}
+}
+
+let err : Message {
+	.text = "The net module requires HAVE_OBJECT, HAVE_DSTREAM and HAVE_URL"
+}
+
+let sources* : SourceSet {
+	.sources += [
+		# TODO: make access classes optional
+		./qabstractsocket.cpp
+		./qabstractsocketengine.cpp
+		./qhostaddress.cpp
+		./qnetworkproxy.cpp
+		./qnetworkrequest.cpp
+		./qhostinfo.cpp
+		./qnetworksession.cpp
+		./qnetworkinterface.cpp
+		./qnetworkconfiguration.cpp
+		./qnativesocketengine.cpp
+		./qsocks5socketengine.cpp
+		./qhttpsocketengine.cpp
+		./qauthenticator.cpp
+		./qnetworkcookie.cpp
+		./qbearerengine.cpp
+		./qnetworkconfigmanager.cpp
+		./qnetworkconfigmanager_p.cpp
+		./qtcpserver.cpp
+		./qtcpsocket.cpp
+		./qudpsocket.cpp
+		./qhttpnetworkreply.cpp
+		./qnetworkreply.cpp
+		./qnetworkaccessmanager.cpp
+		./qhttpnetworkheader.cpp
+		./qhttpnetworkrequest.cpp
+		./qbearerplugin.cpp
+		./qhttpnetworkconnection.cpp
+		./qhttpnetworkconnectionchannel.cpp
+		./qabstractprotocolhandler.cpp
+		./qnetworkaccesscache.cpp
+		./qnetworkaccesscachebackend.cpp
+		./qnetworkaccessbackend.cpp
+		./qnetworkreplyimpl.cpp
+		./qnetworkaccessauthenticationmanager.cpp
+		./qnetworkcookiejar.cpp
+		./qabstractnetworkcache.cpp
+		./qsharednetworksession.cpp
+		./qnetworkaccessftpbackend.cpp
+		./qftp.cpp 
+		./qurlinfo.cpp
+		./qnetworkaccessfilebackend.cpp # TODO: only if HAVE_FILEIO
+		./qnetworkaccessdebugpipebackend.cpp
+		./qnetworkreplydataimpl.cpp
+		./qnetworkreplyfileimpl.cpp # TODO HAVE_FILEIO
+		./qhttpmultipart.cpp
+		./qnetworkreplyhttpimpl.cpp
+		./qnoncontiguousbytedevice.cpp # belongs to access
+		./qhttpprotocolhandler.cpp
+		./qspdyprotocolhandler.cpp
+		./qhttpthreaddelegate.cpp
+		./qdnslookup.cpp
+	]
+	if !^HAVE_OBJECT || !^HAVE_URL || !^HAVE_DSTREAM {
+		.deps += err
+	}
+	
+	if ^HAVE_LOCALSOCK {
+		.sources += [
+			./qlocalserver.cpp
+			./qlocalsocket.cpp
+		]
+	}
+	
+	if ^HAVE_SSL {
+		.sources += [
+			./qsslconfiguration.cpp
+			./qsslsocket.cpp
+			./qssl.cpp
+			./qsslerror.cpp
+			./qsslcertificate.cpp
+			./qsslcipher.cpp
+			./qsslkey_p.cpp
+			./qsslellipticcurve.cpp
+			./qsslpresharedkeyauthenticator.cpp
+			./qsslcertificateextension.cpp
+		]
+		# NOTE: winrt and mac securetransport are not supported, only OpenSSL
+		.sources += [
+			./qsslsocket_openssl.cpp
+			./qsslsocket_openssl_symbols.cpp
+			./qsslcertificate_openssl.cpp
+			./qsslkey_openssl.cpp
+			./qsslellipticcurve_openssl.cpp
+			./qsslcontext_openssl.cpp
+		]
+	}
+	
+	if target_os == `win32 {
+		.sources += [
+			./qnetworkproxy_win.cpp
+			./qhostinfo_win.cpp
+			./qnetworkinterface_win.cpp
+			./qnativesocketengine_win.cpp
+			./qdnslookup_win.cpp
+		]
+		if ^HAVE_LOCALSOCK {
+			.sources += [
+				./qlocalserver_win.cpp
+				./qlocalsocket_win.cpp
+			]
+		}
+	}else {
+		.sources += [
+			./qhostinfo_unix.cpp
+			./qnetworkinterface_unix.cpp
+			./qnativesocketengine_unix.cpp
+			./qdnslookup_unix.cpp
+		]
+		if target_os == `macos {
+			.sources += [
+				./qnetworkproxy_mac.cpp
+			]
+		}
+		if ^HAVE_LOCALSOCK {
+			.sources += [
+				./qlocalserver_unix.cpp
+				./qlocalsocket_unix.cpp
+			]
+		}
+	}
+
+	.configs += [ ^_core_config lib_config config ]
+	.include_dirs += build_dir() 
+}
+
+let run_moc : Moc {
+	.sources += [
+		./qabstractsocket.h
+		./qtcpserver.h
+		./qnetworkaccessmanager.h
+		./qhttpnetworkconnection_p.h
+		./qhttpnetworkconnectionchannel_p.h
+		./qnetworkreplyimpl_p.h
+		./qftp.h
+		./qftp_p.h
+		./qnetworkreplydataimpl_p.h
+		./qnetworkreplyfileimpl_p.h
+		./qdnslookup.h
+		./qnoncontiguousbytedevice_p.h
+		./qhostinfo_p.h
+		./qhttpsocketengine_p.h
+		./qnativesocketengine_p.h
+		./qabstractsocketengine_p.h
+		./qsocks5socketengine_p.h
+		./qudpsocket.h
+		./qtcpsocket.h
+		./qhttpnetworkreply_p.h
+		./qnetworkreply.h
+		./qnetworkaccesscache_p.h
+		./qabstractnetworkcache.h
+		./qnetworkcookiejar.h
+		./qnetworkaccessftpbackend_p.h
+		./qnetworkaccessbackend_p.h
+		./qnetworkaccessfilebackend_p.h
+		./qhttpmultipart.h
+		./qnetworkreplyhttpimpl_p.h
+		./qhttpthreaddelegate_p.h
+		./qdnslookup_p.h
+	]
+	if ^HAVE_SSL {
+		.sources += [
+			./qsslsocket.h
+		]
+		if target_os == `win32 {
+			.sources += ./qsslsocket_openssl_p.h
+		}
+	}
+	if ^HAVE_LOCALSOCK {
+		.sources += [
+			./qlocalserver.h
+			./qlocalsocket.h
+		]
+	}
+	.defines += config.defines # use += instead of = to make a copy
+	if target_os == `win32 {
+		.defines += "Q_OS_WIN"
+	}
+}
+
+let moc_sources * : SourceSet {
+	.configs += [ ^_core_config config lib_config ]
+	.deps += run_moc 
+}
+
+# not yet implemented
+# QNetworkDiskCache (requires qCompress and fileio)

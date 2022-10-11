@@ -21,7 +21,7 @@
 #if !defined(QT_NO_FSCOMPLETER) && (defined(QT_NO_FILESYSTEMMODEL) || defined(QT_NO_COMPLETER))
 #  define QT_NO_FSCOMPLETER
 #endif
-#if !defined(QT_NO_BEARERMANAGEMENT) && (defined(QT_NO_LIBRARY) || defined(QT_NO_NETWORKINTERFACE) || defined(QT_NO_PROPERTIES))
+#if !defined(QT_NO_BEARERMANAGEMENT) && (defined(QT_NO_PLUGINS) || defined(QT_NO_NETWORKINTERFACE) || defined(QT_NO_PROPERTIES))
 #  define QT_NO_BEARERMANAGEMENT
 #endif
 #if !defined(QT_NO_SOCKS5) && (defined(QT_NO_NETWORKPROXY))

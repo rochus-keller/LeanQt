@@ -170,6 +170,7 @@ let sources* : SourceSet {
 			./qurlrecode.cpp
 			./qurlidna.cpp
 			./qurlquery.cpp
+			./qdataurl.cpp
 		]
         if target_os == `macos {
              .sources += ./qurl_mac.mm
@@ -247,8 +248,6 @@ let sources* : SourceSet {
 		if target_os == `win32 {
 			.sources += [
 				./qprocess_win.cpp
-				./qwindowspipereader.cpp
-				./qwindowspipewriter.cpp
 			]
 		}else{
 			.include_dirs += ../thirdparty/forkfd
@@ -258,7 +257,12 @@ let sources* : SourceSet {
 			]
 		}
 	}
-	
+	if ( ^HAVE_PROCESS || ^HAVE_LOCALSOCK ) && ( target_os == `win32 ) {
+		.sources += [
+			./qwindowspipereader.cpp
+			./qwindowspipewriter.cpp
+		]
+	}
 	if ^HAVE_FILEIO || ^HAVE_PROCESS {
 		.sources += ./qringbuffer.cpp
 	}
@@ -473,13 +477,13 @@ let run_moc : Moc {
 	}
 	if ^HAVE_PROCESS {
 		.sources += ./qprocess.h
-		if target_os == `win32 {
-			.sources += [
-				./qwindowspipereader_p.h
-				./qwindowspipewriter_p.h
-			]
-		}
 	}
+	if ( ^HAVE_PROCESS || ^HAVE_LOCALSOCK ) && ( target_os == `win32 ) {
+		.sources += [
+			./qwindowspipereader_p.h
+			./qwindowspipewriter_p.h
+		]
+	}	
 	if ^HAVE_SHAREDMEM {
 		.sources += ./qsharedmemory.h
 	}
