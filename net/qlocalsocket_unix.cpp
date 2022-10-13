@@ -44,7 +44,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#ifndef QT_NO_FILEENGINE
 #include <qdir.h>
+#endif
 #include <qdebug.h>
 #include <qelapsedtimer.h>
 
@@ -264,11 +266,20 @@ void QLocalSocketPrivate::_q_connectToSocket()
     if (connectingName.startsWith(QLatin1Char('/'))) {
         connectingPathName = connectingName;
     } else {
+#ifndef QT_NO_FILEENGINE
         connectingPathName = QDir::tempPath();
+#else
+        connectingPathName = ".";
+#endif
         connectingPathName += QLatin1Char('/') + connectingName;
     }
 
-    const QByteArray encodedConnectingPathName = QFile::encodeName(connectingPathName);
+    const QByteArray encodedConnectingPathName =
+#ifndef QT_NO_FILEENGINE
+            QFile::encodeName(connectingPathName);
+#else
+            connectingPathName.toUtf8();
+#endif
     struct sockaddr_un name;
     name.sun_family = PF_UNIX;
     if (sizeof(name.sun_path) < (uint)encodedConnectingPathName.size() + 1) {

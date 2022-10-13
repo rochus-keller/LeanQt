@@ -24,8 +24,9 @@ param HAVE_CORE_ALL = false	# switches on all flags which add code
 
 param HAVE_SSL = false       # include QSslSocket and friends; only OpenSSL dynamic loading supported so far
 param HAVE_LOCALSOCK = false # include QLocalSocket and QLocalServer
-# TODO param HAVE_NETACCESS = false # include QNetworkAccessManager and friends
-# TODO param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends
+param HAVE_NETACCESS = false # include QNetworkAccessManager and friends
+param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends
+param HAVE_AUTH = false      # include 
 
 
 # NOTE: not all possible combinations on all platforms have been tested; 
@@ -35,6 +36,26 @@ if HAVE_CORE_ALL {
 	HAVE_GEOM = true HAVE_JSON = true HAVE_XMLSTREAM = true HAVE_URL = true HAVE_DSTREAM = true
 	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
 	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true HAVE_PLUGINS = true
+}
+
+if HAVE_BEARER && !HAVE_PLUGINS {
+	message("enabling HAVE_PLUGINS required by HAVE_BEARER")
+	HAVE_PLUGINS = true
+}
+
+if HAVE_SSL && !HAVE_LIBRARY {
+	message("enabling HAVE_LIBRARY required by HAVE_SSL")
+	HAVE_LIBRARY = true
+}
+
+if HAVE_SSL && !HAVE_AUTH {
+	message("enabling HAVE_AUTH required by HAVE_SSL")
+	HAVE_AUTH = true
+}
+
+if ( HAVE_AUTH || HAVE_NETACCESS ) && !HAVE_DSTREAM {
+	message("enabling HAVE_DSTREAM required by HAVE_AUTH and HAVE_NETACCESS")
+	HAVE_DSTREAM = true
 }
 
 if HAVE_PLUGINS && !HAVE_OBJECT {
@@ -179,7 +200,7 @@ let libqtnetwork * : Library {
 	.deps += net_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += core_client_config;
+		.configs += [ core_client_config net_client_config ]
 		.deps += libqtcore
 	}else{
 		.lib_type = `static

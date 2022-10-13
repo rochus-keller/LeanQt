@@ -37,7 +37,9 @@
 #include "qstringlist.h"
 #include "qregexp.h"
 #include "qtimer.h"
+#ifndef QT_NO_FILEENGINE
 #include "qfileinfo.h"
+#endif
 #include "qlocale.h"
 
 

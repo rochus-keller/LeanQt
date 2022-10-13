@@ -34,7 +34,9 @@
 #include "qnoncontiguousbytedevice_p.h"
 #include <qbuffer.h>
 #include <qdebug.h>
+#ifndef QT_NO_FILEENGINE
 #include <qfile.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 

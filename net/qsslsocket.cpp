@@ -310,7 +310,9 @@
 #include "qsslconfiguration_p.h"
 
 #include <QtCore/qdebug.h>
+#ifndef QT_NO_FILEENGINE
 #include <QtCore/qdir.h>
+#endif
 #include <QtCore/qmutex.h>
 #include <QtCore/qelapsedtimer.h>
 #include <QtNetwork/qhostaddress.h>
@@ -981,10 +983,13 @@ void QSslSocket::setLocalCertificate(const QSslCertificate &certificate)
 void QSslSocket::setLocalCertificate(const QString &path,
                                      QSsl::EncodingFormat format)
 {
+#ifndef QT_NO_FILEENGINE
     QFile file(path);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
         setLocalCertificate(QSslCertificate(file.readAll(), format));
-
+#else
+    qWarning() << "QSslSocket::setLocalCertificate requires HAVE_FILEIO";
+#endif
 }
 
 /*!
@@ -1139,11 +1144,15 @@ void QSslSocket::setPrivateKey(const QString &fileName, QSsl::KeyAlgorithm algor
                                QSsl::EncodingFormat format, const QByteArray &passPhrase)
 {
     Q_D(QSslSocket);
+#ifndef QT_NO_FILEENGINE
     QFile file(fileName);
     if (file.open(QIODevice::ReadOnly)) {
         d->configuration.privateKey = QSslKey(file.readAll(), algorithm,
                                               format, QSsl::PrivateKey, passPhrase);
     }
+#else
+    qWarning() << "QSslSocket::setPrivateKey: requires HAVE_FILEIO";
+#endif
 }
 
 /*!

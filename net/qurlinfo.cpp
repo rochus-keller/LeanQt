@@ -191,7 +191,9 @@ QUrlInfo::QUrlInfo(const QUrl &url, int permissions, const QString &owner,
                     bool isWritable, bool isReadable, bool isExecutable)
 {
     d = new QUrlInfoPrivate;
+#ifndef QT_NO_FILEENGINE
     d->name = QFileInfo(url.path()).fileName();
+#endif
     d->permissions = permissions;
     d->owner = owner;
     d->group = group;

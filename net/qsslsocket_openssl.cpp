@@ -63,11 +63,13 @@
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qelapsedtimer.h>
+#ifndef QT_NO_FILEENGINE
 #include <QtCore/qdir.h>
 #include <QtCore/qdiriterator.h>
-#include <QtCore/qelapsedtimer.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qfileinfo.h>
+#endif
 #include <QtCore/qmutex.h>
 #include <QtCore/qthread.h>
 #include <QtCore/qurl.h>
@@ -549,6 +551,7 @@ void QSslSocketPrivate::ensureCiphersAndCertsLoaded()
     QList<QByteArray> dirs = unixRootCertDirectories();
     QStringList symLinkFilter;
     symLinkFilter << QLatin1String("[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[0-9]");
+#ifndef QT_NO_FILEENGINE
     for (int a = 0; a < dirs.count(); ++a) {
         QDirIterator iterator(QLatin1String(dirs.at(a)), symLinkFilter, QDir::Files);
         if (iterator.hasNext()) {
@@ -556,6 +559,7 @@ void QSslSocketPrivate::ensureCiphersAndCertsLoaded()
             break;
         }
     }
+#endif
 #endif
 #endif //QT_NO_LIBRARY
     // if on-demand loading was not enabled, load the certs now
@@ -756,7 +760,9 @@ QList<QSslCertificate> QSslSocketPrivate::systemCaCertificates()
     }
 #elif defined(Q_OS_UNIX)
     QSet<QString> certFiles;
+#ifndef QT_NO_FILEENGINE
     QDir currentDir;
+#endif
     QStringList nameFilters;
     QList<QByteArray> directories;
     QSsl::EncodingFormat platformEncodingFormat;
@@ -780,6 +786,7 @@ QList<QSslCertificate> QSslSocketPrivate::systemCaCertificates()
 #   endif //Q_OS_ANDROID_NO_SDK
 # endif //Q_OS_ANDROID
     {
+#ifndef QT_NO_FILEENGINE
         currentDir.setNameFilters(nameFilters);
         for (int a = 0; a < directories.count(); a++) {
             currentDir.setPath(QLatin1String(directories.at(a)));
@@ -790,6 +797,7 @@ QList<QSslCertificate> QSslSocketPrivate::systemCaCertificates()
                 certFiles.insert(it.fileInfo().canonicalFilePath());
             }
         }
+#endif
         QSetIterator<QString> it(certFiles);
         while (it.hasNext())
             systemCerts.append(QSslCertificate::fromPath(it.next(), platformEncodingFormat));
@@ -1592,6 +1600,7 @@ void QSslSocketBackendPrivate::continueHandshake()
         debugLineClientRandom.append(masterKey.toHex().toUpper());
         debugLineClientRandom.append("\n");
 
+#ifndef QT_NO_FILEENGINE
         QString sslKeyFile = QDir::tempPath() + QLatin1String("/qt-ssl-keys");
         QFile file(sslKeyFile);
         if (!file.open(QIODevice::Append))
@@ -1599,6 +1608,7 @@ void QSslSocketBackendPrivate::continueHandshake()
         if (!file.write(debugLineClientRandom))
             qCWarning(lcSsl) << "could not write to file" << sslKeyFile;
         file.close();
+#endif
     } else {
         qCWarning(lcSsl, "could not decrypt SSL traffic");
     }

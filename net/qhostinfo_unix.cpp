@@ -42,7 +42,9 @@
 #include <qlibrary.h>
 #include <qbasicatomic.h>
 #include <qurl.h>
+#ifndef QT_NO_FILEENGINE
 #include <qfile.h>
+#endif
 #include <private/qnet_unix_p.h>
 
 #include <sys/types.h>
@@ -345,6 +347,7 @@ QString QHostInfo::localDomainName()
     }
 #endif
     // nothing worked, try doing it by ourselves:
+#ifndef QT_NO_FILEENGINE
     QFile resolvconf;
 #if defined(_PATH_RESCONF)
     resolvconf.setFileName(QFile::decodeName(_PATH_RESCONF));
@@ -369,9 +372,11 @@ QString QHostInfo::localDomainName()
             domainName = QUrl::fromAce(searchDomain);
         }
     }
-
     // return the fallen-back-to searched domain
     return domainName;
+#else
+	return QString();
+#endif
 }
 
 QT_END_NAMESPACE

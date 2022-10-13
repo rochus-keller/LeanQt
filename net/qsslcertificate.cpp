@@ -121,9 +121,11 @@
 #include "qsslcertificate_p.h"
 #include "qsslkey_p.h"
 
+#ifndef QT_NO_FILEENGINE
 #include <QtCore/qdir.h>
 #include <QtCore/qdiriterator.h>
 #include <QtCore/qfile.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -462,7 +464,12 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
     // $, (,), *, +, ., ?, [, ,], ^, {, | and }.
 
     // make sure to use the same path separators on Windows and Unix like systems.
-    QString sourcePath = QDir::fromNativeSeparators(path);
+    QString sourcePath =
+#ifndef QT_NO_FILEENGINE
+            QDir::fromNativeSeparators(path);
+#else
+            path;
+#endif
 
     // Find the path without the filename
     QString pathPrefix = sourcePath.left(sourcePath.lastIndexOf(QLatin1Char('/')));
@@ -482,6 +489,7 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
             pathPrefix.clear();
     } else {
         // Check if the path is a file.
+#ifndef QT_NO_FILEENGINE
         if (QFileInfo(sourcePath).isFile()) {
             QFile file(sourcePath);
             QIODevice::OpenMode openMode = QIODevice::ReadOnly;
@@ -491,6 +499,7 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
                 return QSslCertificate::fromData(file.readAll(), format);
             return QList<QSslCertificate>();
         }
+#endif
     }
 
     // Special case - if the prefix ends up being nothing, use "." instead.
@@ -503,6 +512,7 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
     // The path can be a file or directory.
     QList<QSslCertificate> certs;
     QRegExp pattern(sourcePath, Qt::CaseSensitive, syntax);
+#ifndef QT_NO_FILEENGINE
     QDirIterator it(pathPrefix, QDir::Files, QDirIterator::FollowSymlinks | QDirIterator::Subdirectories);
     while (it.hasNext()) {
         QString filePath = startIndex == 0 ? it.next() : it.next().mid(startIndex);
@@ -516,6 +526,9 @@ QList<QSslCertificate> QSslCertificate::fromPath(const QString &path,
         if (file.open(openMode))
             certs += QSslCertificate::fromData(file.readAll(), format);
     }
+#else
+        qWarning() << __FILE__ << __LINE__ << "requires HAVE_FILEIO";
+#endif
     return certs;
 }
 

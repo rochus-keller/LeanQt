@@ -58,7 +58,7 @@
 #include <QtCore/qmutex.h>
 #include <private/qmutexpool_p.h>
 #include <QtCore/qdatetime.h>
-#if defined(Q_OS_UNIX)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_FILEENGINE)
 #include <QtCore/qdir.h>
 #endif
 #if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
@@ -496,8 +496,10 @@ static int dlIterateCallback(struct dl_phdr_info *info, size_t size, void *data)
     QSet<QString> *paths = (QSet<QString> *)data;
     QString path = QString::fromLocal8Bit(info->dlpi_name);
     if (!path.isEmpty()) {
+#ifndef QT_NO_FILEENGINE
         QFileInfo fi(path);
         path = fi.absolutePath();
+#endif
         if (!path.isEmpty())
             paths->insert(path);
     }
@@ -547,6 +549,7 @@ static QStringList findAllLibs(QLatin1String filter)
     QStringList found;
     const QStringList filters((QString(filter)));
 
+#ifndef QT_NO_FILEENGINE
     foreach (const QString &path, paths) {
         QDir dir(path);
         QStringList entryList = dir.entryList(filters, QDir::Files);
@@ -555,6 +558,7 @@ static QStringList findAllLibs(QLatin1String filter)
         foreach (const QString &entry, entryList)
             found << path + QLatin1Char('/') + entry;
     }
+#endif
 
     return found;
 }
@@ -685,6 +689,7 @@ static QPair<QLibrary*, QLibrary*> loadOpenSsl()
     QStringList sslList = findAllLibSsl();
     QStringList cryptoList = findAllLibCrypto();
 
+#ifndef QT_NO_FILEENGINE
     foreach (const QString &crypto, cryptoList) {
         libcrypto->setFileNameAndVersion(crypto, -1);
         if (libcrypto->load()) {
@@ -707,6 +712,7 @@ static QPair<QLibrary*, QLibrary*> loadOpenSsl()
         }
         libcrypto->unload();
     }
+#endif
 
     // failed to load anything
     delete libssl;

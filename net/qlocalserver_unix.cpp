@@ -44,7 +44,9 @@
 #include <sys/un.h>
 
 #include <qdebug.h>
+#ifndef QT_NO_FILEENGINE
 #include <qdir.h>
+#endif
 #include <qdatetime.h>
 
 #ifdef Q_OS_VXWORKS
@@ -63,12 +65,18 @@ bool QLocalServerPrivate::removeServer(const QString &name)
     if (name.startsWith(QLatin1Char('/'))) {
         fileName = name;
     } else {
+#ifndef QT_NO_FILEENGINE
         fileName = QDir::cleanPath(QDir::tempPath());
         fileName += QLatin1Char('/') + name;
+#else
+        fileName = name;
+#endif
     }
+#ifndef QT_NO_FILEENGINE
     if (QFile::exists(fileName))
         return QFile::remove(fileName);
     else
+#endif
         return true;
 }
 
@@ -80,8 +88,12 @@ bool QLocalServerPrivate::listen(const QString &requestedServerName)
     if (requestedServerName.startsWith(QLatin1Char('/'))) {
         fullServerName = requestedServerName;
     } else {
+#ifndef QT_NO_FILEENGINE
         fullServerName = QDir::cleanPath(QDir::tempPath());
         fullServerName += QLatin1Char('/') + requestedServerName;
+#else
+        fullServerName = requestedServerName;
+#endif
     }
     serverName = requestedServerName;
 
@@ -90,6 +102,7 @@ bool QLocalServerPrivate::listen(const QString &requestedServerName)
     QScopedPointer<QTemporaryDir> tempDir;
 
     // Check any of the flags
+#ifndef QT_NO_FILEENGINE
     if (socketOptions & QLocalServer::WorldAccessOption) {
         QFileInfo serverNameFileInfo(fullServerName);
         tempDir.reset(new QTemporaryDir(serverNameFileInfo.absolutePath() + QLatin1Char('/')));
@@ -99,6 +112,7 @@ bool QLocalServerPrivate::listen(const QString &requestedServerName)
         }
         encodedTempPath = QFile::encodeName(tempDir->path() + QLatin1String("/s"));
     }
+#endif
 
     // create the unix socket
     listenSocket = qt_safe_socket(PF_UNIX, SOCK_STREAM, 0);
@@ -148,8 +162,10 @@ bool QLocalServerPrivate::listen(const QString &requestedServerName)
         setError(QLatin1String("QLocalServer::listen"));
         closeServer();
         listenSocket = -1;
+#ifndef QT_NO_FILEENGINE
         if (error != QAbstractSocket::AddressInUseError)
             QFile::remove(fullServerName);
+#endif
         return false;
     }
 
@@ -246,8 +262,12 @@ void QLocalServerPrivate::closeServer()
         QT_CLOSE(listenSocket);
     listenSocket = -1;
 
+#ifndef QT_NO_FILEENGINE
     if (!fullServerName.isEmpty())
         QFile::remove(fullServerName);
+#else
+    qWarning() << __FILE__ << __LINE__ << "requires HAVE_FILEIO";
+#endif
 }
 
 /*!

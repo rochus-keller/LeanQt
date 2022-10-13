@@ -35,9 +35,11 @@
 
 #include "qnetworkaccesscachebackend_p.h"
 #include "qabstractnetworkcache.h"
+#ifndef QT_NO_FILEENGINE
 #include "qfileinfo.h"
-#include "qurlinfo_p.h"
 #include "qdir.h"
+#endif
+#include "qurlinfo_p.h"
 #include "qcoreapplication.h"
 
 QT_BEGIN_NAMESPACE

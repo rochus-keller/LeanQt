@@ -47,7 +47,6 @@ QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_SSL
 
-class QDir;
 class QSslCipher;
 class QSslCertificate;
 class QSslConfiguration;

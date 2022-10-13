@@ -17,71 +17,92 @@ let config * : Config {
 	}else{
 		.include_dirs += ../thirdparty
 	}
-	if !^HAVE_PLUGINS {
+	if ^HAVE_BEARER {
 		.defines += "QT_NO_BEARERMANAGEMENT"
 	}
 }
 
 let err : Message {
-	.text = "The net module requires HAVE_OBJECT, HAVE_DSTREAM and HAVE_URL"
+	.text = "The net module requires HAVE_OBJECT and HAVE_URL"
 }
 
 let sources* : SourceSet {
 	.sources += [
-		# TODO: make access classes optional
 		./qabstractsocket.cpp
 		./qabstractsocketengine.cpp
-		./qhostaddress.cpp
+		./qhostaddress.cpp # requires QDataStream
 		./qnetworkproxy.cpp
-		./qnetworkrequest.cpp
 		./qhostinfo.cpp
-		./qnetworksession.cpp
 		./qnetworkinterface.cpp
-		./qnetworkconfiguration.cpp
 		./qnativesocketengine.cpp
 		./qsocks5socketengine.cpp
 		./qhttpsocketengine.cpp
-		./qauthenticator.cpp
-		./qnetworkcookie.cpp
-		./qbearerengine.cpp
-		./qnetworkconfigmanager.cpp
-		./qnetworkconfigmanager_p.cpp
 		./qtcpserver.cpp
 		./qtcpsocket.cpp
 		./qudpsocket.cpp
-		./qhttpnetworkreply.cpp
-		./qnetworkreply.cpp
-		./qnetworkaccessmanager.cpp
-		./qhttpnetworkheader.cpp
-		./qhttpnetworkrequest.cpp
-		./qbearerplugin.cpp
-		./qhttpnetworkconnection.cpp
-		./qhttpnetworkconnectionchannel.cpp
-		./qabstractprotocolhandler.cpp
-		./qnetworkaccesscache.cpp
-		./qnetworkaccesscachebackend.cpp
-		./qnetworkaccessbackend.cpp
-		./qnetworkreplyimpl.cpp
-		./qnetworkaccessauthenticationmanager.cpp
-		./qnetworkcookiejar.cpp
-		./qabstractnetworkcache.cpp
-		./qsharednetworksession.cpp
-		./qnetworkaccessftpbackend.cpp
 		./qftp.cpp 
 		./qurlinfo.cpp
-		./qnetworkaccessfilebackend.cpp # TODO: only if HAVE_FILEIO
-		./qnetworkaccessdebugpipebackend.cpp
-		./qnetworkreplydataimpl.cpp
-		./qnetworkreplyfileimpl.cpp # TODO HAVE_FILEIO
-		./qhttpmultipart.cpp
-		./qnetworkreplyhttpimpl.cpp
-		./qnoncontiguousbytedevice.cpp # belongs to access
-		./qhttpprotocolhandler.cpp
-		./qspdyprotocolhandler.cpp
-		./qhttpthreaddelegate.cpp
 		./qdnslookup.cpp
 	]
-	if !^HAVE_OBJECT || !^HAVE_URL || !^HAVE_DSTREAM {
+	
+	if ^HAVE_AUTH {
+		.sources += [
+			./qauthenticator.cpp 
+		]
+	}
+
+	if ^HAVE_BEARER {
+		.sources += [
+			./qnetworksession.cpp
+			./qnetworkconfiguration.cpp
+			./qbearerengine.cpp
+			./qnetworkconfigmanager.cpp
+			./qnetworkconfigmanager_p.cpp
+			./qbearerplugin.cpp		
+			./qsharednetworksession.cpp
+		]
+	}
+	
+	if ^HAVE_NETACCESS {
+		.sources += [
+			./qnetworkrequest.cpp
+			./qnetworkcookie.cpp
+			./qhttpnetworkreply.cpp
+			./qnetworkreply.cpp
+			./qnetworkaccessmanager.cpp
+			./qhttpnetworkheader.cpp
+			./qhttpnetworkrequest.cpp
+			./qhttpnetworkconnection.cpp
+			./qhttpnetworkconnectionchannel.cpp
+			./qabstractprotocolhandler.cpp
+			./qnetworkaccesscache.cpp
+			./qnetworkaccesscachebackend.cpp
+			./qnetworkaccessbackend.cpp
+			./qnetworkreplyimpl.cpp
+			./qnetworkaccessauthenticationmanager.cpp
+			./qnetworkcookiejar.cpp
+			./qabstractnetworkcache.cpp
+			./qnetworkaccessftpbackend.cpp
+			./qnetworkaccessdebugpipebackend.cpp
+			./qnetworkreplydataimpl.cpp
+			./qhttpmultipart.cpp
+			./qnetworkreplyhttpimpl.cpp
+			./qnoncontiguousbytedevice.cpp # belongs to access
+			./qhttpprotocolhandler.cpp
+			./qspdyprotocolhandler.cpp
+			./qhttpthreaddelegate.cpp
+		]
+		
+		if ^HAVE_FILEIO {
+			.sources += [
+				./qnetworkaccessfilebackend.cpp 
+				./qnetworkreplyfileimpl.cpp 
+				./qnetworkdiskcache.cpp
+			]
+		}
+	}
+		
+	if !^HAVE_OBJECT || !^HAVE_URL {
 		.deps += err
 	}
 	
@@ -157,17 +178,10 @@ let sources* : SourceSet {
 let run_moc : Moc {
 	.sources += [
 		./qabstractsocket.h
-		./qtcpserver.h
-		./qnetworkaccessmanager.h
-		./qhttpnetworkconnection_p.h
-		./qhttpnetworkconnectionchannel_p.h
-		./qnetworkreplyimpl_p.h
+		./qtcpserver.h	
 		./qftp.h
 		./qftp_p.h
-		./qnetworkreplydataimpl_p.h
-		./qnetworkreplyfileimpl_p.h
-		./qdnslookup.h
-		./qnoncontiguousbytedevice_p.h
+		./qdnslookup.h		
 		./qhostinfo_p.h
 		./qhttpsocketengine_p.h
 		./qnativesocketengine_p.h
@@ -175,19 +189,45 @@ let run_moc : Moc {
 		./qsocks5socketengine_p.h
 		./qudpsocket.h
 		./qtcpsocket.h
-		./qhttpnetworkreply_p.h
-		./qnetworkreply.h
-		./qnetworkaccesscache_p.h
-		./qabstractnetworkcache.h
-		./qnetworkcookiejar.h
-		./qnetworkaccessftpbackend_p.h
-		./qnetworkaccessbackend_p.h
-		./qnetworkaccessfilebackend_p.h
-		./qhttpmultipart.h
-		./qnetworkreplyhttpimpl_p.h
-		./qhttpthreaddelegate_p.h
 		./qdnslookup_p.h
 	]
+	if ^HAVE_BEARER {
+		.sources += [
+			./qbearerengine_p.h
+			./qbearerplugin_p.h
+			./qnetworkconfigmanager.h
+			./qnetworkconfigmanager_p.h
+			./qnetworksession.h
+			./qnetworksession_p.h
+		]
+	}
+	if ^HAVE_NETACCESS {
+		.sources += [
+			./qnetworkaccessmanager.h
+			./qhttpnetworkconnection_p.h
+			./qhttpnetworkconnectionchannel_p.h
+			./qnetworkreplyimpl_p.h
+			./qnetworkreplydataimpl_p.h
+			./qnoncontiguousbytedevice_p.h
+			./qhttpnetworkreply_p.h
+			./qnetworkreply.h
+			./qnetworkaccesscache_p.h
+			./qabstractnetworkcache.h
+			./qnetworkcookiejar.h
+			./qnetworkaccessftpbackend_p.h
+			./qnetworkaccessbackend_p.h
+			./qhttpmultipart.h
+			./qnetworkreplyhttpimpl_p.h
+			./qhttpthreaddelegate_p.h
+		]
+		if ^HAVE_FILEIO {
+			.sources += [
+				./qnetworkaccessfilebackend_p.h
+				./qnetworkreplyfileimpl_p.h
+				./qnetworkdiskcache.h
+			]
+		}
+	}
 	if ^HAVE_SSL {
 		.sources += [
 			./qsslsocket.h
@@ -213,5 +253,3 @@ let moc_sources * : SourceSet {
 	.deps += run_moc 
 }
 
-# not yet implemented
-# QNetworkDiskCache (requires qCompress and fileio)
