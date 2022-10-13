@@ -17,8 +17,15 @@ let config * : Config {
 	}else{
 		.include_dirs += ../thirdparty
 	}
-	if ^HAVE_BEARER {
+	if !^HAVE_BEARER {
 		.defines += "QT_NO_BEARERMANAGEMENT"
+	}
+	if !^HAVE_NETACCESS {
+		.defines += [ "QT_NO_NETWORKACCESS" "QT_NO_HTTP" ]
+	}
+	
+	if !^HAVE_AUTH {
+		.defines += "QT_NO_AUTHENTICATOR"
 	}
 }
 
@@ -36,13 +43,13 @@ let sources* : SourceSet {
 		./qnetworkinterface.cpp
 		./qnativesocketengine.cpp
 		./qsocks5socketengine.cpp
-		./qhttpsocketengine.cpp
 		./qtcpserver.cpp
 		./qtcpsocket.cpp
 		./qudpsocket.cpp
 		./qftp.cpp 
 		./qurlinfo.cpp
 		./qdnslookup.cpp
+		./qnetworkheadersprivate.cpp
 	]
 	
 	if ^HAVE_AUTH {
@@ -91,6 +98,7 @@ let sources* : SourceSet {
 			./qhttpprotocolhandler.cpp
 			./qspdyprotocolhandler.cpp
 			./qhttpthreaddelegate.cpp
+			./qhttpsocketengine.cpp
 		]
 		
 		if ^HAVE_FILEIO {
@@ -219,6 +227,7 @@ let run_moc : Moc {
 			./qhttpmultipart.h
 			./qnetworkreplyhttpimpl_p.h
 			./qhttpthreaddelegate_p.h
+			./qspdyprotocolhandler_p.h
 		]
 		if ^HAVE_FILEIO {
 			.sources += [
@@ -243,6 +252,9 @@ let run_moc : Moc {
 		]
 	}
 	.defines += config.defines # use += instead of = to make a copy
+	if !^HAVE_BEARER {
+		.defines += "QT_NO_BEARERMANAGEMENT"
+	}
 	if target_os == `win32 {
 		.defines += "Q_OS_WIN"
 	}
@@ -251,5 +263,5 @@ let run_moc : Moc {
 let moc_sources * : SourceSet {
 	.configs += [ ^_core_config config lib_config ]
 	.deps += run_moc 
-}
+} 
 

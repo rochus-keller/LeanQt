@@ -96,6 +96,7 @@ let sources* : SourceSet {
 		../../core/qvsnprintf.cpp
 		../../core/qlinkedlist.cpp
 		../../core/qsystemerror.cpp
+		../../core/qsimd.cpp
 	]
 	
 	# OBJECT
@@ -169,7 +170,6 @@ let sources* : SourceSet {
 			../../core/qcollator_win.cpp
 			../../core/qelapsedtimer_win.cpp
 			../../core/qtimezoneprivate_win.cpp
-			../../core/qsimd.cpp
 		]
 		if target_toolchain == `msvc {
 			.sources += [

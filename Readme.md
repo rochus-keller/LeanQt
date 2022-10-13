@@ -10,7 +10,7 @@ For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available u
 
 ### State of development
 
-This version is suited to successfully build and run the command line version of my Oberon+ compiler on x86 Linux, Windows and macOS, as well as macOS M1; other Linux architectures are work in progress.
+This version is suited to successfully build and run the command line version of my Oberon+ compiler and the LeanQt examples with different configurations on Windows x86, on macOS x86_64 and M1, and on Linux x86 and x86_64; other Linux architectures are work in progress.
 
 The following features are available: 
 
@@ -35,12 +35,15 @@ The following features are available:
 - rcc (resource compiler)
 - moc (meta object compiler)
 - library and plugins
+- async and sync networking
 
 ### Planned or work-in-progress features
 
 - [x] QtCore 
 - [x] QtXml
-- [ ] QtNetwork
+- [x] QtNetwork
+- [ ] qCompress
+- [ ] QtConcurrent
 
 ### Long term plan
 
@@ -48,7 +51,6 @@ The following features are available:
 - [ ] QtWidgets
 - [ ] mimetypes
 - [ ] printing
-- [ ] concurrent
 
 ### No support planned
 

@@ -151,6 +151,7 @@ let sources* : SourceSet {
 		./qlinkedlist.cpp
 		./qsystemerror.cpp
 		./qsimd.cpp
+		./qringbuffer.cpp # also used by net module, not only be FILEIO and PROCESS
 	]
 	
 	if ^HAVE_GEOM {
@@ -262,9 +263,6 @@ let sources* : SourceSet {
 			./qwindowspipereader.cpp
 			./qwindowspipewriter.cpp
 		]
-	}
-	if ^HAVE_FILEIO || ^HAVE_PROCESS {
-		.sources += ./qringbuffer.cpp
 	}
 	
 	if ^HAVE_LIBRARY {

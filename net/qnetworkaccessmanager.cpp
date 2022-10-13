@@ -36,11 +36,15 @@
 #include "QtNetwork/private/qsharednetworksession_p.h"
 
 #include "qnetworkaccessftpbackend_p.h"
+#ifndef QT_NO_FILEENGINE
 #include "qnetworkaccessfilebackend_p.h"
+#endif
 #include "qnetworkaccessdebugpipebackend_p.h"
 #include "qnetworkaccesscachebackend_p.h"
 #include "qnetworkreplydataimpl_p.h"
+#ifndef QT_NO_FILEENGINE
 #include "qnetworkreplyfileimpl_p.h"
+#endif
 
 #include "QtCore/qbuffer.h"
 #include "QtCore/qurl.h"
@@ -57,7 +61,9 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_FILEENGINE
 Q_GLOBAL_STATIC(QNetworkAccessFileBackendFactory, fileBackend)
+#endif
 #ifndef QT_NO_FTP
 Q_GLOBAL_STATIC(QNetworkAccessFtpBackendFactory, ftpBackend)
 #endif // QT_NO_FTP
@@ -137,7 +143,9 @@ static void ensureInitialized()
 #endif
 
     // leave this one last since it will query the special QAbstractFileEngines
+#ifndef QT_NO_FILEENGINE
     (void) fileBackend();
+#endif
 }
 
 /*!
@@ -1121,7 +1129,9 @@ QNetworkReply *QNetworkAccessManager::createRequest(QNetworkAccessManager::Opera
             || scheme == QLatin1String("assets")
 #endif
             || scheme == QLatin1String("qrc")) {
+#ifndef QT_NO_FILEENGINE
             return new QNetworkReplyFileImpl(this, req, op);
+#endif
         }
 
         if (scheme == QLatin1String("data"))

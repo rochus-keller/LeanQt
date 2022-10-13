@@ -1,7 +1,7 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
-param HAVE_SHARED = false   # if true build shared instead of static library and export symbols
+param HAVE_SHARED = false   # if true build shared instead of static libraries, and export marked symbols
 
 param HAVE_GEOM = false 	# include geometry classes like QRect, QPoint etc.
 param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp, TODO: not yet supported
@@ -25,17 +25,33 @@ param HAVE_CORE_ALL = false	# switches on all flags which add code
 param HAVE_SSL = false       # include QSslSocket and friends; only OpenSSL dynamic loading supported so far
 param HAVE_LOCALSOCK = false # include QLocalSocket and QLocalServer
 param HAVE_NETACCESS = false # include QNetworkAccessManager and friends
-param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends
-param HAVE_AUTH = false      # include 
+param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends 
+param HAVE_AUTH = false      # include QAuthenticator
+
+param HAVE_NET_ALL = false	   # switches on all flags which add code
+param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
 
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
 
 if HAVE_CORE_ALL {
-	HAVE_GEOM = true HAVE_JSON = true HAVE_XMLSTREAM = true HAVE_URL = true HAVE_DSTREAM = true
-	HAVE_FILEIO = true HAVE_COREAPP = true HAVE_OBJECT = true HAVE_CMDLINE = true HAVE_THREADS = true
-	HAVE_LIBRARY = true HAVE_PROCESS = true HAVE_SHAREDMEM = true HAVE_PLUGINS = true
+	HAVE_GEOM = true; HAVE_JSON = true; HAVE_XMLSTREAM = true; HAVE_URL = true; HAVE_DSTREAM = true
+	HAVE_FILEIO = true; HAVE_COREAPP = true; HAVE_OBJECT = true; HAVE_CMDLINE = true; HAVE_THREADS = true
+	HAVE_LIBRARY = true; HAVE_PROCESS = true; HAVE_SHAREDMEM = true; HAVE_PLUGINS = true
+}
+
+if HAVE_NET_ALL {
+	HAVE_SSL = true; HAVE_LOCALSOCK = true; HAVE_NETACCESS = true; HAVE_BEARER = true; HAVE_AUTH = true
+}
+
+if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEARER || HAVE_AUTH {
+	HAVE_NET_MINIMUM = true
+	if !HAVE_OBJECT || !HAVE_URL {
+		message("enabling HAVE_OBJECT and HAVE_URL required by the network module")
+		HAVE_OBJECT = true
+		HAVE_URL = true
+	}
 }
 
 if HAVE_BEARER && !HAVE_PLUGINS {
@@ -53,9 +69,19 @@ if HAVE_SSL && !HAVE_AUTH {
 	HAVE_AUTH = true
 }
 
-if ( HAVE_AUTH || HAVE_NETACCESS ) && !HAVE_DSTREAM {
-	message("enabling HAVE_DSTREAM required by HAVE_AUTH and HAVE_NETACCESS")
+if HAVE_AUTH && !HAVE_DSTREAM {
+	message("enabling HAVE_DSTREAM required by HAVE_AUTH")
 	HAVE_DSTREAM = true
+}
+
+if HAVE_NETACCESS && !HAVE_DSTREAM {
+	message("enabling HAVE_DSTREAM required by HAVE_NETACCESS")
+	HAVE_DSTREAM = true
+}
+
+if HAVE_NETACCESS && !HAVE_AUTH {
+	message("enabling HAVE_AUTH required by HAVE_NETACCESS")
+	HAVE_AUTH = true
 }
 
 if HAVE_PLUGINS && !HAVE_OBJECT {
@@ -202,7 +228,7 @@ let libqtnetwork * : Library {
 		.lib_type = `shared
 		.configs += [ core_client_config net_client_config ]
 		.deps += libqtcore
-	}else{
+	}else{ 
 		.lib_type = `static
 	}
 	.name = "qtnetwork"
@@ -217,10 +243,14 @@ let test_moc : Moc {
 let test ! : Executable {
 	#.cflags_cc += "-g"
 	.sources += ./test.cpp
-	.deps += [ libqtcore /* libqtxml */ libqtnetwork ]
+	.deps += libqtcore
 	if HAVE_OBJECT {
 		.deps += test_moc;
 		.include_dirs += build_dir()
 	}
-	.configs += [ core_client_config net_client_config ]
+	.configs += core_client_config
+	if HAVE_NET_MINIMUM {
+		.configs += net_client_config;
+		.deps += libqtnetwork
+	}
 }
