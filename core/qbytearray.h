@@ -676,6 +676,29 @@ inline QByteArray qCompress(const QByteArray& data, int compressionLevel = -1)
 { return qCompress(reinterpret_cast<const uchar *>(data.constData()), data.size(), compressionLevel); }
 inline QByteArray qUncompress(const QByteArray& data)
 { return qUncompress(reinterpret_cast<const uchar*>(data.constData()), data.size()); }
+class Q_CORE_EXPORT QUncompressor
+{
+public:
+    QUncompressor(const QByteArray& dict = QByteArray());
+    ~QUncompressor();
+    QList<QByteArray> process(QList<QByteArray> data);
+    bool process2(const QByteArray& in, QByteArray& out);
+    void reset();
+private:
+    class Imp;
+    Imp* d;
+};
+class Q_CORE_EXPORT QCompressor
+{
+public:
+    QCompressor();
+    ~QCompressor();
+    QByteArray process(const QByteArray& in);
+private:
+    class Imp;
+    Imp* d;
+};
+
 #endif
 
 Q_DECLARE_SHARED(QByteArray)

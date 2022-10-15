@@ -41,10 +41,6 @@
 #include <QtNetwork/qnetworkreply.h>
 #include <private/qbytedata_p.h>
 
-#ifndef QT_NO_COMPRESS
-#include <zlib.h>
-#endif
-
 #if !defined(QT_NO_HTTP) && !defined(QT_NO_SSL)
 
 QT_BEGIN_NAMESPACE
@@ -200,8 +196,8 @@ private:
     QByteDataBuffer m_spdyBuffer;
     bool m_waitingForCompleteStream;
 #ifndef QT_NO_COMPRESS
-    z_stream m_deflateStream;
-    z_stream m_inflateStream;
+    QCompressor m_deflateStream;
+    QUncompressor m_inflateStream;
 #endif
 };
 

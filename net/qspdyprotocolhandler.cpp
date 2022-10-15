@@ -245,32 +245,14 @@ QSpdyProtocolHandler::QSpdyProtocolHandler(QHttpNetworkConnectionChannel *channe
       m_maxConcurrentStreams(100), // 100 is recommended in the SPDY RFC
       m_initialWindowSize(0),
       m_waitingForCompleteStream(false)
+    #ifndef QT_NO_COMPRESS
+    , m_inflateStream( QByteArray::fromRawData(spdyDictionary,1423))
+    #endif
 {
-#ifndef QT_NO_COMPRESS
-    m_inflateStream.zalloc = Z_NULL;
-    m_inflateStream.zfree = Z_NULL;
-    m_inflateStream.opaque = Z_NULL;
-    int zlibRet = inflateInit(&m_inflateStream);
-    Q_ASSERT(zlibRet == Z_OK);
-
-    m_deflateStream.zalloc = Z_NULL;
-    m_deflateStream.zfree = Z_NULL;
-    m_deflateStream.opaque = Z_NULL;
-
-    // Do actually not compress (i.e. compression level = 0)
-    // when sending the headers because of the CRIME attack
-    zlibRet = deflateInit(&m_deflateStream, /* compression level = */ 0);
-    Q_ASSERT(zlibRet == Z_OK);
-    Q_UNUSED(zlibRet); // silence -Wunused-variable
-#endif
 }
 
 QSpdyProtocolHandler::~QSpdyProtocolHandler()
 {
-#ifndef QT_NO_COMPRESS
-    deflateEnd(&m_deflateStream);
-    deflateEnd(&m_inflateStream);
-#endif
 }
 
 bool QSpdyProtocolHandler::sendRequest()
@@ -415,48 +397,8 @@ static QByteArray headerField(const QByteArray &name, const QByteArray &value)
 bool QSpdyProtocolHandler::uncompressHeader(const QByteArray &input, QByteArray *output)
 {
 #ifndef QT_NO_COMPRESS
-    const size_t chunkSize = 1024;
-    char outputRaw[chunkSize];
-    // input bytes will not be changed by zlib, so it is safe to const_cast here
-    m_inflateStream.next_in = const_cast<Bytef *>(reinterpret_cast<const Bytef *>(input.constData()));
-    m_inflateStream.avail_in = input.count();
-    m_inflateStream.total_in = input.count();
-    int zlibRet;
-
-    do {
-        m_inflateStream.next_out = reinterpret_cast<Bytef *>(outputRaw);
-        m_inflateStream.avail_out = chunkSize;
-        zlibRet = inflate(&m_inflateStream, Z_SYNC_FLUSH);
-        if (zlibRet == Z_NEED_DICT) {
-            zlibRet = inflateSetDictionary(&m_inflateStream,
-                                           reinterpret_cast<const Bytef*>(spdyDictionary),
-                                           /* dictionaryLength = */ 1423);
-            Q_ASSERT(zlibRet == Z_OK);
-            continue;
-        }
-        switch (zlibRet) {
-        case Z_BUF_ERROR: {
-            if (m_inflateStream.avail_in == 0) {
-                int outputSize = chunkSize - m_inflateStream.avail_out;
-                output->append(outputRaw, outputSize);
-                m_inflateStream.avail_out = chunkSize;
-            }
-            break;
-        }
-        case Z_OK: {
-            int outputSize = chunkSize - m_inflateStream.avail_out;
-            output->append(outputRaw, outputSize);
-            break;
-        }
-        default: {
-            qWarning() << "got unexpected zlib return value:" << zlibRet;
-            return false;
-        }
-        }
-    } while (m_inflateStream.avail_in > 0 && zlibRet != Z_STREAM_END);
-
-    Q_ASSERT(m_inflateStream.avail_in == 0);
-    return true;
+    Q_ASSERT(output);
+    return m_inflateStream.process2(input,*output);
 #else 
 	return false;
 #endif
@@ -506,26 +448,10 @@ QByteArray QSpdyProtocolHandler::composeHeader(const QHttpNetworkRequest &reques
     }
 
 #ifndef QT_NO_COMPRESS
-    m_deflateStream.total_in = uncompressedHeader.count();
-    m_deflateStream.avail_in = uncompressedHeader.count();
-    m_deflateStream.next_in = reinterpret_cast<unsigned char *>(uncompressedHeader.data());
-    int outputBytes = uncompressedHeader.count() + 30; // 30 bytes of compression header overhead
-    m_deflateStream.avail_out = outputBytes;
-    unsigned char *out = new unsigned char[outputBytes];
-    m_deflateStream.next_out = out;
-    int availOutBefore = m_deflateStream.avail_out;
-    int zlibRet = deflate(&m_deflateStream, Z_SYNC_FLUSH); // do everything in one go since we use no compression
-    int compressedHeaderSize = availOutBefore - m_deflateStream.avail_out;
-    Q_ASSERT(zlibRet == Z_OK); // otherwise, we need to allocate more outputBytes
-    Q_UNUSED(zlibRet); // silence -Wunused-variable
-    Q_ASSERT(m_deflateStream.avail_in == 0);
-    QByteArray compressedHeader(reinterpret_cast<char *>(out), compressedHeaderSize);
-    delete[] out;
-
-    return compressedHeader;
+    return m_deflateStream.process(uncompressedHeader);
 #else
 	qWarning() << "QSpdyProtocolHandler::composeHeader: compression not supported";
-	return QByteArray();
+    return uncompressedHeader;
 #endif
 }
 
@@ -1249,7 +1175,12 @@ void QSpdyProtocolHandler::handleDataFrame(const QByteArray &frameHeaders)
         Q_ASSERT(compressedCount >= 0);
         Q_UNUSED(compressedCount); // silence -Wunused-variable
 #else
-		qWarning() << "QSpdyProtocolHandler::handleDataFrame: decompression not supported in this version";
+        static bool s_notify = false;
+        if( !s_notify )
+        {
+            qWarning() << "QSpdyProtocolHandler::handleDataFrame: decompression not supported in this version";
+            s_notify = true;
+        }
         replyPrivate->responseData.append(data);
 #endif 
     } else 

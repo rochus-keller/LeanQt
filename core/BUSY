@@ -1,6 +1,8 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
+let HAVE_RE = false 		# include QRecularExpression, using pcre16; not yet supported
+
 let lib_config : Config {
 	.defines += [
 		"QT_BUILD_CORE_LIB" # required to make resource system work at all
@@ -18,9 +20,8 @@ let config * : Config {
 		"QT_NO_BIG_CODECS"
 		"QT_NO_ICONV"
 		"QT_NO_ANIMATION"
-		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file if needed
+		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
-		"QT_NO_COMPRESS"
 		"QT_ATOMIC_FORCE_NO_CXX11"
 		"QT_NO_VERSION_TAGGING"
 	]
@@ -49,7 +50,7 @@ let config * : Config {
 		.defines += "QT_NO_URL_VARIANT"
 	}
 
-	if !^HAVE_RE {
+	if !HAVE_RE {
 		.defines += "QT_NO_REGULAREXPRESSION"
 	}
 	
@@ -81,6 +82,10 @@ let config * : Config {
 		.defines += "QT_NO_PROCESS"
 	}
 	
+	if !^HAVE_ZLIB {
+		.defines += "QT_NO_COMPRESS"
+	}
+	
 	if target_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {
@@ -90,6 +95,8 @@ let config * : Config {
         .defines += "QT_NO_THREADSAFE_CLOEXEC"
     }
 }
+
+submod zlib = ../thirdparty/zlib
 
 let sources* : SourceSet {
 	.sources += [
@@ -178,7 +185,7 @@ let sources* : SourceSet {
         }
 	}
 
-	if ^HAVE_RE {
+	if HAVE_RE {
 		if !trycompile("#include <pcre.h>") {
 			error("HAVE_RE required but the pcre headers are not available")
 		}
@@ -426,6 +433,13 @@ let sources* : SourceSet {
 	}else{
 		.sources += [
 			./NoObject.cpp
+		]
+	}
+	
+	if ^HAVE_ZLIB {
+		.deps += zlib.sources;
+		.sources += [
+			./qcompress.cpp
 		]
 	}
 	

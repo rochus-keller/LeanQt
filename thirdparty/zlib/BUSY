@@ -1,0 +1,11 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources * : SourceSet {
+	.sources += [
+		./adler32.c   ./deflate.c  ./gzread.c   ./inffast.c   ./trees.c
+		./compress.c  ./gzclose.c  ./gzwrite.c  ./inflate.c   ./uncompr.c
+		./crc32.c     ./gzlib.c    ./infback.c  ./inftrees.c  ./zutil.c
+	]
+	.include_dirs += ../../includes
+}

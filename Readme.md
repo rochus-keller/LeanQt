@@ -15,6 +15,7 @@ This version is suited to successfully build and run the command line version of
 The following features are available: 
 
 - bytearrays, strings, unicode
+- data compression
 - localization
 - collections, implicit sharing
 - date/time, time zones
@@ -42,7 +43,6 @@ The following features are available:
 - [x] QtCore 
 - [x] QtXml
 - [x] QtNetwork
-- [ ] qCompress
 - [ ] QtConcurrent
 
 ### Long term plan

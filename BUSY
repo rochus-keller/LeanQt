@@ -1,32 +1,32 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
-param HAVE_SHARED = false   # if true build shared instead of static libraries, and export marked symbols
+param HAVE_SHARED = false      # if true build shared instead of static libraries, and export marked symbols
 
-param HAVE_GEOM = false 	# include geometry classes like QRect, QPoint etc.
-param HAVE_RE = false 		# include QRecularExpression, using pcre16; otherwise only QRegExp, TODO: not yet supported
-param HAVE_JSON = false		# include QJsonObject and friends
-param HAVE_XMLSTREAM = false # include QXmlStreamWriter, QXmlStreamReader, etc.
-param HAVE_URL = false		# include QUrl and support classes
-param HAVE_DSTREAM = false  # include QDataStream
-param HAVE_CMDLINE = false  # include QCommandLineParser and QCommandLineOption
-param HAVE_PROCESS = false  # include QProcess
-param HAVE_SHAREDMEM = false # include QSharedMemory and QSystemSemaphore
+param HAVE_GEOM = false 	   # include geometry classes like QRect, QPoint etc.
+param HAVE_JSON = false		   # include QJsonObject and friends
+param HAVE_XMLSTREAM = false   # include QXmlStreamWriter, QXmlStreamReader, etc.
+param HAVE_URL = false		   # include QUrl and support classes
+param HAVE_DSTREAM = false     # include QDataStream
+param HAVE_CMDLINE = false     # include QCommandLineParser and QCommandLineOption
+param HAVE_PROCESS = false     # include QProcess
+param HAVE_SHAREDMEM = false   # include QSharedMemory and QSystemSemaphore
+param HAVE_ZLIB = false        # include qCompress
 
-param HAVE_THREADS = false  # include QThread and friends
-param HAVE_FILEIO = false   # include QFile, QFileInfo, QDir, QSettings etc. 
-param HAVE_COREAPP = false  # include QCoreApplication, QTranslator
-param HAVE_OBJECT = false	# include QObject, QEvent, QEventDispatcher etc.
-param HAVE_LIBRARY = false  # include QLibrary
-param HAVE_PLUGINS = false  # include QPluginLoader
+param HAVE_THREADS = false     # include QThread and friends
+param HAVE_FILEIO = false      # include QFile, QFileInfo, QDir, QSettings etc. 
+param HAVE_COREAPP = false     # include QCoreApplication, QTranslator
+param HAVE_OBJECT = false	   # include QObject, QEvent, QEventDispatcher etc.
+param HAVE_LIBRARY = false     # include QLibrary
+param HAVE_PLUGINS = false     # include QPluginLoader
 
-param HAVE_CORE_ALL = false	# switches on all flags which add code
+param HAVE_CORE_ALL = false	   # switches on all flags which add code
 
-param HAVE_SSL = false       # include QSslSocket and friends; only OpenSSL dynamic loading supported so far
-param HAVE_LOCALSOCK = false # include QLocalSocket and QLocalServer
-param HAVE_NETACCESS = false # include QNetworkAccessManager and friends
-param HAVE_BEARER = false    # include QNetworkConfiguration, QNetworkSession and friends 
-param HAVE_AUTH = false      # include QAuthenticator
+param HAVE_SSL = false         # include QSslSocket and friends; only OpenSSL dynamic loading supported so far
+param HAVE_LOCALSOCK = false   # include QLocalSocket and QLocalServer
+param HAVE_NETACCESS = false   # include QNetworkAccessManager and friends
+param HAVE_BEARER = false      # include QNetworkConfiguration, QNetworkSession and friends 
+param HAVE_AUTH = false        # include QAuthenticator
 
 param HAVE_NET_ALL = false	   # switches on all flags which add code
 param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
@@ -38,7 +38,7 @@ param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJE
 if HAVE_CORE_ALL {
 	HAVE_GEOM = true; HAVE_JSON = true; HAVE_XMLSTREAM = true; HAVE_URL = true; HAVE_DSTREAM = true
 	HAVE_FILEIO = true; HAVE_COREAPP = true; HAVE_OBJECT = true; HAVE_CMDLINE = true; HAVE_THREADS = true
-	HAVE_LIBRARY = true; HAVE_PROCESS = true; HAVE_SHAREDMEM = true; HAVE_PLUGINS = true
+	HAVE_LIBRARY = true; HAVE_PROCESS = true; HAVE_SHAREDMEM = true; HAVE_PLUGINS = true; HAVE_ZLIB = true
 }
 
 if HAVE_NET_ALL {
@@ -172,6 +172,9 @@ let _net_linker_config - : Config {
 		if HAVE_SSL {
 			.lib_names += "Crypt32"
 		}
+	}
+	if target_os == `macos {
+		.frameworks += [ "SystemConfiguration" "Security" ]
 	}
 }
 

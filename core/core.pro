@@ -419,7 +419,8 @@ SOURCES += \
     qfactoryinterface.cpp \
     ../xml/qdom.cpp \
     ../xml/qxml.cpp \
-    forkfd_qt.cpp
+    forkfd_qt.cpp \
+    qcompress.cpp
 
 HEADERS += \
     qalgorithms.h \

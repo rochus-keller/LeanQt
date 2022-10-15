@@ -37,10 +37,6 @@
 #include "qdatastream.h"
 #include "qmath.h"
 
-#ifndef QT_NO_COMPRESS
-#include <zconf.h>
-#include <zlib.h>
-#endif
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
@@ -486,47 +482,6 @@ quint16 qChecksum(const char *data, uint len)
     \a compressionLevel and returns the compressed data in a new byte array.
 */
 
-#ifndef QT_NO_COMPRESS
-QByteArray qCompress(const uchar* data, int nbytes, int compressionLevel)
-{
-    if (nbytes == 0) {
-        return QByteArray(4, '\0');
-    }
-    if (!data) {
-        qWarning("qCompress: Data is null");
-        return QByteArray();
-    }
-    if (compressionLevel < -1 || compressionLevel > 9)
-        compressionLevel = -1;
-
-    ulong len = nbytes + nbytes / 100 + 13;
-    QByteArray bazip;
-    int res;
-    do {
-        bazip.resize(len + 4);
-        res = ::compress2((uchar*)bazip.data()+4, &len, data, nbytes, compressionLevel);
-
-        switch (res) {
-        case Z_OK:
-            bazip.resize(len + 4);
-            bazip[0] = (nbytes & 0xff000000) >> 24;
-            bazip[1] = (nbytes & 0x00ff0000) >> 16;
-            bazip[2] = (nbytes & 0x0000ff00) >> 8;
-            bazip[3] = (nbytes & 0x000000ff);
-            break;
-        case Z_MEM_ERROR:
-            qWarning("qCompress: Z_MEM_ERROR: Not enough memory");
-            bazip.resize(0);
-            break;
-        case Z_BUF_ERROR:
-            len *= 2;
-            break;
-        }
-    } while (res == Z_BUF_ERROR);
-
-    return bazip;
-}
-#endif
 
 /*!
     \fn QByteArray qUncompress(const QByteArray &data)
@@ -558,89 +513,6 @@ QByteArray qCompress(const uchar* data, int nbytes, int compressionLevel)
     Uncompresses the first \a nbytes of \a data and returns a new byte
     array with the uncompressed data.
 */
-
-#ifndef QT_NO_COMPRESS
-QByteArray qUncompress(const uchar* data, int nbytes)
-{
-    if (!data) {
-        qWarning("qUncompress: Data is null");
-        return QByteArray();
-    }
-    if (nbytes <= 4) {
-        if (nbytes < 4 || (data[0]!=0 || data[1]!=0 || data[2]!=0 || data[3]!=0))
-            qWarning("qUncompress: Input data is corrupted");
-        return QByteArray();
-    }
-    ulong expectedSize = uint((data[0] << 24) | (data[1] << 16) |
-                              (data[2] <<  8) | (data[3]      ));
-    ulong len = qMax(expectedSize, 1ul);
-    QScopedPointer<QByteArray::Data, QScopedPointerPodDeleter> d;
-
-    forever {
-        ulong alloc = len;
-        if (len  >= (1u << 31u) - sizeof(QByteArray::Data)) {
-            //QByteArray does not support that huge size anyway.
-            qWarning("qUncompress: Input data is corrupted");
-            return QByteArray();
-        }
-        QByteArray::Data *p = static_cast<QByteArray::Data *>(::realloc(d.data(), sizeof(QByteArray::Data) + alloc + 1));
-        if (!p) {
-            // we are not allowed to crash here when compiling with QT_NO_EXCEPTIONS
-            qWarning("qUncompress: could not allocate enough memory to uncompress data");
-            return QByteArray();
-        }
-        d.take(); // realloc was successful
-        d.reset(p);
-        d->offset = sizeof(QByteArrayData);
-        d->size = 0; // Shut up valgrind "uninitialized variable" warning
-
-        int res = ::uncompress((uchar*)d->data(), &len,
-                               data+4, nbytes-4);
-
-        switch (res) {
-        case Z_OK:
-            if (len != alloc) {
-                if (len  >= (1u << 31u) - sizeof(QByteArray::Data)) {
-                    //QByteArray does not support that huge size anyway.
-                    qWarning("qUncompress: Input data is corrupted");
-                    return QByteArray();
-                }
-                QByteArray::Data *p = static_cast<QByteArray::Data *>(::realloc(d.data(), sizeof(QByteArray::Data) + len + 1));
-                if (!p) {
-                    // we are not allowed to crash here when compiling with QT_NO_EXCEPTIONS
-                    qWarning("qUncompress: could not allocate enough memory to uncompress data");
-                    return QByteArray();
-                }
-                d.take(); // realloc was successful
-                d.reset(p);
-            }
-            d->ref.initializeOwned();
-            d->size = len;
-            d->alloc = uint(len) + 1u;
-            d->capacityReserved = false;
-            d->offset = sizeof(QByteArrayData);
-            d->data()[len] = 0;
-
-            {
-                QByteArrayDataPtr dataPtr = { d.take() };
-                return QByteArray(dataPtr);
-            }
-
-        case Z_MEM_ERROR:
-            qWarning("qUncompress: Z_MEM_ERROR: Not enough memory");
-            return QByteArray();
-
-        case Z_BUF_ERROR:
-            len *= 2;
-            continue;
-
-        case Z_DATA_ERROR:
-            qWarning("qUncompress: Z_DATA_ERROR: Input data is corrupted");
-            return QByteArray();
-        }
-    }
-}
-#endif
 
 static inline bool qIsUpper(char c)
 {
@@ -4587,4 +4459,3 @@ QByteArray QByteArray::toPercentEncoding(const QByteArray &exclude, const QByteA
     \internal
 */
 
-QT_END_NAMESPACE
