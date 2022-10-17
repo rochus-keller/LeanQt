@@ -167,11 +167,11 @@ let sources* : SourceSet {
 			./qdnslookup_unix.cpp
 		]
 		if target_os == `macos {
-			.sources += [
-				./qnetworkproxy_mac.cpp
-			]
+			.sources += ./qnetworkproxy_mac.cpp
+		}else{
+			.sources += ./qnetworkproxy_generic.cpp
 		}
-		if ^HAVE_LOCALSOCK {
+		if ^HAVE_LOCALSOCK { 
 			.sources += [
 				./qlocalserver_unix.cpp
 				./qlocalsocket_unix.cpp

@@ -1,0 +1,39 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_CONCURRENT_LIB"
+	]
+}
+
+let config * : Config {
+	.include_dirs += [
+		abspath() + ../includes/QtConcurrent
+	]
+
+}
+
+let err : Message {
+	.text = "The concurrent module requires HAVE_THREADS"
+}
+
+let sources* : SourceSet {
+	.sources += [
+        ./qtconcurrentfilter.cpp
+        ./qtconcurrentmap.cpp
+        ./qtconcurrentrun.cpp
+        ./qtconcurrentthreadengine.cpp
+        ./qtconcurrentiteratekernel.cpp
+	]
+	.configs += [ ^_core_config lib_config config ]
+	.include_dirs += build_dir() 
+	if !^HAVE_THREADS {
+		.deps += err
+	}
+}
+
+# TODO
+# win32-msvc*|win32-icc:QMAKE_LFLAGS += /BASE:0x66000000
+# contains(QT_CONFIG, clock-gettime) { linux-*|hpux-*|solaris-*: LIBS_PRIVATE *= -lrt }
+

@@ -313,9 +313,10 @@ let sources* : SourceSet {
 			./qmutexpool.cpp
 			./qresultstore.cpp
 			./qsemaphore.cpp
+			./qfutureinterface.cpp
 		]
-		if ^HAVE_COREAPP && ^HAVE_OBJECT {
-			.sources += [ ./qfuturewatcher.cpp ./qfutureinterface.cpp ]
+		if ^HAVE_OBJECT {
+			.sources += [ ./qfuturewatcher.cpp ]
 		}
 		if target_os == `win32 {
 			.sources += [ ./qthread_win.cpp ./qwaitcondition_win.cpp ]

@@ -1,0 +1,1 @@
+#include "../../concurrent/qtconcurrentfilterkernel.h"

@@ -37,13 +37,14 @@ The following features are available:
 - moc (meta object compiler)
 - library and plugins
 - async and sync networking
+- map/reduce, filter/reduce, async computation
 
 ### Planned or work-in-progress features
 
 - [x] QtCore 
 - [x] QtXml
 - [x] QtNetwork
-- [ ] QtConcurrent
+- [x] QtConcurrent
 
 ### Long term plan
 

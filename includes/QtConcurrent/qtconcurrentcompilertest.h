@@ -1,0 +1,1 @@
+#include "../../concurrent/qtconcurrentcompilertest.h"

@@ -1,0 +1,1 @@
+#include "../../concurrent/qtconcurrentmapkernel.h"

@@ -31,6 +31,7 @@ param HAVE_AUTH = false        # include QAuthenticator
 param HAVE_NET_ALL = false	   # switches on all flags which add code
 param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
 
+param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THREADS support
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -52,6 +53,11 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 		HAVE_OBJECT = true
 		HAVE_URL = true
 	}
+}
+
+if HAVE_CONCURRENT && !HAVE_THREADS {
+	message("enabling HAVE_TRHEADS required by HAVE_CONCURRENT")
+	HAVE_THREADS = true
 }
 
 if HAVE_BEARER && !HAVE_PLUGINS {
@@ -183,6 +189,18 @@ let net_client_config * : Config {
 }
 
 ######################################################################
+submod concurrent
+
+let concurrent_sources = concurrent.sources
+
+let _concurrent_linker_config - : Config {
+}
+
+let concurrent_client_config * : Config {
+	.configs += [ concurrent.config _concurrent_linker_config ]
+}
+
+######################################################################
 submod tools
 
 let rcc * = tools.rcc.rcc
@@ -237,23 +255,95 @@ let libqtnetwork * : Library {
 	.name = "qtnetwork"
 }
 
-######################################################################
-
-let test_moc : Moc {
-	.sources += ./test.cpp
+let libqtconcurrent * : Library {
+	.deps += concurrent_sources
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += [ core_client_config concurrent_client_config ]
+		.deps += libqtcore
+	}else{ 
+		.lib_type = `static
+	}
+	.name = "qtconcurrent"
 }
 
-let test ! : Executable {
-	#.cflags_cc += "-g"
-	.sources += ./test.cpp
-	.deps += libqtcore
-	if HAVE_OBJECT {
-		.deps += test_moc;
-		.include_dirs += build_dir()
-	}
+######################################################################
+## Examples
+
+let hello : Executable {
+	.sources += ./examples/hello.cpp
+	.deps += libqtcore;
 	.configs += core_client_config
-	if HAVE_NET_MINIMUM {
-		.configs += net_client_config;
-		.deps += libqtnetwork
+}
+
+let objects_moc : Moc {
+	.sources += ./examples/objects.cpp
+}
+
+let objects : Executable {
+	.sources += ./examples/objects.cpp
+	.deps += [ libqtcore objects_moc ]
+	.include_dirs += build_dir()
+	.configs += core_client_config
+}
+
+let threads : Executable {
+	.sources += ./examples/threads.cpp
+	.deps += libqtcore;
+	.configs += core_client_config
+}
+
+let process : Executable {
+	.sources += ./examples/process.cpp
+	.deps += libqtcore;
+	.configs += core_client_config
+}
+
+let dnslookup_moc : Moc {
+	.sources += ./examples/dnslookup.h
+}
+
+let dnslookup : Executable {
+	.sources += ./examples/dnslookup.cpp
+	.deps += [ libqtcore libqtnetwork dnslookup_moc ]
+	.configs += [ core_client_config net_client_config ]
+}
+
+let concurrent_example : Executable {
+	.sources += ./examples/concurrent.cpp
+	.deps += [ libqtcore libqtconcurrent ]
+	.configs += [ core_client_config concurrent_client_config ]
+}
+
+let download_moc : Moc {
+	.sources += ./examples/download.cpp
+}
+
+let download : Executable {
+	.sources += ./examples/download.cpp
+	.deps += [ libqtcore libqtnetwork download_moc ]
+	.include_dirs += build_dir()
+	.configs += [ core_client_config net_client_config ]
+}
+ 
+let examples ! : Group {
+	.deps += hello
+	if HAVE_OBJECT {
+		.deps += objects
+	}
+	if HAVE_THREADS {
+		.deps += threads
+	}
+	if HAVE_PROCESS {
+		.deps += process
+	}
+	if HAVE_NET_MINIMUM && HAVE_CMDLINE {
+		.deps += dnslookup
+	}
+	if HAVE_CONCURRENT {
+		.deps += concurrent_example
+	}
+	if HAVE_NETACCESS && HAVE_FILEIO {
+		.deps += download
 	}
 }

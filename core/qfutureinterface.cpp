@@ -37,7 +37,7 @@
 #ifndef QT_NO_QFUTURE
 
 #include "qfutureinterface_p.h"
-
+ 
 #include <QtCore/qatomic.h>
 #include <QtCore/qthread.h>
 #include <private/qthreadpool_p.h>

@@ -38,7 +38,9 @@
 //
 
 #include <QtCore/qelapsedtimer.h>
+#ifndef QT_NO_QOBJECT
 #include <QtCore/qcoreevent.h>
+#endif
 #include <QtCore/qlist.h>
 #include <QtCore/qwaitcondition.h>
 #include <QtCore/qrunnable.h>
@@ -47,7 +49,10 @@
 
 QT_BEGIN_NAMESPACE
 
-class QFutureCallOutEvent : public QEvent
+class QFutureCallOutEvent
+#ifndef QT_NO_QOBJECT
+	 : public QEvent
+#endif
 {
 public:
     enum CallOutType {
@@ -62,17 +67,32 @@ public:
     };
 
     QFutureCallOutEvent()
-        : QEvent(QEvent::FutureCallOut), callOutType(CallOutType(0)), index1(-1), index2(-1)
+        : 
+#ifndef QT_NO_QOBJECT
+        QEvent(QEvent::FutureCallOut), 
+#endif
+        callOutType(CallOutType(0)), index1(-1), index2(-1)
     { }
     explicit QFutureCallOutEvent(CallOutType callOutType, int index1 = -1)
-        : QEvent(QEvent::FutureCallOut), callOutType(callOutType), index1(index1), index2(-1)
+        : 
+#ifndef QT_NO_QOBJECT
+        QEvent(QEvent::FutureCallOut), 
+#endif
+        callOutType(callOutType), index1(index1), index2(-1)
     { }
     QFutureCallOutEvent(CallOutType callOutType, int index1, int index2)
-        : QEvent(QEvent::FutureCallOut), callOutType(callOutType), index1(index1), index2(index2)
+        : 
+#ifndef QT_NO_QOBJECT
+        QEvent(QEvent::FutureCallOut), 
+#endif
+        callOutType(callOutType), index1(index1), index2(index2)
     { }
 
     QFutureCallOutEvent(CallOutType callOutType, int index1, const QString &text)
-        : QEvent(QEvent::FutureCallOut),
+        : 
+#ifndef QT_NO_QOBJECT
+        QEvent(QEvent::FutureCallOut),
+#endif
           callOutType(callOutType),
           index1(index1),
           index2(-1),
@@ -94,7 +114,10 @@ private:
                         int index1,
                         int index2,
                         const QString &text)
-        : QEvent(QEvent::FutureCallOut),
+        : 
+#ifndef QT_NO_QOBJECT
+        QEvent(QEvent::FutureCallOut),
+#endif
           callOutType(callOutType),
           index1(index1),
           index2(index2),
