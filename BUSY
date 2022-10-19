@@ -270,80 +270,29 @@ let libqtconcurrent * : Library {
 ######################################################################
 ## Examples
 
-let hello : Executable {
-	.sources += ./examples/hello.cpp
-	.deps += libqtcore;
-	.configs += core_client_config
-}
+submod examples
 
-let objects_moc : Moc {
-	.sources += ./examples/objects.cpp
-}
-
-let objects : Executable {
-	.sources += ./examples/objects.cpp
-	.deps += [ libqtcore objects_moc ]
-	.include_dirs += build_dir()
-	.configs += core_client_config
-}
-
-let threads : Executable {
-	.sources += ./examples/threads.cpp
-	.deps += libqtcore;
-	.configs += core_client_config
-}
-
-let process : Executable {
-	.sources += ./examples/process.cpp
-	.deps += libqtcore;
-	.configs += core_client_config
-}
-
-let dnslookup_moc : Moc {
-	.sources += ./examples/dnslookup.h
-}
-
-let dnslookup : Executable {
-	.sources += ./examples/dnslookup.cpp
-	.deps += [ libqtcore libqtnetwork dnslookup_moc ]
-	.configs += [ core_client_config net_client_config ]
-}
-
-let concurrent_example : Executable {
-	.sources += ./examples/concurrent.cpp
-	.deps += [ libqtcore libqtconcurrent ]
-	.configs += [ core_client_config concurrent_client_config ]
-}
-
-let download_moc : Moc {
-	.sources += ./examples/download.cpp
-}
-
-let download : Executable {
-	.sources += ./examples/download.cpp
-	.deps += [ libqtcore libqtnetwork download_moc ]
-	.include_dirs += build_dir()
-	.configs += [ core_client_config net_client_config ]
-}
- 
-let examples ! : Group {
-	.deps += hello
+let build_examples ! : Copy {
+	.use_deps += `executable
+	.deps += examples.hello
 	if HAVE_OBJECT {
-		.deps += objects
+		.deps += examples.objects
 	}
 	if HAVE_THREADS {
-		.deps += threads
+		.deps += examples.threads
 	}
 	if HAVE_PROCESS {
-		.deps += process
+		.deps += examples.process
 	}
 	if HAVE_NET_MINIMUM && HAVE_CMDLINE {
-		.deps += dnslookup
+		.deps += examples.dnslookup
 	}
 	if HAVE_CONCURRENT {
-		.deps += concurrent_example
+		.deps += examples.concurrent
 	}
 	if HAVE_NETACCESS && HAVE_FILEIO {
-		.deps += download
+		.deps += examples.download
 	}
+	.outputs += ./{{source_file_part}}
 }
+

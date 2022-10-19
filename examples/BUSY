@@ -1,0 +1,59 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let hello* : Executable {
+	.sources += ./hello.cpp
+	.deps += ^libqtcore;
+	.configs += ^core_client_config
+}
+
+let objects_moc : Moc {
+	.sources += ./objects.cpp
+}
+
+let objects* : Executable {
+	.sources += ./objects.cpp
+	.deps += [ ^libqtcore objects_moc ]
+	.include_dirs += build_dir()
+	.configs += ^core_client_config
+}
+
+let threads* : Executable {
+	.sources += ./threads.cpp
+	.deps += ^libqtcore;
+	.configs += ^core_client_config
+}
+
+let process* : Executable {
+	.sources += ./process.cpp
+	.deps += ^libqtcore;
+	.configs += ^core_client_config
+}
+
+let dnslookup_moc : Moc {
+	.sources += ./dnslookup.h
+}
+
+let dnslookup* : Executable {
+	.sources += ./dnslookup.cpp
+	.deps += [ ^libqtcore ^libqtnetwork dnslookup_moc ]
+	.configs += [ ^core_client_config ^net_client_config ]
+}
+
+let concurrent* : Executable {
+	.sources += ./concurrent.cpp
+	.deps += [ ^libqtcore ^libqtconcurrent ]
+	.configs += [ ^core_client_config ^concurrent_client_config ]
+}
+
+let download_moc : Moc {
+	.sources += ./download.cpp
+}
+
+let download* : Executable {
+	.sources += ./download.cpp
+	.deps += [ ^libqtcore ^libqtnetwork download_moc ]
+	.include_dirs += build_dir()
+	.configs += [ ^core_client_config ^net_client_config ]
+}
+
