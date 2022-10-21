@@ -91,6 +91,10 @@ let config * : Config {
 		if target_toolchain == `msvc {
 			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
 		}
+	}else if target_os == `linux {
+		if ^HAVE_SHARED {
+			.cflags += "-fPIC"
+		}
 	}else if target_os == `macos {
         .defines += "QT_NO_THREADSAFE_CLOEXEC"
     }

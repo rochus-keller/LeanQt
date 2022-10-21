@@ -8,4 +8,5 @@ let sources * : SourceSet {
 		./crc32.c     ./gzlib.c    ./infback.c  ./inftrees.c  ./zutil.c
 	]
 	.include_dirs += ../../includes
+	.configs += ^config
 }
