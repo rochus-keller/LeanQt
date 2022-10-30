@@ -10,7 +10,9 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-INCLUDEPATH += ../includes ../includes/QtCore 
+INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui
+
+DEFINES += QT_NO_GUI QT_NO_IMAGEFORMATPLUGIN QT_BUILD_GUI_LIB
 
 HEADERS += \
     qbezier_p.h \

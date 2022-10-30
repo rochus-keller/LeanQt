@@ -15,6 +15,7 @@ let config * : Config {
 		abspath() + ../includes/QtCore
 		abspath()
 	]
+	# TODO: check which defines are not visible in public API and remove them from public config
 	.defines += [
 		# these are official Qt defines
 		"QT_NO_BIG_CODECS"

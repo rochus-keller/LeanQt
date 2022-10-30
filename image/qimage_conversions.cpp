@@ -371,7 +371,7 @@ static void convert_RGB888_to_RGB(QImageData *dest, const QImageData *src, Qt::I
     }
 }
 
-#ifdef __SSE2__
+#if defined __SSE2__ && defined(QT_COMPILER_SUPPORTS_SSE2)
 extern bool convert_ARGB_to_ARGB_PM_inplace_sse2(QImageData *data, Qt::ImageConversionFlags);
 #else
 static bool convert_ARGB_to_ARGB_PM_inplace(QImageData *data,Qt::ImageConversionFlags)
@@ -2609,7 +2609,7 @@ InPlace_Image_Converter qimage_inplace_converter_map[QImage::NImageFormats][QIma
         0,
         mask_alpha_converter_inplace<QImage::Format_RGB32>,
         0,
-#ifdef __SSE2__
+#if defined __SSE2__ && defined(QT_COMPILER_SUPPORTS_SSE2)
         convert_ARGB_to_ARGB_PM_inplace_sse2,
 #else
         convert_ARGB_to_ARGB_PM_inplace,
@@ -2726,7 +2726,7 @@ InPlace_Image_Converter qimage_inplace_converter_map[QImage::NImageFormats][QIma
         0,
         mask_alpha_converter_rgbx_inplace,
         0,
-#ifdef __SSE2__
+#if defined __SSE2__ && defined(QT_COMPILER_SUPPORTS_SSE2)
         convert_ARGB_to_ARGB_PM_inplace_sse2,
 #elif Q_BYTE_ORDER == Q_LITTLE_ENDIAN
         convert_ARGB_to_ARGB_PM_inplace,
@@ -2917,7 +2917,7 @@ InPlace_Image_Converter qimage_inplace_converter_map[QImage::NImageFormats][QIma
 
 static void qInitImageConversions()
 {
-#if defined(__SSE2__) && defined(QT_COMPILER_SUPPORTS_SSSE3)
+#if defined(__SSE2__) && defined(QT_COMPILER_SUPPORTS_SSE2) && defined(QT_COMPILER_SUPPORTS_SSSE3)
     if (qCpuHasFeature(SSSE3)) {
         extern void convert_RGB888_to_RGB32_ssse3(QImageData *dest, const QImageData *src, Qt::ImageConversionFlags);
         qimage_converter_map[QImage::Format_RGB888][QImage::Format_RGB32] = convert_RGB888_to_RGB32_ssse3;

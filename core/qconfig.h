@@ -24,12 +24,14 @@
 #define QT_COMPILER_SUPPORTS_AVX2 1
 */
 
-#ifndef QT_BOOTSTRAPPED
+// see qfeatures.txt
 
+#if 0
 #if defined(QT_BUILTIN_GIF_READER) && defined(QT_NO_BUILTIN_GIF_READER)
 # undef QT_BUILTIN_GIF_READER
 #elif !defined(QT_BUILTIN_GIF_READER) && !defined(QT_NO_BUILTIN_GIF_READER)
 # define QT_BUILTIN_GIF_READER 1
+#endif
 #endif
 
 #if defined(QT_NO_ACCESSIBILITY_ATSPI_BRIDGE) && defined(QT_ACCESSIBILITY_ATSPI_BRIDGE)
@@ -62,16 +64,20 @@
 # define QT_NO_EGLFS
 #endif
 
+#if 0 // we don't support glib in LeanQt
 #if defined(QT_NO_GLIB) && defined(QT_GLIB)
 # undef QT_NO_GLIB
 #elif !defined(QT_NO_GLIB) && !defined(QT_GLIB)
 # define QT_NO_GLIB
 #endif
+#endif
 
+#if 0 // iconv not supported in LeanQT
 #if defined(QT_NO_ICONV) && defined(QT_ICONV)
 # undef QT_NO_ICONV
 #elif !defined(QT_NO_ICONV) && !defined(QT_ICONV)
 # define QT_NO_ICONV
+#endif
 #endif
 
 #if defined(QT_NO_LIBPROXY) && defined(QT_LIBPROXY)
@@ -162,8 +168,6 @@
 # define QT_THREADSAFE_CLOEXEC 1
 #endif
 
-#endif // QT_BOOTSTRAPPED
-
-#define QT_VISIBILITY_AVAILABLE
+#define QT_VISIBILITY_AVAILABLE // TODO: do that automatically
 
 #define QT_QPA_DEFAULT_PLATFORM_NAME "xcb"

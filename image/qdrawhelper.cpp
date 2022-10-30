@@ -1818,7 +1818,7 @@ static inline uint interpolate_4_pixels_16(uint tl, uint tr, uint bl, uint br, i
 }
 #endif
 
-#if defined(__ARM_NEON__)
+#if defined(__ARM_NEON__) && defined(QT_COMPILER_SUPPORTS_NEON)
 #define interpolate_4_pixels_16_neon(tl, tr, bl, br, distx, disty, disty_, colorMask, invColorMask, v_256, b)  \
 { \
     const int16x8_t dxdy = vmulq_s16(distx, disty); \
@@ -2022,7 +2022,7 @@ static const uint * QT_FASTCALL fetchTransformedBilinearARGB32PM(uint *buffer, c
                         rRB = _mm_srli_epi16(rRB, 8);
                         _mm_storeu_si128((__m128i*)(&intermediate_buffer[0][f]), rRB);
                     }
-#elif defined(__ARM_NEON__)
+#elif defined(__ARM_NEON__) && defined(QT_COMPILER_SUPPORTS_NEON)
                     const int16x8_t disty_ = vdupq_n_s16(disty);
                     const int16x8_t idisty_ = vdupq_n_s16(idisty);
                     const int16x8_t colorMask = vdupq_n_s16(0x00ff);
@@ -2167,7 +2167,7 @@ static const uint * QT_FASTCALL fetchTransformedBilinearARGB32PM(uint *buffer, c
                         v_fx = _mm_add_epi32(v_fx, v_fdx);
                     }
                     fx = _mm_cvtsi128_si32(v_fx);
-#elif defined(__ARM_NEON__)
+#elif defined(__ARM_NEON__)&& defined(QT_COMPILER_SUPPORTS_NEON)
                     BILINEAR_DOWNSCALE_BOUNDS_PROLOG
 
                     const int16x8_t colorMask = vdupq_n_s16(0x00ff);
@@ -6353,13 +6353,13 @@ void qt_memfill64(quint64 *dest, quint64 color, int count)
     qt_memfill_template<quint64>(dest, color, count);
 }
 
-#if !defined(__SSE2__)
+#if !defined(__SSE2__) || !defined(QT_COMPILER_SUPPORTS_SSE2)
 void qt_memfill16(quint16 *dest, quint16 color, int count)
 {
     qt_memfill_template<quint16>(dest, color, count);
 }
 #endif
-#if !defined(__SSE2__) && !defined(__ARM_NEON__)
+#if (!defined(__SSE2__) && !defined(__ARM_NEON__)) || ( !defined(QT_COMPILER_SUPPORTS_SSE2) && !defined(QT_COMPILER_SUPPORTS_NEON))
 #  ifdef QT_COMPILER_SUPPORTS_MIPS_DSP
 extern "C" void qt_memfill32_asm_mips_dsp(quint32 *, quint32, int);
 #  endif
@@ -6387,7 +6387,7 @@ static void qInitDrawhelperFunctions()
     qInitBlendFunctions();
 #endif
 
-#ifdef __SSE2__
+#if defined __SSE2__ && defined QT_COMPILER_SUPPORTS_SSE2
     qDrawHelper[QImage::Format_RGB32].bitmapBlit = qt_bitmapblit32_sse2;
     qDrawHelper[QImage::Format_ARGB32].bitmapBlit = qt_bitmapblit32_sse2;
     qDrawHelper[QImage::Format_ARGB32_Premultiplied].bitmapBlit = qt_bitmapblit32_sse2;
@@ -6482,7 +6482,7 @@ static void qInitDrawhelperFunctions()
 
 #endif // SSE2
 
-#if defined(__ARM_NEON__)
+#if defined(__ARM_NEON__) && defined(QT_COMPILER_SUPPORTS_NEON)
     qBlendFunctions[QImage::Format_RGB32][QImage::Format_RGB32] = qt_blend_rgb32_on_rgb32_neon;
     qBlendFunctions[QImage::Format_ARGB32_Premultiplied][QImage::Format_RGB32] = qt_blend_rgb32_on_rgb32_neon;
     qBlendFunctions[QImage::Format_RGB32][QImage::Format_ARGB32_Premultiplied] = qt_blend_argb32_on_argb32_neon;

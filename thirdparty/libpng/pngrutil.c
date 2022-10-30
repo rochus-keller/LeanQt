@@ -3962,7 +3962,7 @@ png_init_filter_functions(png_structrp pp)
       pp->read_filter[PNG_FILTER_VALUE_PAETH-1] =
          png_read_filter_row_paeth_multibyte_pixel;
 
-#ifdef PNG_FILTER_OPTIMIZATIONS
+#ifdef PNG_FILTER_OPTIMIZATIONS_TODO
    /* To use this define PNG_FILTER_OPTIMIZATIONS as the name of a function to
     * call to install hardware optimizations for the above functions; simply
     * replace whatever elements of the pp->read_filter[] array with a hardware

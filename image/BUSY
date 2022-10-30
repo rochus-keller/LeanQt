@@ -66,6 +66,11 @@ let sources* : SourceSet {
 		./qdrawhelper_sse2.cpp
 		./qdrawhelper_sse4.cpp
 		./qdrawhelper_ssse3.cpp
+		./qdrawhelper_avx2.cpp    
+		./qdrawhelper_neon.cpp    
+		./qimage_avx2.cpp         
+		./qimage_neon.cpp       
+		./qblendfunctions.cpp
 	]
 		
 	if ^HAVE_DSTREAM {

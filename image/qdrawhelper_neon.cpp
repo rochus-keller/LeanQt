@@ -35,7 +35,7 @@
 #include <private/qblendfunctions_p.h>
 #include <private/qmath_p.h>
 
-#ifdef __ARM_NEON__
+#if defined __ARM_NEON__ && defined(QT_COMPILER_SUPPORTS_NEON)
 
 #include <private/qpaintengine_raster_p.h>
 
