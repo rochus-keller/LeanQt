@@ -133,7 +133,9 @@ public:
 #ifndef QT_NO_IMAGEFORMAT_XPM
     explicit QImage(const char * const xpm[]);
 #endif
+#ifndef QT_NO_FILEENGINE
     explicit QImage(const QString &fileName, const char *format = Q_NULLPTR);
+#endif
 
     QImage(const QImage &);
 #ifdef Q_COMPILER_RVALUE_REFS

@@ -979,12 +979,14 @@ QImage::QImage(const uchar *data, int width, int height, int bytesPerLine, Forma
     \sa isNull(), {QImage#Reading and Writing Image Files}{Reading and Writing Image Files}
 */
 
+#ifndef QT_NO_FILEENGINE
 QImage::QImage(const QString &fileName, const char *format)
     : QPaintDevice()
 {
     d = 0;
     load(fileName, format);
 }
+#endif
 
 #ifndef QT_NO_IMAGEFORMAT_XPM
 extern bool qt_read_xpm_image_or_array(QIODevice *device, const char * const *source, QImage &image);
@@ -3483,8 +3485,12 @@ bool QImage::save(const QString &fileName, const char *format, int quality) cons
 {
     if (isNull())
         return false;
+#ifndef QT_NO_FILEENGINE
     QImageWriter writer(fileName, format);
     return d->doImageIO(this, &writer, quality);
+#else
+    return false;
+#endif
 }
 
 /*!

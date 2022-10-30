@@ -35,7 +35,9 @@
 #define QIMAGEWRITER_H
 
 #include <QtCore/qbytearray.h>
+#ifndef QT_NO_COREAPPLICATION
 #include <QtCore/qcoreapplication.h>
+#endif
 #include <QtCore/qlist.h>
 #include <QtGui/qimageiohandler.h>
 
@@ -48,7 +50,12 @@ class QImage;
 class QImageWriterPrivate;
 class Q_GUI_EXPORT QImageWriter
 {
+public:
+#ifndef QT_NO_COREAPPLICATION
     Q_DECLARE_TR_FUNCTIONS(QImageWriter)
+#else
+    static QString tr(const char* text) { return QString::fromUtf8(text); }
+#endif
 public:
     enum ImageWriterError {
         UnknownError,
@@ -58,7 +65,9 @@ public:
 
     QImageWriter();
     explicit QImageWriter(QIODevice *device, const QByteArray &format);
+#ifndef QT_NO_FILEENGINE
     explicit QImageWriter(const QString &fileName, const QByteArray &format = QByteArray());
+#endif
     ~QImageWriter();
 
     void setFormat(const QByteArray &format);

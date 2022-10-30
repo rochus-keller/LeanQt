@@ -32,7 +32,7 @@ param HAVE_NET_ALL = false	   # switches on all flags which add code
 param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
 
 param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THREADS support
-param HAVE_IMAGE = false       # convenience to enable example
+param HAVE_IMAGE = false       # takes care that core is compiled with HAVE_GEOM and HAVE_DSTREAM support
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -54,6 +54,16 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 		HAVE_OBJECT = true
 		HAVE_URL = true
 	}
+}
+
+if HAVE_IMAGE && !HAVE_DSTREAM {
+	message("enabling HAVE_DSTREAM required by HAVE_IMAGE")
+	HAVE_DSTREAM = true
+}
+
+if HAVE_IMAGE && !HAVE_GEOM {
+	message("enabling HAVE_GEOM required by HAVE_IMAGE")
+	HAVE_GEOM = true
 }
 
 if HAVE_CONCURRENT && !HAVE_THREADS {
@@ -300,7 +310,7 @@ submod examples
 
 let build_examples ! : Copy {
 	.use_deps += `executable
-	.deps += examples.hello;
+	.deps += examples.hello
 	if HAVE_OBJECT {
 		.deps += examples.objects
 	}
@@ -319,7 +329,7 @@ let build_examples ! : Copy {
 	if HAVE_NETACCESS && HAVE_FILEIO {
 		.deps += examples.download
 	}
-	if HAVE_IMAGE && HAVE_FILEIO {
+	if HAVE_IMAGE {
 		.deps += examples.transform
 	}
 	.outputs += ./{{source_file_part}}

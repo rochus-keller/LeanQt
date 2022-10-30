@@ -92,8 +92,9 @@
 #include <qvariant.h>
 
 // factory loader
-#include <qcoreapplication.h>
+#ifndef QT_NO_PLUGINS
 #include <private/qfactoryloader_p.h>
+#endif
 
 // image handlers
 #include <private/qbmphandler_p.h>

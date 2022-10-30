@@ -27,7 +27,9 @@
 #define QIMAGEREADER_H
 
 #include <QtCore/qbytearray.h>
+#ifndef QT_NO_COREAPPLICATION
 #include <QtCore/qcoreapplication.h>
+#endif
 #include <QtGui/qimage.h>
 #include <QtGui/qimageiohandler.h>
 
@@ -43,7 +45,12 @@ class QStringList;
 class QImageReaderPrivate;
 class Q_GUI_EXPORT QImageReader
 {
+public:
+#ifndef QT_NO_COREAPPLICATION
     Q_DECLARE_TR_FUNCTIONS(QImageReader)
+#else
+    static QString tr(const char* text) { return QString::fromUtf8(text); }
+#endif
 public:
     enum ImageReaderError {
         UnknownError,
