@@ -1,0 +1,12 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources * : SourceSet {
+	.sources += [
+		./png.c       ./pngmem.c    ./pngrio.c    ./pngset.c    ./pngwrite.c
+		./pngerror.c  ./pngpread.c  ./pngrtran.c  ./pngtrans.c  ./pngwtran.c
+		./pngget.c    ./pngread.c   ./pngrutil.c  ./pngwio.c    ./pngwutil.c
+
+	]
+	.include_dirs += [ ../zlib ../../includes ]
+}

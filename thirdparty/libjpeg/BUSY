@@ -1,0 +1,15 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources * : SourceSet {
+	.sources += [
+		./jaricom.c   ./jcinit.c    ./jctrans.c   ./jddctmgr.c  ./jdsample.c  ./jidctint.c
+		./jcapimin.c  ./jcmainct.c  ./jdapimin.c  ./jdhuff.c    ./jdtrans.c   ./jmemmgr.c
+		./jcapistd.c  ./jcmarker.c  ./jdapistd.c  ./jdinput.c   ./jerror.c    ./jmemnobs.c
+		./jcarith.c   ./jcmaster.c  ./jdarith.c   ./jdmainct.c  ./jfdctflt.c  ./jquant1.c
+		./jccoefct.c  ./jcomapi.c   ./jdatadst.c  ./jdmarker.c  ./jfdctfst.c  ./jquant2.c
+		./jccolor.c   ./jcparam.c   ./jdatasrc.c  ./jdmaster.c  ./jfdctint.c  ./jutils.c
+		./jcdctmgr.c  ./jcprepct.c  ./jdcoefct.c  ./jdmerge.c   ./jidctflt.c
+		./jchuff.c    ./jcsample.c  ./jdcolor.c   ./jdpostct.c  ./jidctfst.c
+	]
+}

@@ -1,0 +1,1 @@
+#include "../../image/qpaintdevice.h"

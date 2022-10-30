@@ -13,7 +13,8 @@
 #define QT_LARGEFILE_SUPPORT 64
 #define QT_REDUCE_RELOCATIONS
 
-// Compiler sub-arch support
+// Compiler sub-arch support (see also qt_module.prf)
+/* TODO 
 #define QT_COMPILER_SUPPORTS_SSE2 1
 #define QT_COMPILER_SUPPORTS_SSE3 1
 #define QT_COMPILER_SUPPORTS_SSSE3 1
@@ -21,6 +22,7 @@
 #define QT_COMPILER_SUPPORTS_SSE4_2 1
 #define QT_COMPILER_SUPPORTS_AVX 1
 #define QT_COMPILER_SUPPORTS_AVX2 1
+*/
 
 #ifndef QT_BOOTSTRAPPED
 

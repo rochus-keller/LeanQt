@@ -57,3 +57,9 @@ let download* : Executable {
 	.configs += [ ^core_client_config ^net_client_config ]
 }
 
+let transform* : Executable {
+	.sources += ./transform.cpp
+	.deps += [ ^libqtcore ^libqtimage ]
+	.configs += [ ^core_client_config ^image_client_config ]	
+}
+

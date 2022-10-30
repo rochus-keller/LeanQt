@@ -140,6 +140,7 @@
 #if (defined(Q_CC_INTEL) || defined(Q_CC_MSVC) \
     || (defined(Q_CC_GNU) && !defined(Q_CC_CLANG) && (__GNUC__-0) * 100 + (__GNUC_MINOR__-0) >= 409)) \
     && !defined(QT_BOOTSTRAPPED)
+    // if GCC >= 4.9 SIMD is apparently always enabled
 #  define QT_COMPILER_SUPPORTS_SIMD_ALWAYS
 #  define QT_COMPILER_SUPPORTS_HERE(x)    QT_COMPILER_SUPPORTS(x)
 #  if defined(Q_CC_GNU) && !defined(Q_CC_INTEL)

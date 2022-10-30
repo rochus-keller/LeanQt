@@ -33,7 +33,7 @@
 
 #include "zconf.h"
 
-#include <QtCore/qglobal.h>
+#include "QtCore/qglobal.h"
 #undef ZEXTERN
 #define ZEXTERN Q_CORE_EXPORT
 

@@ -32,6 +32,7 @@ param HAVE_NET_ALL = false	   # switches on all flags which add code
 param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
 
 param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THREADS support
+param HAVE_IMAGE = false       # convenience to enable example
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -201,6 +202,18 @@ let concurrent_client_config * : Config {
 }
 
 ######################################################################
+submod image
+
+let image_sources * = image.sources
+
+let _image_linker_config - : Config {
+}
+
+let image_client_config * : Config {
+	.configs += [ image.config _image_linker_config ]
+}
+
+######################################################################
 submod tools
 
 let rcc * = tools.rcc.rcc
@@ -267,6 +280,19 @@ let libqtconcurrent * : Library {
 	.name = "qtconcurrent"
 }
 
+let libqtimage * : Library {
+	.deps += image_sources
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += [ core_client_config image_client_config ]
+		.deps += libqtcore
+	}else{ 
+		.lib_type = `static
+	}
+	.name = "qtimage"
+}
+
+
 ######################################################################
 ## Examples
 
@@ -274,7 +300,7 @@ submod examples
 
 let build_examples ! : Copy {
 	.use_deps += `executable
-	.deps += examples.hello
+	.deps += examples.hello;
 	if HAVE_OBJECT {
 		.deps += examples.objects
 	}
@@ -292,6 +318,9 @@ let build_examples ! : Copy {
 	}
 	if HAVE_NETACCESS && HAVE_FILEIO {
 		.deps += examples.download
+	}
+	if HAVE_IMAGE && HAVE_FILEIO {
+		.deps += examples.transform
 	}
 	.outputs += ./{{source_file_part}}
 }

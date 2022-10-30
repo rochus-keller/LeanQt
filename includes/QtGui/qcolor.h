@@ -1,0 +1,1 @@
+#include "../../image/qcolor.h"

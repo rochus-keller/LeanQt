@@ -1,0 +1,99 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_GUI_LIB"
+	]
+}
+
+let config * : Config {
+	.include_dirs += [
+		abspath() + ../includes/QtGui
+		abspath()
+	]
+	
+	.defines += [
+		"QT_NO_IMAGEFORMATPLUGIN"
+		
+		#mines
+		"QT_NO_GUI"
+	]
+}
+
+let err : Message {
+	.text = "The image module requires HAVE_GEOM"
+}
+
+submod libjpeg = ../thirdparty/libjpeg
+submod libpng = ../thirdparty/libpng
+submod zlib = ../thirdparty/zlib
+
+let sources* : SourceSet {
+	.sources += [
+		./qimageiohandler.cpp
+		./qcolor.cpp
+		./qcolor_p.cpp
+		./qmatrix.cpp
+		./qpaintdevice.cpp
+		./qpixelformat.cpp
+		./qpolygon.cpp
+		./qregion.cpp
+		./qtransform.cpp
+		./qpainterpath.cpp
+		./qstroker.cpp
+		./qpathclipper.cpp
+		./qbezier.cpp
+		./qimage.cpp
+		./qmemrotate.cpp
+		./qimagescale.cpp
+		./qgifhandler.cpp
+		./qjpeghandler.cpp
+		./qpnghandler.cpp
+		./qppmhandler.cpp
+		./qxbmhandler.cpp
+		./qxpmhandler.cpp
+		./qimagereader.cpp
+		./qimagewriter.cpp
+		./qimage_compat.cpp
+		./qimage_conversions.cpp
+		./qimagescale_sse4.cpp
+		./qimage_sse2.cpp
+		./qimage_sse4.cpp
+		./qimage_ssse3.cpp
+		./qvectorpath.cpp
+		./qdrawhelper.cpp
+		./qdrawhelper_sse2.cpp
+		./qdrawhelper_sse4.cpp
+		./qdrawhelper_ssse3.cpp
+	]
+		
+	if ^HAVE_DSTREAM {
+		.sources += ./qbmphandler.cpp
+	}
+	
+	if !^HAVE_GEOM {
+		.deps += err
+	}
+	
+	if !^HAVE_ZLIB { # if zlib was not integrated in core have it here
+		.deps += zlib.sources
+	}
+
+	.deps += [ libpng.sources libjpeg.sources ]
+	.configs += [ ^_core_config lib_config config ]
+}
+
+let run_moc : Moc {
+	.sources += [
+		./qimageiohandler.h
+	]
+
+	.defines += config.defines 
+}
+
+let moc_sources * : SourceSet {
+	.configs += [ ^_core_config config lib_config ]
+	.deps += run_moc 
+} 
+

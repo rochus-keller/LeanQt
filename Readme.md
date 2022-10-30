@@ -38,6 +38,7 @@ The following features are available:
 - library and plugins
 - async and sync networking
 - map/reduce, filter/reduce, async computation
+- image handling, format conversion
 
 ### Planned or work-in-progress features
 
@@ -45,6 +46,7 @@ The following features are available:
 - [x] QtXml
 - [x] QtNetwork
 - [x] QtConcurrent
+- [x] QImage, QImageReader/Writer (separated from QtGui)
 
 ### Long term plan
 
@@ -52,6 +54,7 @@ The following features are available:
 - [ ] QtWidgets
 - [ ] mimetypes
 - [ ] printing
+- [ ] SIMD support
 
 ### No support planned
 

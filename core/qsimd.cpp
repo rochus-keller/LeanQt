@@ -23,7 +23,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
+  
 #include "qsimd_p.h"
 #include <QByteArray>
 #include <stdio.h>
