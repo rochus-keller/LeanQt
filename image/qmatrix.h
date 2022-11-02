@@ -28,7 +28,9 @@
 
 #include <QtGui/qpolygon.h>
 #include <QtGui/qregion.h>
-//#include <QtGui/qwindowdefs.h>
+#ifndef QT_NO_GUI
+#include <QtGui/qwindowdefs.h>
+#endif
 #include <QtCore/qline.h>
 #include <QtCore/qpoint.h>
 #include <QtCore/qrect.h>

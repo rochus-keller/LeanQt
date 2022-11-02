@@ -50,7 +50,7 @@
 #include <qpa/qplatformpixmap.h>
 #include <qpa/qplatformintegration.h>
 #include <private/qguiapplication_p.h>
-#include "qimagepixmapcleanuphooks_p.h"
+#include "private/qimagepixmapcleanuphooks_p.h"
 #else
 #ifndef QT_NO_COREAPPLICATION
 #include <QCoreApplication>

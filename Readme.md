@@ -47,10 +47,10 @@ The following features are available:
 - [x] QtNetwork
 - [x] QtConcurrent
 - [x] QImage, QImageReader/Writer (separated from QtGui)
+- [ ] QtGui (freetext & qpa backends pending)
 
 ### Long term plan
 
-- [ ] QtGui
 - [ ] QtWidgets
 - [ ] mimetypes
 - [ ] printing
@@ -71,7 +71,9 @@ The following features are available:
 - web and browser stuff
 - testlib
 - scripting, quick stuff
+- opengl, direct2d, directfb
 - qml
+- accessibility (requires dbus)
 - all not mentioned add-ons 
 - ios, winrt, wince, android, blackberry, nacl, vxworks, haiku
 

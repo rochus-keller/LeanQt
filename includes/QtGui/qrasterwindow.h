@@ -1,0 +1,1 @@
+#include "../../gui/qrasterwindow.h"

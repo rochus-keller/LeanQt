@@ -9,7 +9,7 @@ let lib_config : Config {
 
 let config * : Config {
 	.include_dirs += [
-		abspath() + ../includes/QtConcurrent
+		../includes/QtConcurrent
 	]
 
 }

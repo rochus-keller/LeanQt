@@ -37,13 +37,13 @@ let dnslookup_moc : Moc {
 let dnslookup* : Executable {
 	.sources += ./dnslookup.cpp
 	.deps += [ ^libqtcore ^libqtnetwork dnslookup_moc ]
-	.configs += [ ^core_client_config ^net_client_config ]
+	.configs += ^net_client_config
 }
 
 let concurrent* : Executable {
 	.sources += ./concurrent.cpp
 	.deps += [ ^libqtcore ^libqtconcurrent ]
-	.configs += [ ^core_client_config ^concurrent_client_config ]
+	.configs += ^concurrent_client_config
 }
 
 let download_moc : Moc {
@@ -54,12 +54,27 @@ let download* : Executable {
 	.sources += ./download.cpp
 	.deps += [ ^libqtcore ^libqtnetwork download_moc ]
 	.include_dirs += build_dir()
-	.configs += [ ^core_client_config ^net_client_config ]
+	.configs += ^net_client_config
 }
 
 let transform* : Executable {
 	.sources += ./transform.cpp
-	.deps += [ ^libqtcore ^libqtimage ]
-	.configs += [ ^core_client_config ^image_client_config ]	
+	.deps += ^libqtcore
+	if ^HAVE_GUI {
+		.deps += ^libqtgui
+	} else {
+		.deps += ^libqtimage
+	}
+	.configs += ^image_client_config
+}
+
+let analog_moc : Moc {
+	.sources += ./rasterwindow.h
+}
+
+let analogclock* : Executable {
+	.sources += [ ./rasterwindow.cpp ./analogclock.cpp ]
+	.deps += [ ^libqtcore ^libqtgui analog_moc ]
+	.configs += ^gui_client_config	
 }
 

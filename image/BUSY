@@ -9,16 +9,15 @@ let lib_config : Config {
 
 let config * : Config {
 	.include_dirs += [
-		abspath() + ../includes/QtGui
-		abspath()
+		../includes/QtGui
 	]
-	
 	.defines += [
 		"QT_NO_IMAGEFORMATPLUGIN"
-		
-		#mines
-		"QT_NO_GUI"
 	]
+	
+	if !^HAVE_GUI {
+		.defines += "QT_NO_GUI"
+	}
 }
 
 let err : Message {

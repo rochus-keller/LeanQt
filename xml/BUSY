@@ -9,8 +9,7 @@ let lib_config : Config {
 
 let config * : Config {
 	.include_dirs += [
-		abspath() + ../includes/QtXml
-		abspath()
+		../includes/QtXml
 	]
 }
 

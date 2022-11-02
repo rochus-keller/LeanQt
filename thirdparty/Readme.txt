@@ -19,3 +19,8 @@ deleted, if the option is not used.
 
 - libpng
 - libjpeg
+
+### Things required by gui
+
+- harfbuzz
+

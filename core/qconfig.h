@@ -26,6 +26,21 @@
 
 // see qfeatures.txt
 
+
+// these were in core/BUSY before
+#define QT_NO_GLIB // we don't support glib in LeanQt
+#define QT_NO_ICONV // iconv not supported in LeanQT
+#define QT_NO_BIG_CODECS
+#define QT_NO_ANIMATION
+#define QT_CRYPTOGRAPHICHASH_ONLY_SHA1 // includes MD5 and MD4
+#define QT_ATOMIC_FORCE_NO_CXX11
+#define QT_NO_VERSION_TAGGING
+
+// not supported in LeanQt/gui
+#define QT_NO_OPENGL
+#define QT_NO_ACCESSIBILITY
+#define QT_NO_SESSIONMANAGER
+
 #if 0
 #if defined(QT_BUILTIN_GIF_READER) && defined(QT_NO_BUILTIN_GIF_READER)
 # undef QT_BUILTIN_GIF_READER
@@ -62,22 +77,6 @@
 # undef QT_NO_EGLFS
 #elif !defined(QT_NO_EGLFS) && !defined(QT_EGLFS)
 # define QT_NO_EGLFS
-#endif
-
-#if 0 // we don't support glib in LeanQt
-#if defined(QT_NO_GLIB) && defined(QT_GLIB)
-# undef QT_NO_GLIB
-#elif !defined(QT_NO_GLIB) && !defined(QT_GLIB)
-# define QT_NO_GLIB
-#endif
-#endif
-
-#if 0 // iconv not supported in LeanQT
-#if defined(QT_NO_ICONV) && defined(QT_ICONV)
-# undef QT_NO_ICONV
-#elif !defined(QT_NO_ICONV) && !defined(QT_ICONV)
-# define QT_NO_ICONV
-#endif
 #endif
 
 #if defined(QT_NO_LIBPROXY) && defined(QT_LIBPROXY)

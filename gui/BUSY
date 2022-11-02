@@ -1,0 +1,193 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_GUI_LIB"
+	]
+}
+
+# submod xcb
+
+let config * : Config {
+	.defines += [
+		"QT_NO_IMAGEFORMATPLUGIN"
+	]
+	# .configs += xcb.config
+}
+
+let err : Message {
+	.text = "gui module requires HAVE_IMAGE"
+}
+
+submod harfbuzz = ../thirdparty/harfbuzz
+
+let sources* : SourceSet {
+	.sources += [
+		./qabstracttextdocumentlayout.cpp ./qpixmapcache.cpp
+		./qbackingstore.cpp               ./qpixmap.cpp
+		./qbitmap.cpp                     ./qpixmap_raster.cpp
+		./qblittable.cpp                  ./qmimedata.cpp
+		./qbrush.cpp                      ./qharfbuzz.cpp
+		./qclipboard.cpp                  ./qplatformbackingstore.cpp
+		./qcompositionfunctions.cpp       ./qplatformclipboard.cpp
+		./qcosmeticstroker.cpp            ./qplatformcursor.cpp
+		./qcssparser.cpp                  ./qplatformdialoghelper.cpp
+		./qplatformdrag.cpp
+		./qcssutil.cpp                    ./qplatformfontdatabase.cpp
+		./qcursor.cpp                     ./qplatformgraphicsbuffer.cpp
+		./qdistancefield.cpp              ./qplatformgraphicsbufferhelper.cpp
+		./qdnd.cpp                        ./qplatforminputcontext.cpp
+		./qdrag.cpp                       ./qplatforminputcontextfactory.cpp
+		./qemulationpaintengine.cpp       ./qplatforminputcontextplugin.cpp
+		./qevent.cpp                      ./qplatformintegration.cpp
+		./qfont.cpp                       ./qplatformintegrationfactory.cpp
+		./qfontdatabase.cpp               ./qplatformintegrationplugin.cpp
+		./qfontengine.cpp                 ./qplatformmenu.cpp
+		# TODO ./qfontengine_ft.cpp              
+		./qplatformnativeinterface.cpp
+		./qfontengineglyphcache.cpp       ./qplatformoffscreensurface.cpp
+		./qfontengine_qpf2.cpp            ./qplatformpixmap.cpp
+		./qfontmetrics.cpp                ./qplatformscreen.cpp
+		./qfontsubset_agl.cpp             ./qplatformservices.cpp
+		./qfontsubset.cpp                 ./qplatformsessionmanager.cpp
+		./qfragmentmap.cpp                ./qplatformsharedgraphicscache.cpp
+		./qgammatables.cpp                ./qplatformsurface.cpp
+		./qplatformsystemtrayicon.cpp
+		./qplatformtheme.cpp
+		./qglyphrun.cpp                   ./qplatformthemefactory.cpp
+		./qguiapplication.cpp             ./qplatformthemeplugin.cpp
+		./qguivariant.cpp                 ./qplatformwindow.cpp
+		./qrasterizer.cpp
+		./qhighdpiscaling.cpp             ./qrasterwindow.cpp
+		./qicon.cpp                       ./qrawfont.cpp
+		./qiconengine.cpp                 ./qscreen.cpp
+		./qiconengineplugin.cpp           ./qsessionmanager.cpp
+		./qiconloader.cpp                 ./qshapedpixmapdndwindow.cpp
+		./qimagepixmapcleanuphooks.cpp    ./qshortcutmap.cpp
+		./qinputcontrol.cpp               ./qsimpledrag.cpp
+		./qinputdevicemanager.cpp         ./qstatictext.cpp
+		./qinputmethod.cpp                ./qstylehints.cpp
+		./qkeymapper.cpp                  ./qsurface.cpp
+		./qkeysequence.cpp                ./qsurfaceformat.cpp
+		./qnativeimage.cpp                ./qsyntaxhighlighter.cpp
+		./qoffscreensurface.cpp           ./qtextcursor.cpp
+		./qtextdocument.cpp
+		./qtextdocumentfragment.cpp
+		./qoutlinemapper.cpp              ./qtextdocumentlayout.cpp
+		./qpagedpaintdevice.cpp           ./qtextdocument_p.cpp
+		./qpagelayout.cpp                 ./qtextdocumentwriter.cpp
+		./qpagesize.cpp                   ./qtextengine.cpp
+		./qpaintdevicewindow.cpp          ./qtextformat.cpp
+		./qpaintengine_blitter.cpp        ./qtexthtmlparser.cpp
+		./qpaintengineex.cpp              ./qtextimagehandler.cpp
+		./qpaintengine_pic.cpp            ./qtextlayout.cpp
+		./qpaintengine_raster.cpp         ./qtextlist.cpp
+		./qpainter.cpp                    ./qtextobject.cpp
+		./qpalette.cpp                    
+		./qpathsimplifier.cpp             ./qtextoption.cpp
+		./qpdf.cpp                        ./qtexttable.cpp
+		./qpdfwriter.cpp                  ./qtextureglyphcache.cpp
+		./qpen.cpp                        ./qtouchdevice.cpp
+		./qpicture.cpp                    ./qvector2d.cpp
+		./qwindow.cpp					  ./qpaintengine.cpp
+		./qpixmap_blitter.cpp             ./qwindowsysteminterface.cpp
+		./qvector3d.cpp					  ./qtextboundaryfinder.cpp
+		./qgenericmatrix.cpp			  ./qgrayraster.c
+		./qmatrix4x4.cpp				  ./qzip.cpp
+		./qquaternion.cpp				  ./qunicodetools.cpp
+		./qvector4d.cpp					  ./qgenericpluginfactory.cpp
+	]
+	
+	if ^HAVE_PLUGINS {
+		.sources += [ 
+			./qgenericplugin.cpp
+			./qgenericpluginfactory.cpp
+			./qpictureformatplugin.cpp 
+		]
+	}
+	
+	if ^HAVE_XMLSTREAM {
+		.sources += ./qtextodfwriter.cpp
+	}
+
+	if !^HAVE_IMAGE {
+		.deps += err
+	}
+	
+	if host_os == `win32 {
+		.sources += ./qpixmap_win.cpp
+	}
+	
+	.configs += [ ^_core_config ^_image_config lib_config config /*xcb.config*/ ]
+	.include_dirs += build_dir() # for the embedded .moc files
+	.include_dirs += .. # thirdparty/harfbuzz
+	.deps += [ harfbuzz.sources /* xcb.sources */ ]
+}
+
+let run_moc : Moc {
+	.sources += [
+		./qpixmapcache.cpp
+		./qabstracttextdocumentlayout.h
+		./qclipboard.h
+		./qdnd_p.h
+		./qdrag.h
+		./qguiapplication.h
+		./qiconengineplugin.h
+		./qinputcontrol_p.h
+		./qinputdevicemanager_p.h
+		./qinputmethod.h
+		./qkeymapper_p.h
+		./qmimedata.h
+		./qoffscreensurface.h
+		./qpaintdevicewindow.h
+		./qpdfwriter.h
+		./qplatformdialoghelper.h
+		./qplatformgraphicsbuffer.h
+		./qplatforminputcontext.h
+		./qplatforminputcontextplugin_p.h
+		./qplatformintegrationplugin.h
+		./qplatformmenu.h
+		./qplatformnativeinterface.h
+		./qplatformsharedgraphicscache.h
+		./qplatformsystemtrayicon.h
+		./qplatformthemeplugin.h
+		./qrasterwindow.h
+		./qscreen.h
+		#./qsessionmanager.h
+		./qshapedpixmapdndwindow_p.h
+		./qstylehints.h
+		./qsyntaxhighlighter.h
+		./qtextdocument.h
+		./qtextdocumentlayout_p.h
+		./qtextimagehandler_p.h
+		./qtextlist.h
+		./qtextobject.h
+		./qtexttable.h
+		./qwindow.h		
+		./qevent.h
+		./qbrush.h
+		./qfontdatabase.h
+		./qfont.h
+		./qkeysequence.h
+		./qpainter.h
+		./qpalette.h
+		./qtextformat.h
+		./qtouchdevice.h
+	]
+
+	if ^HAVE_PLUGINS {
+		.sources += [ 
+			./qgenericplugin.h
+			./qpictureformatplugin.h
+		]
+	}
+
+	.defines += config.defines + ^_core_config.defines + "QT_NO_SESSIONMANAGER"
+}
+
+let moc_sources * : SourceSet {
+	.configs += [ ^_core_config ^_image_config config lib_config ]
+	.deps += run_moc 
+} 
+

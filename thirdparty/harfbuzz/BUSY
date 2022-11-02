@@ -1,0 +1,15 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources * : SourceSet {
+	.sources += [
+		./harfbuzz-buffer.c
+		./harfbuzz-gdef.c
+		./harfbuzz-gsub.c
+		./harfbuzz-gpos.c
+		./harfbuzz-impl.c
+		./harfbuzz-open.c
+		./harfbuzz-stream.c
+		./harfbuzz-shaper-all.cpp
+	]
+}

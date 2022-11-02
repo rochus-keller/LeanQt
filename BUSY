@@ -33,6 +33,7 @@ param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJE
 
 param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THREADS support
 param HAVE_IMAGE = false       # takes care that core is compiled with HAVE_GEOM and HAVE_DSTREAM support
+param HAVE_GUI = false		   # takes care that core is compiled with HAVE_IMAGE and HAVE_OBJECT
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -54,6 +55,26 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 		HAVE_OBJECT = true
 		HAVE_URL = true
 	}
+}
+
+if HAVE_GUI && !HAVE_IMAGE {
+	message("enabling HAVE_IMAGE required by HAVE_GUI")
+	HAVE_IMAGE = true
+}
+
+if HAVE_GUI && !HAVE_OBJECT {
+	message("enabling HAVE_OBJECT required by HAVE_GUI")
+	HAVE_OBJECT = true
+}
+
+if HAVE_GUI && !HAVE_FILEIO {
+	message("enabling HAVE_FILEIO required by HAVE_GUI")
+	HAVE_FILEIO = true
+}
+
+if HAVE_GUI && !HAVE_URL {
+	message("enabling HAVE_URL required by HAVE_GUI")
+	HAVE_URL = true
 }
 
 if HAVE_IMAGE && !HAVE_DSTREAM {
@@ -196,7 +217,7 @@ let _net_linker_config - : Config {
 }
 
 let net_client_config * : Config {
-	.configs += [ net.config _net_linker_config ]
+	.configs += [ core_client_config net.config _net_linker_config ]
 }
 
 ######################################################################
@@ -208,7 +229,7 @@ let _concurrent_linker_config - : Config {
 }
 
 let concurrent_client_config * : Config {
-	.configs += [ concurrent.config _concurrent_linker_config ]
+	.configs += [ core_client_config concurrent.config _concurrent_linker_config ]
 }
 
 ######################################################################
@@ -216,11 +237,25 @@ submod image
 
 let image_sources * = image.sources
 
+let _image_config - = image.config
+
 let _image_linker_config - : Config {
 }
 
 let image_client_config * : Config {
-	.configs += [ image.config _image_linker_config ]
+	.configs += [ core_client_config _image_config _image_linker_config ]
+}
+
+######################################################################
+submod gui
+
+let _gui_sources * = gui.sources
+
+let _gui_linker_config - : Config {
+}
+
+let gui_client_config * : Config {
+	.configs += [ image_client_config gui.config _gui_linker_config ]
 }
 
 ######################################################################
@@ -240,6 +275,11 @@ let core_sources * : Group {
 let net_sources * : Group {
 	.deps += [ moc net.moc_sources ] # do this first because of .moc includes
 	.deps += _net_sources;
+}
+
+let gui_sources * : Group {
+	.deps += [ moc gui.moc_sources ] 
+	.deps += _gui_sources;
 }
 
 ######################################################################
@@ -270,7 +310,7 @@ let libqtnetwork * : Library {
 	.deps += net_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += [ core_client_config net_client_config ]
+		.configs += net_client_config;
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -282,7 +322,7 @@ let libqtconcurrent * : Library {
 	.deps += concurrent_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += [ core_client_config concurrent_client_config ]
+		.configs += concurrent_client_config;
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -294,12 +334,25 @@ let libqtimage * : Library {
 	.deps += image_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += [ core_client_config image_client_config ]
+		.configs += image_client_config;
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
 	}
 	.name = "qtimage"
+}
+
+# either use libqtgui or libqtimage, but not both
+let libqtgui * : Library {
+	.deps += [ image_sources gui_sources ]
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += gui_client_config;
+		.deps += libqtcore
+	}else{ 
+		.lib_type = `static
+	}
+	.name = "qtgui"
 }
 
 
@@ -331,6 +384,9 @@ let build_examples ! : Copy {
 	}
 	if HAVE_IMAGE {
 		.deps += examples.transform
+	}
+	if HAVE_GUI {
+		.deps += examples.analogclock
 	}
 	.outputs += ./{{source_file_part}}
 }

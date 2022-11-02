@@ -11,20 +11,13 @@ let lib_config : Config {
 
 let config * : Config {
 	.include_dirs += [
-		abspath() + ../includes 
-		abspath() + ../includes/QtCore
-		abspath()
+		../includes 
+		../includes/QtCore
 	]
 	# TODO: check which defines are not visible in public API and remove them from public config
 	.defines += [
 		# these are official Qt defines
-		"QT_NO_BIG_CODECS"
-		"QT_NO_ICONV"
-		"QT_NO_ANIMATION"
 		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
-		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" # includes MD5
-		"QT_ATOMIC_FORCE_NO_CXX11"
-		"QT_NO_VERSION_TAGGING"
 	]
 	.defines += [
 		"QT_NO_ITEMMODELS"
@@ -61,6 +54,10 @@ let config * : Config {
 	
 	if !^HAVE_DSTREAM {
 		.defines += "QT_NO_DATASTREAM"
+	}
+	
+	if !^HAVE_XMLSTREAM {
+		.defines += "QT_NO_XMLSTREAM"
 	}
 	
 	if !^HAVE_FILEIO {
@@ -470,6 +467,9 @@ let run_moc : Moc {
 		./qsocketnotifier.h
 		./qtimer.h
 	]
+	if ^HAVE_OBJECT {
+		.sources += ./qcoreevent.h
+	}
 	if ^HAVE_FILEIO {
 		.sources += [ 
 			./qfileselector.h 
