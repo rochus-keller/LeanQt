@@ -70,6 +70,7 @@ let sources* : SourceSet {
 		./qimage_avx2.cpp         
 		./qimage_neon.cpp       
 		./qblendfunctions.cpp
+		./qmovie.cpp
 	]
 		
 	if ^HAVE_DSTREAM {
@@ -91,6 +92,7 @@ let sources* : SourceSet {
 let run_moc : Moc {
 	.sources += [
 		./qimageiohandler.h
+		./qmovie.h
 	]
 
 	.defines += config.defines 

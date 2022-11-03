@@ -97,6 +97,9 @@ let sources* : SourceSet {
 		./qmatrix4x4.cpp				  ./qzip.cpp
 		./qquaternion.cpp				  ./qunicodetools.cpp
 		./qvector4d.cpp					  ./qgenericpluginfactory.cpp
+		./qvalidator.cpp				  ./qdesktopservices.cpp
+		./qlayoutpolicy.cpp				  ./qgridlayoutengine.cpp
+		./qabstractlayoutstyleinfo.cpp
 	]
 	
 	if ^HAVE_PLUGINS {
@@ -174,6 +177,7 @@ let run_moc : Moc {
 		./qpalette.h
 		./qtextformat.h
 		./qtouchdevice.h
+		./qdesktopservices.cpp
 	]
 
 	if ^HAVE_PLUGINS {
