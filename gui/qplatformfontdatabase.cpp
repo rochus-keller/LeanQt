@@ -37,8 +37,9 @@
 #include <QtGui/QGuiApplication>
 #include <QtGui/QScreen>
 #include <qpa/qplatformscreen.h>
-#include <QtCore/QLibraryInfo>
+//#include <QtCore/QLibraryInfo>
 #include <QtCore/QDir>
+#include <QStandardPaths>
 
 #include <algorithm>
 #include <iterator>
@@ -272,7 +273,7 @@ void QPlatformFontDatabase::populateFontDatabase()
 {
     QString fontpath = fontDir();
     if(!QFile::exists(fontpath)) {
-        qWarning("QFontDatabase: Cannot find font directory '%s' - is Qt installed correctly?",
+        qWarning("QPlatformFontDatabase: Cannot find font directory '%s' - is Qt installed correctly?",
                  qPrintable(QDir::toNativeSeparators(fontpath)));
         return;
     }
@@ -390,8 +391,18 @@ QString QPlatformFontDatabase::fontDir() const
 {
     QString fontpath = QString::fromLocal8Bit(qgetenv("QT_QPA_FONTDIR"));
     if (fontpath.isEmpty()) {
+#if 0
         fontpath = QLibraryInfo::location(QLibraryInfo::LibrariesPath);
         fontpath += QLatin1String("/fonts");
+#else
+        fontpath = QGuiApplication::applicationDirPath() + QLatin1String("/fonts");
+        if( !QDir(fontpath).exists() )
+        {
+            const QStringList locs = QStandardPaths::standardLocations(QStandardPaths::FontsLocation);
+            if( !locs.isEmpty() )
+                fontpath = locs.first();
+        }
+#endif
     }
 
     return fontpath;

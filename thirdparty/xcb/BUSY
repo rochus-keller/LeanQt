@@ -1,0 +1,32 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	.include_dirs += [
+		./include
+		./sysinclude
+		./include/xcb
+	]
+}
+
+let sources * : SourceSet {
+	.sources += [
+		./xcb-util-wm/icccm.c
+		./xcb-util-renderutil/util.c
+		./xcb-util-keysyms/keysyms.c
+		./xcb-util-image/xcb_image.c
+		./xcb-util/atoms.c
+		./xcb-util/event.c
+		./xcb-util/xcb_aux.c
+		./libxcb/randr.c
+		./libxcb/render.c
+		./libxcb/shape.c
+		./libxcb/shm.c
+		./libxcb/sync.c
+		./libxcb/xfixes.c
+		./libxcb/xinerama.c
+		./libxcb/xkb.c
+	]
+	.defines += "XCB_USE_RENDER"
+	.configs += config
+}

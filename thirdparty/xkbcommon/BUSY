@@ -1,0 +1,52 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	.include_dirs += [
+		.
+		./src
+	]
+}
+
+let sources * : SourceSet {
+	.sources += [
+		./src/atom.c
+		./src/xkb-compat.c # renamed: compat.c -> xkb-compat.c
+		./src/context.c
+		./src/xkb-keymap.c # renamed: keymap.c -> xkb-keymap.c
+		./src/keysym.c
+		./src/keysym-utf.c
+		./src/state.c
+		./src/text.c
+		./src/context-priv.c
+		./src/keymap-priv.c
+		./src/utils.c
+		./src/utf8.c
+		./src/xkbcomp/action.c
+		./src/xkbcomp/ast-build.c
+		./src/xkbcomp/compat.c
+		./src/xkbcomp/expr.c
+		./src/xkbcomp/include.c
+		./src/xkbcomp/keycodes.c
+		./src/xkbcomp/keymap-dump.c
+		./src/xkbcomp/keymap.c
+		./src/xkbcomp/keywords.c
+		./src/xkbcomp/rules.c
+		./src/xkbcomp/scanner.c
+		./src/xkbcomp/symbols.c
+		./src/xkbcomp/types.c
+		./src/xkbcomp/vmod.c
+		./src/xkbcomp/xkbcomp.c
+		./src/xkbcomp/parser.c
+	]
+	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
+		.cflags += [ "-std=c99" "-w" ] # TODO cflags_c doesn't seem to work!
+	}
+	.defines += [
+		"DFLT_XKB_CONFIG_ROOT=\"/usr/share/X11/xkb\""
+		"DEFAULT_XKB_RULES=\"evdev\""
+		"DEFAULT_XKB_MODEL=\"pc105\""
+		"DEFAULT_XKB_LAYOUT=\"us\""
+	]
+	.configs += config
+}

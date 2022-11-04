@@ -1,0 +1,76 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	.defines += [ "QT_BUILD_XCB_PLUGIN" "XCB_USE_RENDER" "QT_NO_XKB" ]
+	if ^HAVE_FONTCONFIG {
+		.defines += "Q_FONTCONFIGDATABASE"
+	}
+	.lib_names += "xcb"
+	if ^HAVE_FONTCONFIG {
+		.lib_names += "fontconfig"
+	}
+}
+
+submod lib_xcb = ../../thirdparty/xcb
+submod lib_xkb = ../../thirdparty/xkbcommon
+
+let run_moc : Moc {
+	.sources += [
+		./qxcbclipboard.cpp
+		./qxcbmain.cpp
+		./qxcbconnection.h
+		./qxcbmime.h
+		./qxcbsystemtraytracker.h
+		./qxcbnativeinterface.h
+		../platformsupport/qunixeventdispatcher_qpa_p.h
+	]
+}
+
+let sources * : SourceSet {
+	.sources += [
+        ./qxcbclipboard.cpp
+        ./qxcbconnection.cpp
+        ./qxcbintegration.cpp
+        ./qxcbkeyboard.cpp
+        ./qxcbmime.cpp
+        ./qxcbdrag.cpp
+        ./qxcbscreen.cpp
+        ./qxcbwindow.cpp
+        ./qxcbbackingstore.cpp
+        ./qxcbwmsupport.cpp
+        ./qxcbnativeinterface.cpp
+        ./qxcbcursor.cpp
+        ./qxcbimage.cpp
+        ./qxcbxsettings.cpp
+        ./qxcbsystemtraytracker.cpp
+        
+        ./qxcbglintegration.cpp
+        ./qxcbglintegrationfactory.cpp
+        ./qxcbnativeinterfacehandler.cpp
+        
+        ./qxcbmain.cpp
+        
+        ../platformsupport/qgenericunixeventdispatcher.cpp
+        ../platformsupport/qgenericunixservices.cpp
+        ../platformsupport/qgenericunixthemes.cpp
+        ../platformsupport/qunixeventdispatcher.cpp
+		../platformsupport/qbasicfontdatabase.cpp
+	]
+	if ^HAVE_FONTCONFIG {
+		.sources += ../platformsupport/qfontconfigdatabase.cpp
+		.sources += ../platformsupport/qfontenginemultifontconfig.cpp
+	}
+
+	.include_dirs += [
+		.
+		../platformsupport
+		../../thirdparty/freetype/include
+	]
+	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
+		.cflags_cc += "-std=c++11"
+	}
+	.configs += [ ^_core_config ^_image_config config lib_xcb.config ]
+	.deps += [ run_moc lib_xcb.sources lib_xkb.sources ]
+	.include_dirs += build_dir()
+}

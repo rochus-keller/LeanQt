@@ -7,13 +7,15 @@ let lib_config : Config {
 	]
 }
 
-# submod xcb
+submod xcb
 
 let config * : Config {
 	.defines += [
 		"QT_NO_IMAGEFORMATPLUGIN"
 	]
-	# .configs += xcb.config
+	if target_os == `linux {
+		.configs += xcb.config
+	}
 }
 
 let err : Message {
@@ -21,6 +23,7 @@ let err : Message {
 }
 
 submod harfbuzz = ../thirdparty/harfbuzz
+submod freetype = ../thirdparty/freetype
 
 let sources* : SourceSet {
 	.sources += [
@@ -44,7 +47,7 @@ let sources* : SourceSet {
 		./qfont.cpp                       ./qplatformintegrationfactory.cpp
 		./qfontdatabase.cpp               ./qplatformintegrationplugin.cpp
 		./qfontengine.cpp                 ./qplatformmenu.cpp
-		# TODO ./qfontengine_ft.cpp              
+		./qfontengine_ft.cpp              
 		./qplatformnativeinterface.cpp
 		./qfontengineglyphcache.cpp       ./qplatformoffscreensurface.cpp
 		./qfontengine_qpf2.cpp            ./qplatformpixmap.cpp
@@ -122,10 +125,17 @@ let sources* : SourceSet {
 		.sources += ./qpixmap_win.cpp
 	}
 	
-	.configs += [ ^_core_config ^_image_config lib_config config /*xcb.config*/ ]
+	.configs += [ ^_core_config ^_image_config lib_config config ]
 	.include_dirs += build_dir() # for the embedded .moc files
 	.include_dirs += .. # thirdparty/harfbuzz
-	.deps += [ harfbuzz.sources /* xcb.sources */ ]
+	.include_dirs += .  # platform integrations
+	.include_dirs += ../thirdparty/freetype/include
+	.deps += harfbuzz.sources
+	if target_os == `linux {
+		.deps += [ xcb.sources freetype.sources ]
+		.configs += xcb.config
+		# TODO: in case of HAVE_PLUGIN should we switch to xcb plugin shared library or just stick with static platforms?
+	}
 }
 
 let run_moc : Moc {
@@ -157,7 +167,6 @@ let run_moc : Moc {
 		./qplatformthemeplugin.h
 		./qrasterwindow.h
 		./qscreen.h
-		#./qsessionmanager.h
 		./qshapedpixmapdndwindow_p.h
 		./qstylehints.h
 		./qsyntaxhighlighter.h

@@ -1,0 +1,64 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let sources* : SourceSet {
+	.sources += [
+		./src/autofit/afangles.c
+		./src/autofit/afdummy.c
+		./src/autofit/afglobal.c
+		./src/autofit/afhints.c
+		./src/autofit/aflatin.c
+		./src/autofit/afloader.c
+		./src/autofit/afmodule.c
+		./src/autofit/autofit.c
+		./src/base/ftbase.c
+		./src/base/ftbitmap.c
+		./src/base/ftbbox.c
+		./src/base/ftdebug.c
+		./src/base/ftglyph.c
+		./src/base/ftinit.c
+		./src/base/ftlcdfil.c
+		./src/base/ftmm.c
+		./src/base/ftsynth.c
+		./src/base/fttype1.c
+		./src/bdf/bdf.c
+		./src/cache/ftcache.c
+		./src/cff/cff.c
+		./src/cid/type1cid.c
+		./src/gzip/ftgzip.c
+		./src/lzw/ftlzw.c
+		./src/otvalid/otvalid.c
+		./src/otvalid/otvbase.c
+		./src/otvalid/otvcommn.c
+		./src/otvalid/otvgdef.c
+		./src/otvalid/otvgpos.c
+		./src/otvalid/otvgsub.c
+		./src/otvalid/otvjstf.c
+		./src/otvalid/otvmod.c
+		./src/pcf/pcf.c
+		./src/pfr/pfr.c
+		./src/psaux/psaux.c
+		./src/pshinter/pshinter.c
+		./src/psnames/psmodule.c
+		./src/raster/raster.c
+		./src/sfnt/sfnt.c
+		./src/smooth/smooth.c
+		./src/truetype/truetype.c
+		./src/type1/type1.c
+		./src/type42/type42.c
+		./src/winfonts/winfnt.c
+	]
+	if target_os == `win32 {
+		.sources += ./src/base/ftsystem.c
+	}else{
+		.sources += ./src/unix/ftsystem.c
+		.include_dirs += ./src/unix
+	}
+	
+	.include_dirs += [ ../zlib ../libpng ./include ]
+	
+	.configs += [ ^_core_config ]
+	
+	.defines += [ "FT2_BUILD_LIBRARY" "FT_CONFIG_OPTION_SYSTEM_ZLIB" "FT_CONFIG_OPTION_USE_PNG" "TT_CONFIG_OPTION_SUBPIXEL_HINTING" ]
+}
+

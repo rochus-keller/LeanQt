@@ -32,6 +32,16 @@
 #include "qguiapplication.h"
 #include "qdebug.h"
 
+#ifdef QT_NO_PLUGINS
+#if defined(Q_OS_LINUX)
+#include <xcb/qxcbintegration.h>
+#elif defined(Q_OS_WIN)
+// TODO
+#elif defined(Q_OS_MAC)
+// TODO
+#endif
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_PLUGINS
@@ -70,6 +80,13 @@ QPlatformIntegration *QPlatformIntegrationFactory::create(const QString &platfor
     Q_UNUSED(argc);
     Q_UNUSED(argv);
     Q_UNUSED(platformPluginPath);
+#if defined(Q_OS_LINUX)
+    return new QXcbIntegration(paramList, argc, argv);
+#elif defined(Q_OS_WIN)
+// TODO
+#elif defined(Q_OS_MAC)
+// TODO
+#endif
 #endif
     return 0;
 }
@@ -100,8 +117,15 @@ QStringList QPlatformIntegrationFactory::keys(const QString &platformPluginPath)
     list.append(loader()->keyMap().values());
     return list;
 #else
-    Q_UNUSED(platformPluginPath);
-    return QStringList();
+    QStringList keys;
+#if defined(Q_OS_LINUX)
+    keys << "xcb";
+#elif defined(Q_OS_WIN)
+// TODO
+#elif defined(Q_OS_MAC)
+// TODO
+#endif
+    return keys;
 #endif
 }
 

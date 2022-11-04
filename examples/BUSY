@@ -61,11 +61,12 @@ let transform* : Executable {
 	.sources += ./transform.cpp
 	.deps += ^libqtcore
 	if ^HAVE_GUI {
-		.deps += ^libqtgui
+		.deps += ^libqtgui;
+		.configs += ^gui_client_config	
 	} else {
-		.deps += ^libqtimage
+		.deps += ^libqtimage;
+		.configs += ^image_client_config
 	}
-	.configs += ^image_client_config
 }
 
 let analog_moc : Moc {

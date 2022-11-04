@@ -35,6 +35,9 @@ param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THRE
 param HAVE_IMAGE = false       # takes care that core is compiled with HAVE_GEOM and HAVE_DSTREAM support
 param HAVE_GUI = false		   # takes care that core is compiled with HAVE_IMAGE and HAVE_OBJECT
 
+param HAVE_FONTCONFIG = false  # Linux GUI option; use fontconfig to locate fonts; otherwise use the path provided via QT_QPA_FONTDIR
+							   # environment variable, or applicationDirPath() + "/fonts", or QStandardPaths::FontsLocation; requires -lfontconfig
+
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
 

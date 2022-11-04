@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
@@ -44,6 +44,7 @@
 #include <QGuiApplication>
 #include <QTimerEvent>
 #include <QTime>
+#include <QtDebug>
 
 #include "rasterwindow.h"
 
@@ -103,10 +104,19 @@ void AnalogClockWindow::render(QPainter *p)
 
 //! [9]
     p->setRenderHint(QPainter::Antialiasing);
+    
+	p->setPen(Qt::black);
+	p->setFont(QFont("Arial", 16));
+	
+	const int header = p->fontMetrics().height();
+	p->drawText(0,0,width(),header,Qt::AlignCenter,QTime::currentTime().toString());    
+    
+    const int h = qMax( height() - header, 0 );
+    
 //! [9] //! [10]
-    p->translate(width() / 2, height() / 2);
+    p->translate(width() / 2, (h+2*header) / 2);
 
-    int side = qMin(width(), height());
+    int side = qMin(width(), h);
     p->scale(side / 200.0, side / 200.0);
 //! [1] //! [10]
 
