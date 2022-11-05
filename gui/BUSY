@@ -8,6 +8,7 @@ let lib_config : Config {
 }
 
 submod xcb
+submod windows
 
 let config * : Config {
 	.defines += [
@@ -15,6 +16,8 @@ let config * : Config {
 	]
 	if target_os == `linux {
 		.configs += xcb.config
+	}else if target_os == `win32 {
+		.configs += windows.config
 	}
 }
 
@@ -135,6 +138,9 @@ let sources* : SourceSet {
 		.deps += [ xcb.sources freetype.sources ]
 		.configs += xcb.config
 		# TODO: in case of HAVE_PLUGIN should we switch to xcb plugin shared library or just stick with static platforms?
+	}else if target_os == `win32 {
+		.deps += windows.sources;
+		.configs += windows.config
 	}
 }
 
@@ -187,6 +193,7 @@ let run_moc : Moc {
 		./qtextformat.h
 		./qtouchdevice.h
 		./qdesktopservices.cpp
+		./qvalidator.h
 	]
 
 	if ^HAVE_PLUGINS {
@@ -196,7 +203,7 @@ let run_moc : Moc {
 		]
 	}
 
-	.defines += config.defines + ^_core_config.defines + "QT_NO_SESSIONMANAGER"
+	.defines += config.defines + ^_core_config.defines + "QT_NO_SESSIONMANAGER" + "QT_NO_TABLETEVENT"
 }
 
 let moc_sources * : SourceSet {

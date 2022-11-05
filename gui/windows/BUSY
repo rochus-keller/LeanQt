@@ -1,0 +1,61 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	.defines += [ "QT_BUILD_WINDOWS_PLUGIN" "QT_NO_DIRECTWRITE" "QT_NO_FREETYPE" ]
+	.lib_names += [ "winspool" "imm32" "winmm" "oleaut32" "shlwapi" ] # see also _core_linker_config
+	.ldflags += [ "/SUBSYSTEM:WINDOWS" "/DYNAMICBASE" "/NXCOMPAT" "/INCREMENTAL:NO" ]
+}
+
+let run_moc : Moc {
+	.sources += [
+		./main.cpp
+		./qwindowsdialoghelpers.cpp
+		./qwindowsinputcontext.h
+		./qwindowsgdinativeinterface.h
+		./qwindowsnativeinterface.h
+		../platformsupport/qwindowsguieventdispatcher_p.h
+	]
+}
+
+let sources * : SourceSet {
+	.sources += [
+		./main.cpp                           ./qwindowsintegration.cpp
+		./qwindowsbackingstore.cpp           ./qwindowsinternalmimedata.cpp
+		./qwindowsclipboard.cpp              ./qwindowskeymapper.cpp
+		./qwindowscontext.cpp                ./qwindowsmime.cpp
+		./qwindowscursor.cpp                 ./qwindowsmousehandler.cpp
+		./qwindowsdialoghelpers.cpp          ./qwindowsnativeimage.cpp
+		./qwindowsdrag.cpp                   ./qwindowsnativeinterface.cpp
+		#./qwindowseglcontext.cpp             
+		./qwindowsole.cpp
+		./qwindowsfontdatabase.cpp           #./qwindowsopengltester.cpp
+		#./qwindowsfontdatabase_ft.cpp        
+		./qwindowsscreen.cpp
+		./qwindowsfontengine.cpp             ./qwindowsservices.cpp
+		#./qwindowsfontenginedirectwrite.cpp  
+		#	./qwindowssessionmanager.cpp
+		./qwindowsgdiintegration.cpp         
+		#./qwindowstabletsupport.cpp
+		./qwindowsgdinativeinterface.cpp     ./qwindowstheme.cpp
+		#./qwindowsglcontext.cpp              
+		./qwindowswindow.cpp
+		./qwindowsinputcontext.cpp
+		
+		../platformsupport/qwindowsguieventdispatcher.cpp
+		#../platformsupport/qbasicfontdatabase.cpp
+		
+		./qtmain_win.cpp
+	]
+
+	.include_dirs += [
+		.
+		../platformsupport
+	]
+	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
+		#.cflags_cc += "-std=c++11"
+	}
+	.configs += [ ^_core_config ^_image_config config ]
+	.deps += [ run_moc ]
+	.include_dirs += build_dir()
+}

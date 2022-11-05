@@ -160,98 +160,11 @@
 
 #ifndef QT_NO_MOVIE
 
-#include "qmovie.h"
-#include "qimage.h"
-#include "qimagereader.h"
-#include "qpixmap.h"
-#include "qrect.h"
-#include "qdatetime.h"
-#include "qtimer.h"
-#include "qpair.h"
-#include "qmap.h"
-#include "qlist.h"
-#include "qbuffer.h"
-#include "qdir.h"
-#include "private/qobject_p.h"
-
-#define QMOVIE_INVALID_DELAY -1
+#include "qmovie_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QFrameInfo
-{
-public:
-    QPixmap pixmap;
-    int delay;
-    bool endMark;
-    inline QFrameInfo(bool endMark)
-        : pixmap(QPixmap()), delay(QMOVIE_INVALID_DELAY), endMark(endMark)
-    { }
 
-    inline QFrameInfo()
-        : pixmap(QPixmap()), delay(QMOVIE_INVALID_DELAY), endMark(false)
-    { }
-
-    inline QFrameInfo(const QPixmap &pixmap, int delay)
-        : pixmap(pixmap), delay(delay), endMark(false)
-    { }
-
-    inline bool isValid()
-    {
-        return endMark || !(pixmap.isNull() && (delay == QMOVIE_INVALID_DELAY));
-    }
-
-    inline bool isEndMarker()
-    { return endMark; }
-
-    static inline QFrameInfo endMarker()
-    { return QFrameInfo(true); }
-};
-
-class QMoviePrivate : public QObjectPrivate
-{
-    Q_DECLARE_PUBLIC(QMovie)
-
-public:
-    QMoviePrivate(QMovie *qq);
-    bool isDone();
-    bool next();
-    int speedAdjustedDelay(int delay) const;
-    bool isValid() const;
-    bool jumpToFrame(int frameNumber);
-    int frameCount() const;
-    bool jumpToNextFrame();
-    QFrameInfo infoForFrame(int frameNumber);
-    void reset();
-
-    inline void enterState(QMovie::MovieState newState) {
-        movieState = newState;
-        emit q_func()->stateChanged(newState);
-    }
-
-    // private slots
-    void _q_loadNextFrame();
-    void _q_loadNextFrame(bool starting);
-
-    QImageReader *reader;
-    int speed;
-    QMovie::MovieState movieState;
-    QRect frameRect;
-    QPixmap currentPixmap;
-    int currentFrameNumber;
-    int nextFrameNumber;
-    int greatestFrameNumber;
-    int nextDelay;
-    int playCounter;
-    qint64 initialDevicePos;
-    QMovie::CacheMode cacheMode;
-    bool haveReadAll;
-    bool isFirstIteration;
-    QMap<int, QFrameInfo> frameMap;
-    QString absoluteFilePath;
-
-    QTimer nextImageTimer;
-};
 
 /*! \internal
  */

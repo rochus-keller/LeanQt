@@ -40,7 +40,7 @@ let sources * : SourceSet {
 		./src/xkbcomp/parser.c
 	]
 	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
-		.cflags += [ "-std=c99" "-w" ] # TODO cflags_c doesn't seem to work!
+		.cflags_c += [ "-std=c99" "-w" ] 
 	}
 	.defines += [
 		"DFLT_XKB_CONFIG_ROOT=\"/usr/share/X11/xkb\""

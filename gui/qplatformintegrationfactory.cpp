@@ -36,7 +36,7 @@
 #if defined(Q_OS_LINUX)
 #include <xcb/qxcbintegration.h>
 #elif defined(Q_OS_WIN)
-// TODO
+#include <windows/qwindowsgdiintegration.h>
 #elif defined(Q_OS_MAC)
 // TODO
 #endif
@@ -83,7 +83,7 @@ QPlatformIntegration *QPlatformIntegrationFactory::create(const QString &platfor
 #if defined(Q_OS_LINUX)
     return new QXcbIntegration(paramList, argc, argv);
 #elif defined(Q_OS_WIN)
-// TODO
+    return new QWindowsGdiIntegration(paramList);
 #elif defined(Q_OS_MAC)
 // TODO
 #endif
@@ -121,7 +121,7 @@ QStringList QPlatformIntegrationFactory::keys(const QString &platformPluginPath)
 #if defined(Q_OS_LINUX)
     keys << "xcb";
 #elif defined(Q_OS_WIN)
-// TODO
+    keys << "windows";
 #elif defined(Q_OS_MAC)
 // TODO
 #endif

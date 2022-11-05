@@ -28,6 +28,15 @@ submod libjpeg = ../thirdparty/libjpeg
 submod libpng = ../thirdparty/libpng
 submod zlib = ../thirdparty/zlib
 
+let run_moc : Moc {
+	.sources += [
+		./qimageiohandler.h
+		./qmovie.h
+	]
+
+	.defines += config.defines 
+}
+
 let sources* : SourceSet {
 	.sources += [
 		./qimageiohandler.cpp
@@ -85,21 +94,8 @@ let sources* : SourceSet {
 		.deps += zlib.sources
 	}
 
-	.deps += [ libpng.sources libjpeg.sources ]
+	.deps += [ run_moc libpng.sources libjpeg.sources ]
 	.configs += [ ^_core_config lib_config config ]
 }
 
-let run_moc : Moc {
-	.sources += [
-		./qimageiohandler.h
-		./qmovie.h
-	]
-
-	.defines += config.defines 
-}
-
-let moc_sources * : SourceSet {
-	.configs += [ ^_core_config config lib_config ]
-	.deps += run_moc 
-} 
 

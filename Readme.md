@@ -47,7 +47,7 @@ The following features are available:
 - [x] QtNetwork
 - [x] QtConcurrent
 - [x] QImage, QImageReader/Writer (separated from QtGui)
-- [ ] QtGui (freetext & qpa backends pending)
+- [ ] QtGui (freetext & qpa mac backend pending)
 
 ### Long term plan
 

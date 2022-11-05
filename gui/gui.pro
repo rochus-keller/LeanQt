@@ -9,7 +9,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui . ..
+INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui . .. $$PWD/platformsupport
 
 DEFINES += QT_NO_PLUGINS QT_NO_IMAGEFORMATPLUGIN QT_BUILD_GUI_LIB
 
@@ -528,7 +528,43 @@ HEADERS += \
     ../core/qwineventnotifier.h \
     ../core/qxmlstream_p.h \
     ../core/qxmlstream.h \
-    ../core/qxmlutils_p.h
+    ../core/qxmlutils_p.h \
+    windows/array.h \
+    windows/qtwindows_additional.h \
+    windows/qtwindowsglobal.h \
+    windows/qwindowsbackingstore.h \
+    windows/qwindowsclipboard.h \
+    windows/qwindowscontext.h \
+    windows/qwindowscursor.h \
+    windows/qwindowsdialoghelpers.h \
+    windows/qwindowsdrag.h \
+    windows/qwindowseglcontext.h \
+    windows/qwindowsfontdatabase_ft.h \
+    windows/qwindowsfontdatabase.h \
+    windows/qwindowsfontengine.h \
+    windows/qwindowsfontenginedirectwrite.h \
+    windows/qwindowsgdiintegration.h \
+    windows/qwindowsgdinativeinterface.h \
+    windows/qwindowsglcontext.h \
+    windows/qwindowsinputcontext.h \
+    windows/qwindowsintegration.h \
+    windows/qwindowsinternalmimedata.h \
+    windows/qwindowskeymapper.h \
+    windows/qwindowsmime.h \
+    windows/qwindowsmousehandler.h \
+    windows/qwindowsnativeimage.h \
+    windows/qwindowsnativeinterface.h \
+    windows/qwindowsole.h \
+    windows/qwindowsopenglcontext.h \
+    windows/qwindowsopengltester.h \
+    windows/qwindowsscreen.h \
+    windows/qwindowsservices.h \
+    windows/qwindowssessionmanager.h \
+    windows/qwindowstabletsupport.h \
+    windows/qwindowstheme.h \
+    windows/qwindowsthreadpoolrunner.h \
+    windows/qwindowswindow.h \
+    platformsupport/qwindowsguieventdispatcher_p.h
 
 SOURCES += \
     qabstracttextdocumentlayout.cpp \
@@ -738,8 +774,39 @@ SOURCES += \
     platformsupport/qbasicfontdatabase.cpp \
     platformsupport/qgenericunixeventdispatcher.cpp \
     platformsupport/qgenericunixservices.cpp \
-    platformsupport/qgenericunixthemes.cpp
-
+    platformsupport/qgenericunixthemes.cpp \
+    windows/main.cpp \
+    windows/qwindowsbackingstore.cpp \
+    windows/qwindowsclipboard.cpp \
+    windows/qwindowscontext.cpp \
+    windows/qwindowscursor.cpp \
+    windows/qwindowsdialoghelpers.cpp \
+    windows/qwindowsdrag.cpp \
+    windows/qwindowseglcontext.cpp \
+    windows/qwindowsfontdatabase_ft.cpp \
+    windows/qwindowsfontdatabase.cpp \
+    windows/qwindowsfontengine.cpp \
+    windows/qwindowsfontenginedirectwrite.cpp \
+    windows/qwindowsgdiintegration.cpp \
+    windows/qwindowsgdinativeinterface.cpp \
+    windows/qwindowsglcontext.cpp \
+    windows/qwindowsinputcontext.cpp \
+    windows/qwindowsintegration.cpp \
+    windows/qwindowsinternalmimedata.cpp \
+    windows/qwindowskeymapper.cpp \
+    windows/qwindowsmime.cpp \
+    windows/qwindowsmousehandler.cpp \
+    windows/qwindowsnativeimage.cpp \
+    windows/qwindowsnativeinterface.cpp \
+    windows/qwindowsole.cpp \
+    windows/qwindowsopengltester.cpp \
+    windows/qwindowsscreen.cpp \
+    windows/qwindowsservices.cpp \
+    windows/qwindowssessionmanager.cpp \
+    windows/qwindowstabletsupport.cpp \
+    windows/qwindowstheme.cpp \
+    windows/qwindowswindow.cpp \
+    platformsupport/qwindowsguieventdispatcher.cpp
 
 
 

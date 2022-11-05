@@ -332,6 +332,6 @@ QString QDesktopServices::storageLocationImpl(QStandardPaths::StandardLocation t
 
 QT_END_NAMESPACE
 
-//#include "qdesktopservices.moc"
+#include "qdesktopservices.moc"
 
 #endif // QT_NO_DESKTOPSERVICES
