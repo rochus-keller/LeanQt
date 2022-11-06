@@ -9,6 +9,7 @@ let lib_config : Config {
 
 submod xcb
 submod windows
+submod cocoa
 
 let config * : Config {
 	.defines += [
@@ -18,6 +19,8 @@ let config * : Config {
 		.configs += xcb.config
 	}else if target_os == `win32 {
 		.configs += windows.config
+	}else if target_os == `macos {
+		.configs += cocoa.config
 	}
 }
 
@@ -141,6 +144,9 @@ let sources* : SourceSet {
 	}else if target_os == `win32 {
 		.deps += windows.sources;
 		.configs += windows.config
+	}else if target_os == `macos {
+		.deps += cocoa.sources;
+		.configs += cocoa.config
 	}
 }
 

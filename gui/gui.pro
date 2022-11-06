@@ -11,7 +11,7 @@ TEMPLATE = app
 
 INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui . .. $$PWD/platformsupport
 
-DEFINES += QT_NO_PLUGINS QT_NO_IMAGEFORMATPLUGIN QT_BUILD_GUI_LIB
+DEFINES += QT_NO_PLUGINS QT_NO_IMAGEFORMATPLUGIN QT_BUILD_GUI_LIB QT_NO_WIDGETS
 
 HEADERS += \
     qabstracttextdocumentlayout_p.h \
@@ -564,7 +564,56 @@ HEADERS += \
     windows/qwindowstheme.h \
     windows/qwindowsthreadpoolrunner.h \
     windows/qwindowswindow.h \
-    platformsupport/qwindowsguieventdispatcher_p.h
+    platformsupport/qwindowsguieventdispatcher_p.h \
+    cocoa/messages.h \
+    cocoa/qcocoaaccessibility.h \
+    cocoa/qcocoaaccessibilityelement.h \
+    cocoa/qcocoaapplication.h \
+    cocoa/qcocoaapplicationdelegate.h \
+    cocoa/qcocoabackingstore.h \
+    cocoa/qcocoaclipboard.h \
+    cocoa/qcocoacolordialoghelper.h \
+    cocoa/qcocoacursor.h \
+    cocoa/qcocoadrag.h \
+    cocoa/qcocoaeventdispatcher.h \
+    cocoa/qcocoafiledialoghelper.h \
+    cocoa/qcocoafontdialoghelper.h \
+    cocoa/qcocoaglcontext.h \
+    cocoa/qcocoahelpers.h \
+    cocoa/qcocoainputcontext.h \
+    cocoa/qcocoaintegration.h \
+    cocoa/qcocoaintrospection.h \
+    cocoa/qcocoakeymapper.h \
+    cocoa/qcocoamenu.h \
+    cocoa/qcocoamenubar.h \
+    cocoa/qcocoamenuitem.h \
+    cocoa/qcocoamenuloader.h \
+    cocoa/qcocoamimetypes.h \
+    cocoa/qcocoanativeinterface.h \
+    cocoa/qcocoaprintdevice.h \
+    cocoa/qcocoaprintersupport.h \
+    cocoa/qcocoaservices.h \
+    cocoa/qcocoasystemsettings.h \
+    cocoa/qcocoasystemtrayicon.h \
+    cocoa/qcocoatheme.h \
+    cocoa/qcocoawindow.h \
+    cocoa/qmacclipboard.h \
+    cocoa/qmacdefines_mac.h \
+    cocoa/qmultitouch_mac_p.h \
+    cocoa/qnsview.h \
+    cocoa/qnswindowdelegate.h \
+    cocoa/qpaintengine_mac_p.h \
+    cocoa/qprintengine_mac_p.h \
+    cocoa/qt_mac_p.h \
+    ../mime/qmimedatabase_p.h \
+    ../mime/qmimedatabase.h \
+    ../mime/qmimeglobpattern_p.h \
+    ../mime/qmimemagicrule_p.h \
+    ../mime/qmimemagicrulematcher_p.h \
+    ../mime/qmimeprovider_p.h \
+    ../mime/qmimetype_p.h \
+    ../mime/qmimetype.h \
+    ../mime/qmimetypeparser_p.h
 
 SOURCES += \
     qabstracttextdocumentlayout.cpp \
@@ -806,7 +855,56 @@ SOURCES += \
     windows/qwindowstabletsupport.cpp \
     windows/qwindowstheme.cpp \
     windows/qwindowswindow.cpp \
-    platformsupport/qwindowsguieventdispatcher.cpp
+    platformsupport/qwindowsguieventdispatcher.cpp \
+    cocoa/messages.cpp \
+    ../mime/qmimedatabase.cpp \
+    ../mime/qmimeglobpattern.cpp \
+    ../mime/qmimemagicrule.cpp \
+    ../mime/qmimemagicrulematcher.cpp \
+    ../mime/qmimeprovider.cpp \
+    ../mime/qmimetype.cpp \
+    ../mime/qmimetypeparser.cpp
+
+OBJECTIVE_SOURCES += \
+    cocoa/main.mm \
+    #cocoa/qcocoaaccessibility.mm \
+    #cocoa/qcocoaaccessibilityelement.mm \
+    cocoa/qcocoaapplication.mm \
+    cocoa/qcocoaapplicationdelegate.mm \
+    cocoa/qcocoabackingstore.mm \
+    cocoa/qcocoaclipboard.mm \
+    cocoa/qcocoacolordialoghelper.mm \
+    cocoa/qcocoacursor.mm \
+    cocoa/qcocoadrag.mm \
+    cocoa/qcocoaeventdispatcher.mm \
+    cocoa/qcocoafiledialoghelper.mm \
+    cocoa/qcocoafontdialoghelper.mm \
+    #cocoa/qcocoaglcontext.mm \
+    cocoa/qcocoahelpers.mm \
+    cocoa/qcocoainputcontext.mm \
+    cocoa/qcocoaintegration.mm \
+    cocoa/qcocoaintrospection.mm \
+    cocoa/qcocoakeymapper.mm \
+    cocoa/qcocoamenu.mm \
+    cocoa/qcocoamenubar.mm \
+    cocoa/qcocoamenuitem.mm \
+    cocoa/qcocoamenuloader.mm \
+    cocoa/qcocoamimetypes.mm \
+    cocoa/qcocoanativeinterface.mm \
+    cocoa/qcocoaprintdevice.mm \
+    #cocoa/qcocoaprintersupport.mm \
+    cocoa/qcocoaservices.mm \
+    cocoa/qcocoasystemsettings.mm \
+    cocoa/qcocoasystemtrayicon.mm \
+    cocoa/qcocoatheme.mm \
+    cocoa/qcocoawindow.mm \
+    cocoa/qmacclipboard.mm \
+    cocoa/qmultitouch_mac.mm \
+    cocoa/qnsview.mm \
+    #cocoa/qnsviewaccessibility.mm \
+    cocoa/qnswindowdelegate.mm \
+    cocoa/qpaintengine_mac.mm \
+    cocoa/qprintengine_mac.mm
 
 
 

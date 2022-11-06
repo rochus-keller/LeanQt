@@ -385,6 +385,7 @@ let sources* : SourceSet {
             ./qcore_mac.cpp
             ./qcore_mac_objc.mm
  	     ./qcore_unix.cpp
+	     ./qbytearray_mac.mm
        ]
     }
     

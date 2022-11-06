@@ -43,7 +43,7 @@
 static bool initResources()
 {
 #if !defined (Q_OS_WINCE) && !defined (QT_NO_IMAGEFORMAT_PNG)
-    // TODO Q_INIT_RESOURCE(cursors);
+    Q_INIT_RESOURCE(cursors);
 #endif
     return true;
 }

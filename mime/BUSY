@@ -1,0 +1,22 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_GUI_LIB"
+	]
+}
+
+# TODO consider the option to integrate freedesktop.org.xml by rcc
+
+let sources* : SourceSet {
+	.sources += [
+		./qmimedatabase.cpp     ./qmimemagicrulematcher.cpp  ./qmimetypeparser.cpp
+		./qmimeglobpattern.cpp  ./qmimeprovider.cpp
+		./qmimemagicrule.cpp    ./qmimetype.cpp
+	]
+				
+	.configs += [ ^_core_config lib_config ]
+}
+
+

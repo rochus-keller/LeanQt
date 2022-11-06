@@ -12,6 +12,7 @@ param HAVE_CMDLINE = false     # include QCommandLineParser and QCommandLineOpti
 param HAVE_PROCESS = false     # include QProcess
 param HAVE_SHAREDMEM = false   # include QSharedMemory and QSystemSemaphore
 param HAVE_ZLIB = false        # include qCompress
+param HAVE_MIME = false		   # include QMimeType and QMimeDatabase
 
 param HAVE_THREADS = false     # include QThread and friends
 param HAVE_FILEIO = false      # include QFile, QFileInfo, QDir, QSettings etc. 
@@ -45,6 +46,7 @@ if HAVE_CORE_ALL {
 	HAVE_GEOM = true; HAVE_JSON = true; HAVE_XMLSTREAM = true; HAVE_URL = true; HAVE_DSTREAM = true
 	HAVE_FILEIO = true; HAVE_COREAPP = true; HAVE_OBJECT = true; HAVE_CMDLINE = true; HAVE_THREADS = true
 	HAVE_LIBRARY = true; HAVE_PROCESS = true; HAVE_SHAREDMEM = true; HAVE_PLUGINS = true; HAVE_ZLIB = true
+	HAVE_MIME = true
 }
 
 if HAVE_NET_ALL {
@@ -78,6 +80,11 @@ if HAVE_GUI && !HAVE_FILEIO {
 if HAVE_GUI && !HAVE_URL {
 	message("enabling HAVE_URL required by HAVE_GUI")
 	HAVE_URL = true
+}
+
+if HAVE_GUI && (host_os == `macos) && !HAVE_MIME {
+	message("enabling HAVE_MIME required by HAVE_GUI on macOS")
+	HAVE_MIME = true
 }
 
 if HAVE_IMAGE && !HAVE_DSTREAM {
@@ -268,10 +275,15 @@ let rcc * = tools.rcc.rcc
 let moc * = tools.moc.moc
 
 ######################################################################
+
+submod mime
 let core_sources * : Group {
 	.deps += _core_sources
 	if HAVE_OBJECT {
 		.deps += [ moc core.moc_sources ]
+	}
+	if HAVE_MIME {
+		.deps += mime.sources
 	}
 }
 
@@ -281,8 +293,11 @@ let net_sources * : Group {
 }
 
 let gui_sources * : Group {
+	if (target_os == `macos) || (target_os == `win32) {
+		.deps += rcc
+	}
 	.deps += [ moc gui.moc_sources ] 
-	.deps += _gui_sources;
+	.deps += _gui_sources
 }
 
 ######################################################################
@@ -389,7 +404,7 @@ let build_examples ! : Copy {
 		.deps += examples.transform
 	}
 	if HAVE_GUI {
-		.deps += examples.analogclock
+		.deps += examples.clock
 	}
 	.outputs += ./{{source_file_part}}
 }

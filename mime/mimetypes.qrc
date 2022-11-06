@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/qt-project.org/qmime">
+        <file>freedesktop.org.xml</file>
+    </qresource>
+</RCC>

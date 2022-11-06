@@ -16,7 +16,7 @@ The following features are available:
 
 - bytearrays, strings, unicode
 - data compression
-- localization
+- localization, mime types
 - collections, implicit sharing
 - date/time, time zones
 - variants/metatypes
@@ -39,6 +39,8 @@ The following features are available:
 - async and sync networking
 - map/reduce, filter/reduce, async computation
 - image handling, format conversion
+- window handling, events, 2D bitmap and vector graphics, fonts, rich text
+- pdf and odf writer 
 
 ### Planned or work-in-progress features
 
@@ -47,14 +49,15 @@ The following features are available:
 - [x] QtNetwork
 - [x] QtConcurrent
 - [x] QImage, QImageReader/Writer (separated from QtGui)
-- [ ] QtGui (freetext & qpa mac backend pending)
+- [x] mimetypes
+- [x] QtGui (tested on Linux x86, Win32 x86 & x64, Mac x64 & M1)
 
 ### Long term plan
 
 - [ ] QtWidgets
-- [ ] mimetypes
 - [ ] printing
 - [ ] SIMD support
+- [ ] Linux framebuffer platform
 
 ### No support planned
 
@@ -74,6 +77,7 @@ The following features are available:
 - opengl, direct2d, directfb
 - qml
 - accessibility (requires dbus)
+- wacom tablets
 - all not mentioned add-ons 
 - ios, winrt, wince, android, blackberry, nacl, vxworks, haiku
 

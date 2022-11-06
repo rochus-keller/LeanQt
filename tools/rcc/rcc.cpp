@@ -31,6 +31,8 @@
 **
 ****************************************************************************/
 
+#undef QT_NO_XMLSTREAM
+
 #include "rcc.h"
 
 #include <qbytearray.h>

@@ -18,6 +18,10 @@ let run_moc : Moc {
 	]
 }
 
+let run_rcc : Rcc {
+	.sources += ./cursors.qrc
+}
+
 let sources * : SourceSet {
 	.sources += [
 		./main.cpp                           ./qwindowsintegration.cpp
@@ -52,10 +56,7 @@ let sources * : SourceSet {
 		.
 		../platformsupport
 	]
-	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
-		#.cflags_cc += "-std=c++11"
-	}
 	.configs += [ ^_core_config ^_image_config config ]
-	.deps += [ run_moc ]
+	.deps += [ run_rcc run_moc ]
 	.include_dirs += build_dir()
 }

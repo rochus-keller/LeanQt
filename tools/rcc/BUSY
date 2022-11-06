@@ -10,7 +10,8 @@ let rcc * : Executable {
 		./main.cpp
 		./rcc.cpp
 	]
-	if ^HAVE_SHARED && ( target_toolchain == `msvc ) {
+	if ^HAVE_OBJECT || (^HAVE_SHARED && ( target_toolchain == `msvc )) {
+		# use this with OBJECT because otherwise we have issues with missing moced objects
 		.deps += ^bootstrap.sources;
 		.configs += [ ^bootstrap.config ^_core_linker_config ]
 		.sources += [

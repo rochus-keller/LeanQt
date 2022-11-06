@@ -69,13 +69,13 @@ let transform* : Executable {
 	}
 }
 
-let analog_moc : Moc {
+let clock_moc : Moc {
 	.sources += ./rasterwindow.h
 }
 
-let analogclock* : Executable {
-	.sources += [ ./rasterwindow.cpp ./analogclock.cpp ]
-	.deps += [ ^libqtcore ^libqtgui analog_moc ]
+let clock* : Executable {
+	.sources += [ ./rasterwindow.cpp ./clock.cpp ]
+	.deps += [ ^libqtcore ^libqtgui clock_moc ]
 	.configs += ^gui_client_config	
 }
 

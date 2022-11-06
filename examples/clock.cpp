@@ -67,7 +67,7 @@ private:
 //! [6]
 AnalogClockWindow::AnalogClockWindow()
 {
-    setTitle("Analog Clock");
+    setTitle("Qt Gui Clock");
     resize(200, 200);
 
     m_timerId = startTimer(1000);

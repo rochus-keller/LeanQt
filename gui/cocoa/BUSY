@@ -1,0 +1,66 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+	.defines += [ "QT_BUILD_COCOA_PLUGIN" "QT_NO_WIDGETS" "QT_NO_FREETYPE" "QT_NO_PRINTER" ]
+	.frameworks += [ "Cocoa" "Carbon" ] # TODO -lcups
+	.ldflags += [ ]
+}
+
+let run_moc : Moc {
+	.sources += [
+		./main.mm
+		./qcocoaclipboard.h
+		./qcocoaeventdispatcher.h
+		./qcocoainputcontext.h
+		./qcocoamenubar.h
+		./qcocoanativeinterface.h
+	]
+}
+
+let run_rcc : Rcc {
+	.sources += ./qcocoaresources.qrc
+}
+
+let sources * : SourceSet {
+	.sources += [
+		./messages.cpp
+		./main.mm                        ./qcocoamenuitem.mm
+		#./qcocoaaccessibilityelement.mm  
+		./qcocoamenuloader.mm
+		#./qcocoaaccessibility.mm         
+		./qcocoamenu.mm
+		./qcocoaapplicationdelegate.mm   ./qcocoamimetypes.mm
+		./qcocoaapplication.mm           ./qcocoanativeinterface.mm
+		./qcocoabackingstore.mm          #./qcocoaprintdevice.mm
+		./qcocoaclipboard.mm             #./qcocoaprintersupport.mm
+		./qcocoacolordialoghelper.mm     ./qcocoaservices.mm
+		./qcocoacursor.mm                ./qcocoasystemsettings.mm
+		./qcocoadrag.mm                  ./qcocoasystemtrayicon.mm
+		./qcocoaeventdispatcher.mm       ./qcocoatheme.mm
+		./qcocoafiledialoghelper.mm      ./qcocoawindow.mm
+		./qcocoafontdialoghelper.mm      ./qmacclipboard.mm
+		#./qcocoaglcontext.mm             
+		./qmultitouch_mac.mm
+		./qcocoahelpers.mm               #./qnsviewaccessibility.mm
+		./qcocoainputcontext.mm          ./qnsview.mm
+		./qcocoaintegration.mm           ./qnswindowdelegate.mm
+		./qcocoaintrospection.mm         ./qpaintengine_mac.mm
+		./qcocoakeymapper.mm             #./qprintengine_mac.mm
+		./qcocoamenubar.mm
+
+		../platformsupport/qfontengine_coretext.mm
+		../platformsupport/qpaintengine_mac.mm
+		../platformsupport/qcoretextfontdatabase.mm
+		../platformsupport/qmacmime.mm
+		#../platformsupport/cglconvenience.mm
+	]
+
+	.include_dirs += [
+		.
+		../platformsupport
+	]
+	.configs += [ ^_core_config ^_image_config config ]
+	.deps += [ run_moc run_rcc ]
+	.include_dirs += build_dir()
+}
