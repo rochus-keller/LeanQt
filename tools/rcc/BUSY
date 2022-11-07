@@ -34,6 +34,7 @@ let rcc * : Executable {
 			]
 		}
 	}
+	.defines += "QT_FORCE_XMLSTREAM"
 	.include_dirs += .
 	rcc_path = build_dir() + ./rcc
 }

@@ -25,7 +25,7 @@
 
 #include "QtCore/qxmlstream.h"
 
-#ifndef QT_NO_XMLSTREAM
+#if !defined(QT_NO_XMLSTREAM) || defined(QT_FORCE_XMLSTREAM)
 
 #include "qxmlutils_p.h"
 #include <qdebug.h>
@@ -187,7 +187,7 @@ QString QXmlStreamEntityResolver::resolveUndeclaredEntity(const QString &/*name*
     return QString();
 }
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined(QT_NO_XMLSTREAMREADER) || defined(QT_FORCE_XMLSTREAM)
 
 QString QXmlStreamReaderPrivate::resolveUndeclaredEntity(const QString &name)
 {
@@ -765,7 +765,7 @@ QXmlStreamPrivateTagStack::QXmlStreamPrivateTagStack()
     initialTagStackStringStorageSize = tagStackStringStorageSize;
 }
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined QT_NO_XMLSTREAMREADER || defined(QT_FORCE_XMLSTREAM)
 
 QXmlStreamReaderPrivate::QXmlStreamReaderPrivate(QXmlStreamReader *q)
     :q_ptr(q)
@@ -2762,7 +2762,7 @@ void QXmlStreamAttributes::append(const QString &qualifiedName, const QString &v
     append(QXmlStreamAttribute(qualifiedName, value));
 }
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined QT_NO_XMLSTREAMREADER || defined(QT_FORCE_XMLSTREAM)
 
 /*! \fn bool QXmlStreamReader::isStartDocument() const
   Returns \c true if tokenType() equals \l StartDocument; otherwise returns \c false.
@@ -2938,7 +2938,7 @@ QStringRef QXmlStreamReader::documentEncoding() const
 
 */
 
-#ifndef QT_NO_XMLSTREAMWRITER
+#if !defined QT_NO_XMLSTREAMWRITER || defined(QT_FORCE_XMLSTREAM)
 
 class QXmlStreamWriterPrivate : public QXmlStreamPrivateTagStack {
     QXmlStreamWriter *q_ptr;
@@ -3867,7 +3867,7 @@ void QXmlStreamWriterPrivate::writeStartElement(const QString &namespaceUri, con
     tag.namespaceDeclarationsSize = lastNamespaceDeclaration;
 }
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined QT_NO_XMLSTREAMREADER || defined(QT_FORCE_XMLSTREAM)
 /*!  Writes the current state of the \a reader. All possible valid
   states are supported.
 

@@ -36,7 +36,7 @@
 
 #include <QtCore/qiodevice.h>
 
-#ifndef QT_NO_XMLSTREAM
+#if !defined(QT_NO_XMLSTREAM) || defined(QT_FORCE_XMLSTREAM)
 
 #include <QtCore/qstring.h>
 #include <QtCore/qvector.h>
@@ -259,7 +259,7 @@ public:
     virtual QString resolveUndeclaredEntity(const QString &name);
 };
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined(QT_NO_XMLSTREAMREADER) || defined(QT_FORCE_XMLSTREAM)
 class Q_CORE_EXPORT QXmlStreamReader {
     QDOC_PROPERTY(bool namespaceProcessing READ namespaceProcessing WRITE setNamespaceProcessing)
 public:
@@ -381,7 +381,7 @@ private:
 };
 #endif // QT_NO_XMLSTREAMREADER
 
-#ifndef QT_NO_XMLSTREAMWRITER
+#if !defined(QT_NO_XMLSTREAMWRITER) || defined(QT_FORCE_XMLSTREAM)
 
 class QXmlStreamWriterPrivate;
 
@@ -442,7 +442,7 @@ public:
     void writeStartElement(const QString &qualifiedName);
     void writeStartElement(const QString &namespaceUri, const QString &name);
 
-#ifndef QT_NO_XMLSTREAMREADER
+#if !defined(QT_NO_XMLSTREAMREADER) || defined(QT_FORCE_XMLSTREAM)
     void writeCurrentToken(const QXmlStreamReader &reader);
 #endif
 
