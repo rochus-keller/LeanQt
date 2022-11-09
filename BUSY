@@ -46,7 +46,6 @@ if HAVE_CORE_ALL {
 	HAVE_GEOM = true; HAVE_JSON = true; HAVE_XMLSTREAM = true; HAVE_URL = true; HAVE_DSTREAM = true
 	HAVE_FILEIO = true; HAVE_COREAPP = true; HAVE_OBJECT = true; HAVE_CMDLINE = true; HAVE_THREADS = true
 	HAVE_LIBRARY = true; HAVE_PROCESS = true; HAVE_SHAREDMEM = true; HAVE_PLUGINS = true; HAVE_ZLIB = true
-	HAVE_MIME = true
 }
 
 if HAVE_NET_ALL {
@@ -203,12 +202,12 @@ let core_client_config * : Config {
 }
 
 ######################################################################
-submod xml
+submod xml else ./missing.busy
 
 let xml_sources * = xml.sources
 
 ######################################################################
-submod net
+submod net else ./missing.busy
 
 let _net_sources = net.sources
 
@@ -231,7 +230,7 @@ let net_client_config * : Config {
 }
 
 ######################################################################
-submod concurrent
+submod concurrent else ./missing.busy
 
 let concurrent_sources = concurrent.sources
 
@@ -243,7 +242,7 @@ let concurrent_client_config * : Config {
 }
 
 ######################################################################
-submod image
+submod image else ./missing.busy
 
 let image_sources * = image.sources
 
@@ -257,7 +256,7 @@ let image_client_config * : Config {
 }
 
 ######################################################################
-submod gui
+submod gui else ./missing.busy
 
 let _gui_sources * = gui.sources
 
@@ -276,7 +275,7 @@ let moc * = tools.moc.moc
 
 ######################################################################
 
-submod mime
+submod mime else ./missing.busy
 let core_sources * : Group {
 	.deps += _core_sources
 	if HAVE_OBJECT {
@@ -395,7 +394,7 @@ let build_examples ! : Copy {
 		.deps += examples.dnslookup
 	}
 	if HAVE_CONCURRENT {
-		.deps += examples.concurrent
+		.deps += examples.runner
 	}
 	if HAVE_NETACCESS && HAVE_FILEIO {
 		.deps += examples.download

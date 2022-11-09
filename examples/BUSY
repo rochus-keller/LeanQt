@@ -40,8 +40,8 @@ let dnslookup* : Executable {
 	.configs += ^net_client_config
 }
 
-let concurrent* : Executable {
-	.sources += ./concurrent.cpp
+let runner* : Executable {
+	.sources += ./runner.cpp
 	.deps += [ ^libqtcore ^libqtconcurrent ]
 	.configs += ^concurrent_client_config
 }

@@ -98,7 +98,7 @@ let config * : Config {
     }
 }
 
-submod zlib = ../thirdparty/zlib
+submod zlib = ../thirdparty/zlib else ../missing.busy
 
 let sources* : SourceSet {
 	.sources += [

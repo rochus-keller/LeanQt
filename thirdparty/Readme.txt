@@ -1,8 +1,9 @@
 In general source files only used by a specific HAVE_* option can be deleted if this option is 
 not used; but keep in mind that certain options enable other options; see the root BUSY file
 for more information.
-In BUSY modules such as e.g. zlib the .c and .h files (but not the BUSY file) can be 
-deleted, if the option is not used.
+
+Directories such as image, gui, freetype, harfbuz or libpng may be deleted, if the corresponding 
+BUSY module is not used. 
 
 ### Things required by core
 

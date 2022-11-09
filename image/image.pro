@@ -52,7 +52,11 @@ HEADERS += \
     qvectorpath_p.h \
     qxbmhandler_p.h \
     qxpmhandler_p.h \
-    qdrawhelper_neon_asm.S
+    qdrawhelper_neon_asm.S \
+    qblendfunctions_p.h \
+    qmath_p.h \
+    qmovie_p.h \
+    qmovie.h
 
 SOURCES += \
     qbezier.cpp \
@@ -95,7 +99,9 @@ SOURCES += \
     qtransform.cpp \
     qvectorpath.cpp \
     qxbmhandler.cpp \
-    qxpmhandler.cpp
+    qxpmhandler.cpp \
+    qblendfunctions.cpp \
+    qmovie.cpp
 
 
 

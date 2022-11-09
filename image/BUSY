@@ -31,8 +31,11 @@ submod zlib = ../thirdparty/zlib
 let run_moc : Moc {
 	.sources += [
 		./qimageiohandler.h
-		./qmovie.h
 	]
+
+	if ^HAVE_GUI {
+		.sources += ./qmovie.h
+	}
 
 	.defines += config.defines 
 }
@@ -79,8 +82,11 @@ let sources* : SourceSet {
 		./qimage_avx2.cpp         
 		./qimage_neon.cpp       
 		./qblendfunctions.cpp
-		./qmovie.cpp
 	]
+	
+	if ^HAVE_GUI {
+		.sources += ./qmovie.cpp
+	}
 		
 	if ^HAVE_DSTREAM {
 		.sources += ./qbmphandler.cpp
@@ -93,8 +99,12 @@ let sources* : SourceSet {
 	if !^HAVE_ZLIB { # if zlib was not integrated in core have it here
 		.deps += zlib.sources
 	}
+	
+	if ^HAVE_OBJECT {
+		.deps += run_moc
+	}
 
-	.deps += [ run_moc libpng.sources libjpeg.sources ]
+	.deps += [ libpng.sources libjpeg.sources ]
 	.configs += [ ^_core_config lib_config config ]
 }
 

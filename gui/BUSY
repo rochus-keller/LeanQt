@@ -7,9 +7,9 @@ let lib_config : Config {
 	]
 }
 
-submod xcb
-submod windows
-submod cocoa
+submod xcb  else ../missing.busy
+submod windows else ../missing.busy
+submod cocoa else ../missing.busy
 
 let config * : Config {
 	.defines += [
@@ -29,7 +29,7 @@ let err : Message {
 }
 
 submod harfbuzz = ../thirdparty/harfbuzz
-submod freetype = ../thirdparty/freetype
+submod freetype = ../thirdparty/freetype else ../missing.busy
 
 let sources* : SourceSet {
 	.sources += [

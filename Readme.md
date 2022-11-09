@@ -6,7 +6,12 @@ My primary motivation for LeanQt was to make my Oberon compiler (and also the ID
 
 Unfortunately, there has been a certain proliferation over the years where Qt has been bloated with all sorts of features with questionable value. The standard binary installation of Qt swallows several gigabytes and requires a login to a commercial company server, which discourages many people. The non-essential features make the build more complicated (higher probability of missing dependencies or incompatiblities). The now initiated development with Qt 6 makes higher demands on compiler and system, and follows a development that I cannot make sense of. For applications using only the non-gui part of Qt, or only basic GUI features, these are significant impediments. 
 
-For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available under both LGPL v2.1 and v3. Instead of qmake the BUSY build system (see https://github.com/rochus-keller/BUSY) is used, which was one of the reasons I implemented it. LeanQt has a different source tree structure compared to the original Qt toolkit; a lot of the original subdirectories (e.g. mkspecs, qmake) are no longer required; there are no longer separate subdirectories under corelib since each was depending on every other anyway. I also added additional configuration options so it is possible to use a minimal version even without the file engine and core application (see the BUSY file in the root for more information); many changes were necessary to the original source code for this, but the API is mostly the same and thus the original Qt documentation is still valid.
+For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available under both LGPL v2.1 and v3. Instead of qmake the BUSY build system (see https://github.com/rochus-keller/BUSY) is used, which was one of the reasons I implemented it. LeanQt has a different source tree structure compared to the original Qt toolkit; a lot of the original subdirectories (e.g. mkspecs, qmake) are no longer required; there are no longer separate subdirectories under corelib or gui since each was depending on every other anyway. I also added additional configuration options so it is possible to use a minimal version even without the file engine and core application (see the BUSY file in the root for more information); many changes were necessary to the original source code for this, but the API is mostly the same and thus the original Qt documentation is still valid.
+
+It is not necessary to deploy the whole source tree; if an application doesn't e.g. require image or gui support, the corresponding source code
+directories can be deleted. BUSY has a fallback mechanism for the case when a module is not present; if e.g. the image or net directories are deleted,
+BUSY loads the "missing.busy" file instead, which acts as a placeholder for the missing modules, and generates a build time error if an application 
+want's to use them anyway; see also the thirdparty/Readme.txt file for potentially removable directories.
 
 ### State of development
 
@@ -80,6 +85,10 @@ The following features are available:
 - wacom tablets
 - all not mentioned add-ons 
 - ios, winrt, wince, android, blackberry, nacl, vxworks, haiku
+
+### Other differences to original Qt
+
+- QMimeData and QTextBoundaryFinder belong to the gui module, not the core module
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 

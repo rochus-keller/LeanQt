@@ -1,4 +1,0 @@
-
-These classes are now in QtGui, no longer in QtCore:
-QMimeData
-QTextBoundaryFinder

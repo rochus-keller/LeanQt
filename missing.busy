@@ -1,0 +1,16 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let config * : Config {
+}
+
+let err : Message {
+	.text = "cannot build module " + modname() + " because the source files are missing; download them to use this module"
+}
+
+let sources* : SourceSet {
+	.deps += err
+}
+
+let moc_sources* : SourceSet {
+}
