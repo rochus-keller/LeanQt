@@ -48,5 +48,5 @@ let sources * : SourceSet {
 		"DEFAULT_XKB_MODEL=\"pc105\""
 		"DEFAULT_XKB_LAYOUT=\"us\""
 	]
-	.configs += config
+	.configs += [ ^_core_config config ]
 }

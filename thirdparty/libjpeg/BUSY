@@ -12,4 +12,5 @@ let sources * : SourceSet {
 		./jcdctmgr.c  ./jcprepct.c  ./jdcoefct.c  ./jdmerge.c   ./jidctflt.c
 		./jchuff.c    ./jcsample.c  ./jdcolor.c   ./jdpostct.c  ./jidctfst.c
 	]
+	.configs += ^_core_config
 }

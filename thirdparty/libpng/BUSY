@@ -9,4 +9,5 @@ let sources * : SourceSet {
 
 	]
 	.include_dirs += [ ../zlib ../../includes ]
+	.configs += ^_core_config
 }

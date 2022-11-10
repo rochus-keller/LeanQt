@@ -28,5 +28,5 @@ let sources * : SourceSet {
 		./libxcb/xkb.c
 	]
 	.defines += "XCB_USE_RENDER"
-	.configs += config
+	.configs += [ ^_core_config config ]
 }

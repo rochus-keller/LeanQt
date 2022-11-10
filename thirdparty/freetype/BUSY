@@ -3,13 +3,13 @@
 
 let sources* : SourceSet {
 	.sources += [
-		./src/autofit/afangles.c
-		./src/autofit/afdummy.c
-		./src/autofit/afglobal.c
-		./src/autofit/afhints.c
-		./src/autofit/aflatin.c
-		./src/autofit/afloader.c
-		./src/autofit/afmodule.c
+		#./src/autofit/afangles.c
+		#./src/autofit/afdummy.c
+		#./src/autofit/afglobal.c
+		#./src/autofit/afhints.c
+		#./src/autofit/aflatin.c
+		#./src/autofit/afloader.c
+		#./src/autofit/afmodule.c
 		./src/autofit/autofit.c
 		./src/base/ftbase.c
 		./src/base/ftbitmap.c
@@ -28,13 +28,13 @@ let sources* : SourceSet {
 		./src/gzip/ftgzip.c
 		./src/lzw/ftlzw.c
 		./src/otvalid/otvalid.c
-		./src/otvalid/otvbase.c
-		./src/otvalid/otvcommn.c
-		./src/otvalid/otvgdef.c
-		./src/otvalid/otvgpos.c
-		./src/otvalid/otvgsub.c
-		./src/otvalid/otvjstf.c
-		./src/otvalid/otvmod.c
+		#./src/otvalid/otvbase.c
+		#./src/otvalid/otvcommn.c
+		#./src/otvalid/otvgdef.c
+		#./src/otvalid/otvgpos.c
+		#./src/otvalid/otvgsub.c
+		#./src/otvalid/otvjstf.c
+		#./src/otvalid/otvmod.c
 		./src/pcf/pcf.c
 		./src/pfr/pfr.c
 		./src/psaux/psaux.c

@@ -10,6 +10,8 @@ let sources * : SourceSet {
 	.include_dirs += ../../includes
 	if ^HAVE_SHARED {
 		.defines += "QT_SHARED"
+		if target_os == `linux {
+			.cflags += "-fPIC"
+		}
 	}
-	# .configs += ^config
 }
