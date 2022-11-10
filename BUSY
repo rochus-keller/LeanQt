@@ -372,6 +372,13 @@ let libqtgui * : Library {
 	.name = "qtgui"
 }
 
+# use libqtwinmain for Windows applications (with both static or shared libqtgui)
+let libqtwinmain * : Library {
+	.sources += ./gui/windows/qtmain_win.cpp
+	.lib_type = `static
+	.name = "qtwinmain"
+	.configs += _core_config
+}
 
 ######################################################################
 ## Examples

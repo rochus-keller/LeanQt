@@ -50,7 +50,6 @@ let sources * : SourceSet {
 		./qcocoamenubar.mm
 
 		../platformsupport/qfontengine_coretext.mm
-		../platformsupport/qpaintengine_mac.mm
 		../platformsupport/qcoretextfontdatabase.mm
 		../platformsupport/qmacmime.mm
 		#../platformsupport/cglconvenience.mm

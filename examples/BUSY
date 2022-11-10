@@ -61,7 +61,10 @@ let transform* : Executable {
 	.sources += ./transform.cpp
 	.deps += ^libqtcore
 	if ^HAVE_GUI {
-		.deps += ^libqtgui;
+		.deps += ^libqtgui
+		if target_os == `win32 {
+			.deps += ^libqtwinmain
+		}
 		.configs += ^gui_client_config	
 	} else {
 		.deps += ^libqtimage;
@@ -76,6 +79,9 @@ let clock_moc : Moc {
 let clock* : Executable {
 	.sources += [ ./rasterwindow.cpp ./clock.cpp ]
 	.deps += [ ^libqtcore ^libqtgui clock_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
 	.configs += ^gui_client_config	
 }
 

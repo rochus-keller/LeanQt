@@ -22,6 +22,9 @@ let config * : Config {
 	}else if target_os == `macos {
 		.configs += cocoa.config
 	}
+	if target_os == `win32 {
+		.ldflags += "/IGNORE:4217,4049"
+	}
 }
 
 let err : Message {

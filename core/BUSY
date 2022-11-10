@@ -5,7 +5,7 @@ let HAVE_RE = false 		# include QRecularExpression, using pcre16; not yet suppor
 
 let lib_config : Config {
 	.defines += [
-		"QT_BUILD_CORE_LIB" # required to make resource system work at all
+		"QT_BUILD_CORE_LIB" # public, required to make resource system work at all
 	]
 }
 
@@ -14,50 +14,50 @@ let config * : Config {
 		../includes 
 		../includes/QtCore
 	]
-	# TODO: check which defines are not visible in public API and remove them from public config
+	# NOTE: most of the defines are visible in the public API and therefore have to be used by client apps
 	.defines += [
 		# these are official Qt defines
-		#"QT_USE_QSTRINGBUILDER" # not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
+		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]
 	.defines += [
-		"QT_NO_ITEMMODELS"
+		"QT_NO_ITEMMODELS" # public
 	]
 	
 	if !^HAVE_PLUGINS {
-		.defines += "QT_NO_PLUGINS" 
+		.defines += "QT_NO_PLUGINS" # public
 	}
 	
 	if !^HAVE_LIBRARY {
-		.defines += "QT_NO_LIBRARY"
+		.defines += "QT_NO_LIBRARY" # public
 	}
 	
 	if ^HAVE_SHARED {
-		.defines += "QT_SHARED"
+		.defines += "QT_SHARED" # public
 		# QT_STATIC is automatically set in qconfig.h
 	}
 	
 	if !^HAVE_GEOM {
-		.defines += "QT_NO_GEOM_VARIANT"
+		.defines += "QT_NO_GEOM_VARIANT" # public
 	}
 	
 	if !^HAVE_URL {
-		.defines += "QT_NO_URL_VARIANT"
+		.defines += "QT_NO_URL_VARIANT" # public
 	}
 
 	if !HAVE_RE {
-		.defines += "QT_NO_REGULAREXPRESSION"
+		.defines += "QT_NO_REGULAREXPRESSION" # public
 	}
 	
 	if !^HAVE_JSON {
-		.defines += "QT_NO_JSON"
+		.defines += "QT_NO_JSON" # public
 	}
 	
 	if !^HAVE_DSTREAM {
-		.defines += "QT_NO_DATASTREAM"
+		.defines += "QT_NO_DATASTREAM" # public
 	}
 	
 	if !^HAVE_XMLSTREAM {
-		.defines += "QT_NO_XMLSTREAM"
+		.defines += "QT_NO_XMLSTREAM" # private
 	}
 	
 	if !^HAVE_FILEIO {

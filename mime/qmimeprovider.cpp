@@ -47,7 +47,7 @@
 
 static void initResources()
 {
-    Q_INIT_RESOURCE(mimetypes);
+    // TODO Q_INIT_RESOURCE(mimetypes);
 }
 
 QT_BEGIN_NAMESPACE

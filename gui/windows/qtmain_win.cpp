@@ -111,10 +111,6 @@ static inline char *wideToMulti(int codePage, const wchar_t *aw)
 
 extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int /* cmdShow */)
 {
-	QFile log("log.txt");
-	log.open(QIODevice::WriteOnly);
-	QTextStream out(&log);
- 	out << __FILE__ << " C WinMain started" << endl;
    int argc;
     wchar_t **argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
     if (!argvW)

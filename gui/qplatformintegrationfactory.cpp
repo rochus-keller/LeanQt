@@ -38,7 +38,7 @@
 #elif defined(Q_OS_WIN)
 #include <windows/qwindowsgdiintegration.h>
 #elif defined(Q_OS_MAC)
-#include <cocoa/qcocoaintegration.h>
+#include <cocoa/qcocoaintegrationfactory.h>
 #endif
 #endif
 
@@ -85,7 +85,7 @@ QPlatformIntegration *QPlatformIntegrationFactory::create(const QString &platfor
 #elif defined(Q_OS_WIN)
     return new QWindowsGdiIntegration(paramList);
 #elif defined(Q_OS_MAC)
-    return new QCocoaIntegration(paramList);
+    return QCocoaIntegrationFactory::create(paramList);
 #endif
 #endif
     return 0;

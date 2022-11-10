@@ -49,7 +49,7 @@ let sources * : SourceSet {
 		../platformsupport/qwindowsguieventdispatcher.cpp
 		#../platformsupport/qbasicfontdatabase.cpp
 		
-		./qtmain_win.cpp
+		# must be added directly to the app in case of SHARED: ./qtmain_win.cpp
 	]
 
 	.include_dirs += [
