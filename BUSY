@@ -277,10 +277,10 @@ let moc * = tools.moc.moc
 
 submod mime else ./missing.busy
 let core_sources * : Group {
-	.deps += _core_sources
 	if HAVE_OBJECT {
 		.deps += [ moc core.moc_sources ]
 	}
+	.deps += _core_sources
 	if HAVE_MIME {
 		.deps += mime.sources
 	}

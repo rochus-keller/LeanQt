@@ -49,6 +49,7 @@ class RasterWindow : public QWindow
     Q_OBJECT
 public:
     explicit RasterWindow(QWindow *parent = 0);
+    ~RasterWindow();
 
     virtual void render(QPainter *painter);
 

@@ -55,6 +55,11 @@ RasterWindow::RasterWindow(QWindow *parent)
     setGeometry(100, 100, 300, 200);
 
 }
+
+RasterWindow::~RasterWindow()
+{
+    delete m_backingStore;
+}
 //! [1]
 
 

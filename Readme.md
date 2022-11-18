@@ -55,7 +55,7 @@ The following features are available:
 - [x] QtConcurrent
 - [x] QImage, QImageReader/Writer (separated from QtGui)
 - [x] mimetypes
-- [x] QtGui (tested on Linux x86 & x64, Win x86 & x64, Mac x64 & M1)
+- [x] QtGui (tested on Linux x86 & x64 & ARMv7, Win x86 & x64, Mac x64 & M1)
 
 ### Long term plan
 
