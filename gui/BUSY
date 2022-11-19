@@ -61,7 +61,7 @@ let sources* : SourceSet {
 		./qfontengineglyphcache.cpp       ./qplatformoffscreensurface.cpp
 		./qfontengine_qpf2.cpp            ./qplatformpixmap.cpp
 		./qfontmetrics.cpp                ./qplatformscreen.cpp
-		./qfontsubset_agl.cpp             ./qplatformservices.cpp
+		./qplatformservices.cpp			#./qfontsubset_agl.cpp             
 		./qfontsubset.cpp                 ./qplatformsessionmanager.cpp
 		./qfragmentmap.cpp                ./qplatformsharedgraphicscache.cpp
 		./qgammatables.cpp                ./qplatformsurface.cpp
