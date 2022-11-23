@@ -87,7 +87,9 @@ let config * : Config {
 	if target_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {
-			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "-Zc:strictStrings" "/GR" ]
+			# no longer "-Zc:strictStrings", because we don't need it and it triggers bug in MS C++ std library (xlocale and xdebug)
+			# when compiled with _DEBUG
+			.cflags_cc += [ "/EHsc" "/Zc:wchar_t"  "/GR" ]
 		}
 	}else if target_os == `linux {
 		if ^HAVE_SHARED {

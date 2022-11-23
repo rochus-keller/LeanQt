@@ -2,6 +2,7 @@
 # licensed under GPL/LGPL
 
 param HAVE_SHARED = false      # if true build shared instead of static libraries, and export marked symbols
+param HAVE_DEBUG = false       # if true don't optimize and compile with debug information
 
 param HAVE_GEOM = false 	   # include geometry classes like QRect, QPoint etc.
 param HAVE_JSON = false		   # include QJsonObject and friends
@@ -169,6 +170,20 @@ if HAVE_OBJECT && !HAVE_COREAPP {
 if HAVE_OBJECT && !HAVE_THREADS {
 	message("enabling HAVE_THREADS required by HAVE_OBJECT")
 	HAVE_THREADS = true
+}
+
+######################################################################
+
+let defconf : Config {
+	if target_toolchain == `msvc {
+		.cflags += [ "-MDd" "/Zi" "-Fddebug.pdb" ]
+		.ldflags += "/DEBUG"
+	} else {
+		.cflags += "-g"
+	}
+}
+if HAVE_DEBUG {
+	set_defaults(target_toolchain,defconf)
 }
 
 ######################################################################
