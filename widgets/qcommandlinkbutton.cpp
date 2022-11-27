@@ -365,4 +365,4 @@ QString QCommandLinkButton::description() const
 
 QT_END_NAMESPACE
 
-#include "moc_qcommandlinkbutton.cpp"
+//#include "moc_qcommandlinkbutton.cpp"

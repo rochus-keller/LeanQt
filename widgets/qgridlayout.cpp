@@ -103,7 +103,7 @@ QLayoutItem *QGridLayoutPrivate::takeAt(int index) {
     return 0;
 }
 
-QLayoutItem* QGridLayoutPrivate::replaceAt(int index, QLayoutItem *newitem) Q_DECL_OVERRIDE
+QLayoutItem* QGridLayoutPrivate::replaceAt(int index, QLayoutItem *newitem)
 {
     if (!newitem)
         return 0;
@@ -1580,4 +1580,4 @@ void QGridLayout::invalidate()
 
 QT_END_NAMESPACE
 
-#include "moc_qgridlayout.cpp"
+//#include "moc_qgridlayout.cpp"

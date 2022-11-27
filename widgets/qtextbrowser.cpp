@@ -1164,6 +1164,6 @@ bool QTextBrowser::event(QEvent *e)
 
 QT_END_NAMESPACE
 
-#include "moc_qtextbrowser.cpp"
+//#include "moc_qtextbrowser.cpp"
 
 #endif // QT_NO_TEXTBROWSER

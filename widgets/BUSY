@@ -200,6 +200,7 @@ let run_moc : Moc {
 		./qwindowcontainer_p.h
 		./qwindowsstyle_p.h
 		./qwizard.h
+		./qsizepolicy.h
 	]
 	
 	if target_os == `linux {

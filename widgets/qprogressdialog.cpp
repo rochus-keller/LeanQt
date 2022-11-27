@@ -813,6 +813,6 @@ void QProgressDialog::open(QObject *receiver, const char *member)
 
 QT_END_NAMESPACE
 
-#include "moc_qprogressdialog.cpp"
+//#include "moc_qprogressdialog.cpp"
 
 #endif // QT_NO_PROGRESSDIALOG

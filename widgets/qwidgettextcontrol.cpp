@@ -3317,6 +3317,6 @@ void QTextEditMimeData::setup() const
 
 QT_END_NAMESPACE
 
-#include "moc_qwidgettextcontrol_p.cpp"
+//#include "moc_qwidgettextcontrol_p.cpp"
 
 #endif // QT_NO_TEXTCONTROL

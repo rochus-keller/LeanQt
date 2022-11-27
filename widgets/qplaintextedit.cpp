@@ -3155,7 +3155,7 @@ QAbstractTextDocumentLayout::PaintContext QPlainTextEdit::getPaintContext() cons
 
 QT_END_NAMESPACE
 
-#include "moc_qplaintextedit.cpp"
-#include "moc_qplaintextedit_p.cpp"
+//#include "moc_qplaintextedit.cpp"
+//#include "moc_qplaintextedit_p.cpp"
 
 #endif // QT_NO_TEXTEDIT

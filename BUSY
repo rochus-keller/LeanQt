@@ -3,6 +3,7 @@
 
 param HAVE_SHARED = false      # if true build shared instead of static libraries, and export marked symbols
 param HAVE_DEBUG = false       # if true don't optimize and compile with debug information
+param HAVE_NOOPT = false	   # if true don't optimize
 
 param HAVE_GEOM = false 	   # include geometry classes like QRect, QPoint etc.
 param HAVE_JSON = false		   # include QJsonObject and friends
@@ -181,7 +182,7 @@ if HAVE_OBJECT && !HAVE_THREADS {
 
 ######################################################################
 
-let defconf : Config {
+let debugconf : Config {
 	if target_toolchain == `msvc {
 		.cflags += [ "-MDd" "/Zi" "-Fddebug.pdb" ]
 		.ldflags += "/DEBUG"
@@ -189,8 +190,19 @@ let defconf : Config {
 		.cflags += "-g"
 	}
 }
-if HAVE_DEBUG {
-	set_defaults(target_toolchain,defconf)
+
+let nooptconf : Config {
+	if target_toolchain == `msvc {
+		.cflags += "-MD"
+	}
+}
+
+if HAVE_DEBUG && HAVE_NOOPT {
+	error("cannot enable both HAVE_NOOPT and HAVE_DEBUG")
+}else if HAVE_DEBUG {
+	set_defaults(target_toolchain,debugconf)
+}else if HAVE_NOOPT {
+	set_defaults(target_toolchain,nooptconf)
 }
 
 ######################################################################
