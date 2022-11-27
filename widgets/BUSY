@@ -1,0 +1,236 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += [
+		"QT_BUILD_WIDGET_LIB"
+		"QT_NO_STYLE_WINDOWSVISTA" "QT_NO_STYLE_ANDROID" "QT_NO_STYLE_GTK"
+		"QT_NO_STYLE_WINDOWSXP" "QT_NO_STYLE_WINDOWSCE" "QT_NO_STYLE_WINDOWSMOBILE" 
+		"QT_NO_STATEMACHINE"
+	]
+}
+
+let config * : Config {
+	.include_dirs += [
+		../includes/QtWidgets
+	]
+	
+	.defines += [ "QT_NO_ITEMVIEWS" "QT_NO_GESTURES" "QT_NO_GRAPHICSVIEW" "QT_NO_EFFECTS" ]
+	
+	# QT_NO_ITEMVIEWS causes the following:
+	.defines += [ "QT_NO_PROXYMODEL" "QT_NO_COMPLETER" "QT_NO_IDENTITYPROXYMODEL" 
+				"QT_NO_SORTFILTERPROXYMODEL" "QT_NO_CALENDARWIDGET" "QT_NO_COMBOBOX"
+				"QT_NO_FILEDIALOG" ]
+	
+	#.defines += "QT_NO_GUI"
+}
+
+let err : Message {
+	.text = "widget module requires HAVE_GUI"
+}
+
+let sources* : SourceSet {
+	.sources += [
+		./qabstractbutton.cpp      ./qlayout.cpp              ./qstylehelper.cpp
+		./qabstractscrollarea.cpp  ./qlayoutengine.cpp        ./qstyleoption.cpp
+		./qabstractslider.cpp      ./qlayoutitem.cpp          ./qstylepainter.cpp
+		./qabstractspinbox.cpp     ./qlcdnumber.cpp           ./qstyleplugin.cpp
+		./qaction.cpp              ./qlineedit.cpp            ./qstylesheetstyle.cpp
+		./qactiongroup.cpp         ./qlineedit_p.cpp          ./qstylesheetstyle_default.cpp
+		./qapplication.cpp         ./qmainwindow.cpp          ./qsystemtrayicon.cpp
+		./qboxlayout.cpp           ./qmainwindowlayout.cpp    ./qsystemtrayicon_qpa.cpp
+		./qbuttongroup.cpp         ./qmdiarea.cpp             
+		./qmdisubwindow.cpp        
+		./qcheckbox.cpp            ./qmenubar.cpp             ./qtabbar.cpp
+		./qcolordialog.cpp         ./qmenu.cpp                ./qtabwidget.cpp
+		./qcolormap.cpp            ./qmessagebox.cpp          ./qtextbrowser.cpp
+		./qplaintextedit.cpp       ./qtextedit.cpp
+		./qcommandlinkbutton.cpp   ./qprogressbar.cpp         ./qtoolbararealayout.cpp
+		./qcommonstyle.cpp         ./qprogressdialog.cpp      ./qtoolbar.cpp
+		./qproxystyle.cpp          ./qtoolbarextension.cpp
+		./qpushbutton.cpp          ./qtoolbarlayout.cpp
+		./qdesktopwidget.cpp       ./qradiobutton.cpp         ./qtoolbarseparator.cpp
+		./qdial.cpp                ./qrubberband.cpp          ./qtoolbox.cpp
+		./qdialogbuttonbox.cpp     ./qscrollarea.cpp          ./qtoolbutton.cpp
+		./qdialog.cpp              ./qscrollbar.cpp           ./qtooltip.cpp
+		./qdockarealayout.cpp      ./qscroller.cpp            ./qundogroup.cpp
+		./qdockwidget.cpp          ./qscrollerproperties.cpp  ./qundostack.cpp
+		./qdrawutil.cpp            ./qshortcut.cpp            ./qwhatsthis.cpp
+		./qerrormessage.cpp        ./qwidgetaction.cpp
+		./qfocusframe.cpp          ./qsizegrip.cpp            ./qwidgetbackingstore.cpp
+		./qsizepolicy.cpp          ./qwidget.cpp
+		./qslider.cpp              ./qwidgetlinecontrol.cpp
+		./qformlayout.cpp          ./qspinbox.cpp             ./qwidgetresizehandler.cpp
+		./qframe.cpp               ./qsplashscreen.cpp        ./qwidgetsvariant.cpp
+		./qfusionstyle.cpp         ./qsplitter.cpp            ./qwidgettextcontrol.cpp
+		./qgridlayout.cpp          ./qstackedlayout.cpp       ./qwidgetwindow.cpp
+		./qgroupbox.cpp            ./qstackedwidget.cpp       ./qwindowcontainer.cpp
+		./qstatusbar.cpp           ./qwindowsstyle.cpp
+		./qkeysequenceedit.cpp     ./qstyle.cpp               ./qwizard.cpp
+		./qlabel.cpp               ./qstylefactory.cpp        
+		./qeasingcurve.cpp
+	]
+	
+	if !^HAVE_GUI {
+		.deps += err
+	}
+	
+	/* listviews
+		./qdatetimeedit.cpp
+		./qcalendarwidget.cpp   
+		./qcompleter.cpp    
+		./qcombobox.cpp                      
+		./qfontcombobox.cpp    
+		./qfontdialog.cpp      
+		./qinputdialog.cpp        
+		./qheaderview.cpp  
+		./qsidebar.cpp                    
+	*/
+
+	if target_os == `linux {
+		.sources += ./qsystemtrayicon_x11.cpp
+	}else if target_os == `win32 {
+		.sources += [ ./qwizard_win.cpp ./qsystemtrayicon_win.cpp ]
+	}else if target_os == `macos {
+		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ]
+	}
+
+	.configs += [ ^_core_config ^_image_config ^_gui_config lib_config config ]
+	.include_dirs += build_dir() # for the embedded .moc files
+}
+
+let run_moc : Moc {
+	.sources += [		
+		./qabstractbutton.h
+		./qabstractscrollarea.h
+		./qabstractscrollarea_p.h
+		./qabstractslider.h
+		./qabstractspinbox.h
+		./qactiongroup.h
+		./qaction.h
+		./qapplication.h
+		./qboxlayout.h
+		./qbuttongroup.h
+		./qcheckbox.h
+		./qcolordialog.cpp
+		./qcolordialog.h
+		./qcommandlinkbutton.h
+		./qcommonstyle.h
+		./qdesktopwidget.h
+		./qdesktopwidget_p.h
+		./qdial.h
+		./qdialogbuttonbox.h
+		./qdialog.h
+		./qdockwidget.cpp
+		./qdockwidget.h
+		./qdockwidget_p.h
+		./qerrormessage.h
+		./qfocusframe.h
+		./qformlayout.h
+		./qframe.h
+		./qfusionstyle_p.h
+		./qgridlayout.h
+		./qgroupbox.h
+		./qkeysequenceedit.h
+		./qlabel.h
+		./qlayout.h
+		./qlcdnumber.h
+		./qlineedit.h
+		./qlineedit_p.h
+		./qmainwindow.h
+		./qmainwindowlayout_p.h
+		./qmdiarea.h
+		./qmdisubwindow.cpp
+		./qmdisubwindow.h
+		./qmenubar.h
+		./qmenu.cpp
+		./qmenu.h
+		./qmessagebox.h
+		./qmessagebox_p.h
+		./qplaintextedit.h
+		./qplaintextedit_p.h
+		./qprogressbar.h
+		./qprogressdialog.h
+		./qproxystyle.h
+		./qpushbutton.h
+		./qradiobutton.h
+		./qrubberband.h
+		./qscrollarea.h
+		./qscrollbar.h
+		./qscroller.h
+		./qscroller_p.h
+		./qshortcut.h
+		./qsizegrip.h
+		./qslider.h
+		./qspinbox.h
+		./qsplashscreen.h
+		./qsplitter.h
+		./qstackedlayout.h
+		./qstackedwidget.h
+		./qstatusbar.h
+		./qstyle.h
+		./qstyleplugin.h
+		./qstylesheetstyle_p.h
+		./qsystemtrayicon.h
+		./qsystemtrayicon_p.h
+		./qtabbar.h
+		./qtabbar_p.h
+		./qtabwidget.h
+		./qtextbrowser.h
+		./qtextedit.h
+		./qtoolbarextension_p.h
+		./qtoolbar.h
+		./qtoolbarlayout_p.h
+		./qtoolbarseparator_p.h
+		./qtoolbox.cpp
+		./qtoolbox.h
+		./qtoolbutton.h
+		./qtooltip.cpp
+		./qundogroup.h
+		./qundostack.h
+		./qundostack_p.h
+		./qwhatsthis.cpp
+		./qwidgetaction.h
+		#./qwidgetbackingstore_p.h # only if OpenGL
+		./qwidget.h
+		./qwidgetlinecontrol_p.h
+		./qwidgetresizehandler_p.h
+		./qwidgettextcontrol_p.h
+		./qwidgetwindow_p.h
+		./qwindowcontainer_p.h
+		./qwindowsstyle_p.h
+		./qwizard.h
+	]
+	
+	if target_os == `linux {
+		.sources += ./qsystemtrayicon_x11.cpp
+	}else if target_os == `macos {
+		.sources += ./qmacstyle_mac_p.h
+	}
+	
+	/* list view
+		./qcalendarwidget.cpp
+		./qcalendarwidget.h
+		./qcombobox.h
+		./qcombobox_p.h
+		./qcompleter.h
+		./qcompleter_p.h
+		./qdatetimeedit.h
+		./qdatetimeedit_p.h
+		./qfontcombobox.cpp
+		./qfontcombobox.h
+		./qfontdialog.cpp
+		./qfontdialog.h
+		./qinputdialog.cpp
+		./qinputdialog.h
+		./qheaderview.h
+		./qsidebar_p.h
+	*/
+	
+	.defines += config.defines + ^_core_config.defines + "QT_NO_ANIMATION" + "QT_NO_ACCESSIBILITY"
+}
+
+let moc_sources * : SourceSet {
+	.configs += [ ^_core_config ^_image_config ^_gui_config config lib_config ]
+	.deps += run_moc
+} 

@@ -56,10 +56,10 @@ The following features are available:
 - [x] QImage, QImageReader/Writer (separated from QtGui)
 - [x] mimetypes
 - [x] QtGui (tested on Linux x86 & x64 & ARMv7, Win x86 & x64, Mac x64 & M1)
+- [ ] QtWidgets (basic widgets work on Linux x86)
 
 ### Long term plan
 
-- [ ] QtWidgets
 - [ ] printing
 - [ ] SIMD support
 - [ ] Linux framebuffer platform
@@ -81,14 +81,17 @@ The following features are available:
 - scripting, quick stuff
 - opengl, direct2d, directfb
 - qml
+- graphics effects
 - accessibility (requires dbus)
 - wacom tablets
+- gestures
 - all not mentioned add-ons 
 - ios, winrt, wince, android, blackberry, nacl, vxworks, haiku
 
 ### Other differences to original Qt
 
 - QMimeData and QTextBoundaryFinder belong to the gui module, not the core module
+- QEasingCurve belong to the widgets module, not the core module
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 

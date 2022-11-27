@@ -39,6 +39,8 @@ param HAVE_GUI = false		   # takes care that core is compiled with HAVE_IMAGE an
 
 param HAVE_FONTCONFIG = false  # Linux GUI option; use fontconfig to locate fonts; otherwise use the path provided via QT_QPA_FONTDIR
 							   # environment variable, or applicationDirPath() + "/fonts", or QStandardPaths::FontsLocation; requires -lfontconfig
+						
+param HAVE_WIDGETS = false     # takes care that GUI is enabled
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -60,6 +62,11 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 		HAVE_OBJECT = true
 		HAVE_URL = true
 	}
+}
+
+if HAVE_WIDGETS && !HAVE_GUI {
+	message("enabling HAVE_GUI required by HAVE_WIDGETS")
+	HAVE_GUI = true
 }
 
 if HAVE_GUI && !HAVE_IMAGE {
@@ -275,11 +282,25 @@ submod gui else ./missing.busy
 
 let _gui_sources * = gui.sources
 
+let _gui_config - = gui.config
+
 let _gui_linker_config - : Config {
 }
 
 let gui_client_config * : Config {
-	.configs += [ image_client_config gui.config _gui_linker_config ]
+	.configs += [ image_client_config _gui_config _gui_linker_config ]
+}
+
+######################################################################
+submod widgets else ./missing.busy
+
+let _widgets_sources * = widgets.sources
+
+let _widgets_linker_config - : Config {
+}
+
+let widgets_client_config * : Config {
+	.configs += [ image_client_config gui_client_config widgets.config _widgets_linker_config ]
 }
 
 ######################################################################
@@ -312,6 +333,11 @@ let gui_sources * : Group {
 	}
 	.deps += [ moc gui.moc_sources ] 
 	.deps += _gui_sources
+}
+
+let widgets_sources * : Group {
+	.deps += [ moc widgets.moc_sources ] 
+	.deps += _widgets_sources
 }
 
 ######################################################################
@@ -395,6 +421,18 @@ let libqtwinmain * : Library {
 	.configs += _core_config
 }
 
+let libqtwidgets * : Library {
+	.deps += [ widgets_sources ]
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += widgets_client_config;
+		.deps += libqtgui
+	}else{ 
+		.lib_type = `static
+	}
+	.name = "qtwidgets"
+}
+
 ######################################################################
 ## Examples
 
@@ -426,6 +464,9 @@ let build_examples ! : Copy {
 	}
 	if HAVE_GUI {
 		.deps += examples.clock
+	}
+	if HAVE_WIDGETS {
+		.deps += examples.calculator
 	}
 	.outputs += ./{{source_file_part}}
 }

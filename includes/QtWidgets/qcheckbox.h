@@ -1,0 +1,1 @@
+#include "../../widgets/qcheckbox.h"

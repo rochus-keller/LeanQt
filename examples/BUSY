@@ -85,3 +85,16 @@ let clock* : Executable {
 	.configs += ^gui_client_config	
 }
 
+let calc_moc : Moc {
+	.sources += ./calculator.h
+}
+
+let calculator* : Executable {
+	.sources += ./calculator.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets calc_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += ^widgets_client_config	
+}
+

@@ -31,3 +31,6 @@ BUSY module is not used.
 - xcb
 - xkbcommon
 
+### Things required by widgets
+
+- easing

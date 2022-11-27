@@ -26,7 +26,7 @@
 #ifndef QXCBWINDOWFUNCTIONS_H
 #define QXCBWINDOWFUNCTIONS_H
 
-#include <qplatformheaderhelper.h>
+#include "qplatformheaderhelper.h"
 
 QT_BEGIN_NAMESPACE
 

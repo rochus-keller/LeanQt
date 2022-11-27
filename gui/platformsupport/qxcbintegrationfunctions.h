@@ -26,7 +26,7 @@
 #ifndef QXCBINTEGRATIONFUNCTIONS_H
 #define QXCBINTEGRATIONFUNCTIONS_H
 
-#include <qplatformheaderhelper.h>
+#include "qplatformheaderhelper.h"
 
 QT_BEGIN_NAMESPACE
 
