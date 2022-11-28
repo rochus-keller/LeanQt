@@ -45,7 +45,7 @@
 #include "qguiapplication.h"
 #include <qdebug.h>
 
-#ifndef QT_NO_WIDGETS
+#ifndef QT_NO_PRINTER
 #include "qcocoaprintersupport.h"
 #include "qprintengine_mac_p.h"
 #include <qpa/qplatformprintersupport.h>

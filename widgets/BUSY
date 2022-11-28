@@ -92,7 +92,7 @@ let sources* : SourceSet {
 	}else if target_os == `win32 {
 		.sources += [ ./qwizard_win.cpp ./qsystemtrayicon_win.cpp ]
 	}else if target_os == `macos {
-		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ]
+		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ./qmacnativewidget_mac.mm ]
 	}
 
 	.configs += [ ^_core_config ^_image_config ^_gui_config lib_config config ]
@@ -206,7 +206,8 @@ let run_moc : Moc {
 	if target_os == `linux {
 		.sources += ./qsystemtrayicon_x11.cpp
 	}else if target_os == `macos {
-		.sources += ./qmacstyle_mac_p.h
+		.sources += [ ./qmacstyle_mac_p.h ./qmacnativewidget_mac.h ./qmacstyle_mac_p.h ]
+		.defines += "Q_OS_MAC"
 	}
 	
 	/* list view

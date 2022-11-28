@@ -39,18 +39,17 @@
 #include <Cocoa/Cocoa.h>
 
 #include "qmacstyle_mac_p.h"
-#include "qmacstyle_mac_p_p.h"
+#include "qmacstyle_mac_pp.h"
 
 #define QMAC_QAQUASTYLE_SIZE_CONSTRAIN
 //#define DEBUG_SIZE_CONSTRAINT
 
 #include <private/qcore_mac_p.h>
-#include <private/qcombobox_p.h>
 #include <private/qpainter_p.h>
+#include <private/qwidget_p.h>
 #include <qapplication.h>
 #include <qbitmap.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qdialogbuttonbox.h>
 #include <qdockwidget.h>
 #include <qevent.h>
@@ -58,7 +57,6 @@
 #include <qformlayout.h>
 #include <qgroupbox.h>
 #include <qhash.h>
-#include <qheaderview.h>
 #include <qlineedit.h>
 #include <qmainwindow.h>
 #include <qmdisubwindow.h>
@@ -76,18 +74,15 @@
 #include <qstyleoption.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qtreeview.h>
-#include <qtableview.h>
 #include <qwizard.h>
 #include <qdebug.h>
 #include <qlibrary.h>
-#include <qdatetimeedit.h>
 #include <qmath.h>
-#include <QtWidgets/qgraphicsproxywidget.h>
-#include <QtWidgets/qgraphicsview.h>
 #include <QtCore/qvariant.h>
 #include <private/qstylehelper_p.h>
+#ifndef QT_NO_ANIMATION
 #include <private/qstyleanimation_p.h>
+#endif
 #include <qpa/qplatformfontdatabase.h>
 #include <qpa/qplatformtheme.h>
 
@@ -442,9 +437,11 @@ static int getControlSize(const QStyleOption *option, const QWidget *widget)
 
 static inline bool isTreeView(const QWidget *widget)
 {
-    return (widget && widget->parentWidget() &&
-            (qobject_cast<const QTreeView *>(widget->parentWidget())
-             ));
+#ifndef QT_NO_LISTVIEW
+    return (widget && widget->parentWidget() && (qobject_cast<const QTreeView *>(widget->parentWidget()) ));
+#else
+    return false;
+#endif
 }
 
 static inline ThemeTabDirection getTabDirection(QTabBar::Shape shape)
@@ -773,8 +770,10 @@ static QSize qt_aqua_get_known_size(QStyle::ContentsType ct, const QWidget *widg
             ct = QStyle::CT_RadioButton;
         else if (qobject_cast<const QCheckBox *>(widg))
             ct = QStyle::CT_CheckBox;
+#ifndef QT_NO_COMBOBOX
         else if (qobject_cast<const QComboBox *>(widg))
             ct = QStyle::CT_ComboBox;
+#endif
         else if (qobject_cast<const QToolButton *>(widg))
             ct = QStyle::CT_ToolButton;
         else if (qobject_cast<const QSlider *>(widg))
@@ -783,8 +782,10 @@ static QSize qt_aqua_get_known_size(QStyle::ContentsType ct, const QWidget *widg
             ct = QStyle::CT_ProgressBar;
         else if (qobject_cast<const QLineEdit *>(widg))
             ct = QStyle::CT_LineEdit;
+#ifndef QT_NO_LISTVIEW
         else if (qobject_cast<const QHeaderView *>(widg))
             ct = QStyle::CT_HeaderSection;
+#endif
         else if (qobject_cast<const QMenuBar *>(widg))
             ct = QStyle::CT_MenuBar;
         else if (qobject_cast<const QSizeGrip *>(widg))
@@ -1001,7 +1002,13 @@ static QSize qt_aqua_get_known_size(QStyle::ContentsType ct, const QWidget *widg
         break;
     }
     case QStyle::CT_LineEdit:
-        if (!widg || !qobject_cast<QComboBox *>(widg->parentWidget())) {
+        if (!widg ||
+        #ifndef QT_NO_COMBOBOX
+                !qobject_cast<QComboBox *>(widg->parentWidget())
+        #else
+                1
+        #endif
+                ) {
             //should I take into account the font dimentions of the lineedit? -Sam
             if (sz == QAquaSizeLarge)
                 ret = QSize(-1, 21);
@@ -1410,6 +1417,7 @@ void QMacStylePrivate::initComboboxBdi(const QStyleOptionComboBox *combo, HIThem
         // an extra check here before using the mini and small buttons.
         int h = combo->rect.size().height();
         if (combo->editable){
+#ifndef QT_NO_COMBOBOX
             if (qobject_cast<const QDateTimeEdit *>(widget)) {
                 // Except when, you know, we get a QDateTimeEdit with calendarPopup
                 // enabled. And then things get weird, basically because it's a
@@ -1426,7 +1434,9 @@ void QMacStylePrivate::initComboboxBdi(const QStyleOptionComboBox *combo, HIThem
                     bdi->kind = kThemeComboBoxSmall;
                 else
                     bdi->kind = kThemeComboBox;
-            } else {
+            } else
+#endif
+            {
                 if (h < 21)
                     bdi->kind = kThemeComboBoxMini;
                 else if (h < 26)
@@ -1767,14 +1777,18 @@ void QMacStylePrivate::getSliderInfo(QStyle::ComplexControl cc, const QStyleOpti
 void QMacStylePrivate::setAutoDefaultButton(QObject *button) const
 {
     if (autoDefaultButton != button) {
+#ifndef QT_NO_ANIMATION
         if (QStyleAnimation *anim = animation(autoDefaultButton)) {
             anim->updateTarget();
             stopAnimation(autoDefaultButton);
         }
+#endif
         autoDefaultButton = button;
     }
+#ifndef QT_NO_ANIMATION
     if (autoDefaultButton && !animation(autoDefaultButton))
         startAnimation(new QStyleAnimation(autoDefaultButton));
+#endif
 }
 
 QMacStylePrivate::QMacStylePrivate()
@@ -1784,9 +1798,11 @@ QMacStylePrivate::QMacStylePrivate()
     memset(&buttonState, 0, sizeof(ButtonState));
 
     if (ptrHIShapeGetBounds == 0) {
+#ifndef QT_NO_LIBRARY
         QLibrary library(QLatin1String("/System/Library/Frameworks/Carbon.framework/Carbon"));
         library.setLoadHints(QLibrary::ExportExternalSymbolsHint);
         ptrHIShapeGetBounds = reinterpret_cast<PtrHIShapeGetBounds>(library.resolve("HIShapeGetBounds"));
+#endif
     }
 
 }
@@ -2296,7 +2312,11 @@ void QMacStyle::polish(QWidget* w)
         w->setAttribute(Qt::WA_SetPalette, false);
     }
 
-    if (qobject_cast<QMenu*>(w) || qobject_cast<QComboBoxPrivateContainer *>(w)) {
+    if (qobject_cast<QMenu*>(w)
+        #ifndef QT_NO_COMBOBOX
+            || qobject_cast<QComboBoxPrivateContainer *>(w)
+        #endif
+            ) {
         w->setWindowOpacity(0.985);
         if (!w->testAttribute(Qt::WA_SetPalette)) {
             QPixmap px(64, 64);
@@ -2351,12 +2371,14 @@ void QMacStyle::unpolish(QWidget* w)
         w->setWindowOpacity(1.0);
     }
 
+#ifndef QT_NO_COMBOBOX
     if (QComboBox *combo = qobject_cast<QComboBox *>(w)) {
         if (!combo->isEditable()) {
             if (QWidget *widget = combo->findChild<QComboBoxPrivateContainer *>())
                 widget->setWindowOpacity(1.0);
         }
     }
+#endif
 
     if (QRubberBand *rubber = qobject_cast<QRubberBand*>(w)) {
         rubber->setWindowOpacity(1.0);
@@ -3722,9 +3744,11 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
             HIRect bounds = qt_hirectForQRect(ir);
 
             bool noVerticalHeader = true;
+#ifndef QT_NO_LISTVIEW
             if (w)
                 if (const QTableView *table = qobject_cast<const QTableView *>(w->parentWidget()))
                     noVerticalHeader = !table->verticalHeader()->isVisible();
+#endif
 
             bool drawTopBorder = header->orientation == Qt::Horizontal;
             bool drawLeftBorder = header->orientation == Qt::Vertical
@@ -3887,13 +3911,17 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
             if (!d->autoDefaultButton) {
                 if (btn->features & QStyleOptionButton::DefaultButton && opt->state & State_Active) {
                     d->defaultButton = opt->styleObject;
+#ifndef QT_NO_ANIMATION
                     if (!usingYosemiteOrLater && !d->animation(opt->styleObject))
                         d->startAnimation(new QStyleAnimation(opt->styleObject));
+#endif
                 } else if (d->defaultButton == opt->styleObject) {
+#ifndef QT_NO_ANIMATION
                     if (QStyleAnimation *animation = d->animation(opt->styleObject)) {
                         animation->updateTarget();
                         d->stopAnimation(opt->styleObject);
                     }
+#endif
                     d->defaultButton = 0;
                 }
             }
@@ -3926,6 +3954,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
             } else {
                 // the default button animation is paused meanwhile any button
                 // is pressed or an auto-default button is animated instead
+#ifndef QT_NO_ANIMATION
                 if (QStyleAnimation *defaultAnimation = d->animation(d->defaultButton)) {
                     if (d->pressedButton || d->autoDefaultButton) {
                         if (defaultAnimation->state() == QStyleAnimation::Running) {
@@ -3945,6 +3974,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                         bdi.animation.time.current = CFAbsoluteTimeGetCurrent();
                     }
                 }
+#endif
             }
 
             // Unlike Carbon, we want the button to always be drawn inside its bounds.
@@ -4561,9 +4591,11 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
                 // Always be normal or disabled to follow the Mac style.
                 int smallIconSize = proxy()->pixelMetric(PM_SmallIconSize);
                 QSize iconSize(smallIconSize, smallIconSize);
+#ifndef QT_NO_COMBOBOX
                 if (const QComboBox *comboBox = qobject_cast<const QComboBox *>(w)) {
                     iconSize = comboBox->iconSize();
                 }
+#endif
                 QPixmap pixmap = mi->icon.pixmap(window, iconSize, mode);
                 int pixw = pixmap.width() / pixmap.devicePixelRatio();
                 int pixh = pixmap.height() / pixmap.devicePixelRatio();
@@ -4724,6 +4756,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
             tdi.value = pb->progress;
             tdi.attributes = vertical ? 0 : kThemeTrackHorizontal;
 
+#ifndef QT_NO_ANIMATION
             if (isIndeterminate || (tdi.value < tdi.max && !usingYosemiteOrLater)) {
                 if (QProgressStyleAnimation *animation = qobject_cast<QProgressStyleAnimation*>(d->animation(opt->styleObject)))
                     tdi.trackInfo.progress.phase = animation->animationStep();
@@ -4732,6 +4765,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
             } else {
                 d->stopAnimation(opt->styleObject);
             }
+#endif
             if (!(pb->state & State_Active))
                 tdi.enableState = kThemeTrackInactive;
             else if (!(pb->state & State_Enabled))
@@ -4937,6 +4971,7 @@ QRect QMacStyle::subElementRect(SubElement sr, const QStyleOption *opt,
 
     switch (sr) {
     case SE_ItemViewItemText:
+#ifndef QT_NO_LISTVIEW
         if (const QStyleOptionViewItem *vopt = qstyleoption_cast<const QStyleOptionViewItem *>(opt)) {
             int fw = proxy()->pixelMetric(PM_FocusFrameHMargin, opt, widget);
             // We add the focusframeargin between icon and text in commonstyle
@@ -4944,6 +4979,7 @@ QRect QMacStyle::subElementRect(SubElement sr, const QStyleOption *opt,
             if (vopt->features & QStyleOptionViewItem::HasDecoration)
                 rect.adjust(-fw, 0, 0, 0);
         }
+#endif
         break;
     case SE_ToolBoxTabContents:
         rect = QCommonStyle::subElementRect(sr, opt, widget);
@@ -5067,9 +5103,11 @@ QRect QMacStyle::subElementRect(SubElement sr, const QStyleOption *opt,
         break;
     case SE_LineEditContents:
         rect = QCommonStyle::subElementRect(sr, opt, widget);
+#ifndef QT_NO_COMBOBOX
         if (widget && qobject_cast<const QComboBox*>(widget->parentWidget()))
             rect.adjust(-1, -2, 0, 0);
         else
+#endif
             rect.adjust(-1, -1, 0, +1);
         break;
     case SE_CheckBoxLayoutItem:
@@ -5463,6 +5501,7 @@ void QMacStyle::drawComplexControl(ComplexControl cc, const QStyleOptionComplex 
                         styleObject->setProperty("_q_stylestate", static_cast<int>(slider->state));
                         styleObject->setProperty("_q_stylecontrols", static_cast<uint>(slider->activeSubControls));
 
+#ifndef QT_NO_ANIMATION
                         QScrollbarStyleAnimation *anim  = qobject_cast<QScrollbarStyleAnimation *>(d->animation(styleObject));
                         if (transient) {
                             if (!anim) {
@@ -5476,8 +5515,10 @@ void QMacStyle::drawComplexControl(ComplexControl cc, const QStyleOptionComplex 
                         } else if (anim && anim->mode() == QScrollbarStyleAnimation::Deactivating) {
                             d->stopAnimation(styleObject);
                         }
+#endif
                     }
 
+#ifndef QT_NO_ANIMATION
                     QScrollbarStyleAnimation *anim = qobject_cast<QScrollbarStyleAnimation *>(d->animation(styleObject));
                     if (anim && anim->mode() == QScrollbarStyleAnimation::Deactivating) {
                         // once a scrollbar was active (hovered/pressed), it retains
@@ -5488,9 +5529,11 @@ void QMacStyle::drawComplexControl(ComplexControl cc, const QStyleOptionComplex 
                         wasActive = anim->wasActive();
                         opacity = anim->currentValue();
                     }
+#endif
 
                     shouldExpand = (opt->activeSubControls || wasActive) && QSysInfo::macVersion() >= QSysInfo::MV_10_8;
                     if (shouldExpand) {
+#ifndef QT_NO_ANIMATION
                         if (!anim && !oldActiveControls) {
                             // Start expand animation only once and when entering
                             anim = new QScrollbarStyleAnimation(QScrollbarStyleAnimation::Activating, styleObject);
@@ -5504,6 +5547,7 @@ void QMacStyle::drawComplexControl(ComplexControl cc, const QStyleOptionComplex 
                             expandScale = maxExpandScale;
                             expandOffset = 4.5;
                         }
+#endif
                     }
                 }
 
@@ -5587,8 +5631,9 @@ void QMacStyle::drawComplexControl(ComplexControl cc, const QStyleOptionComplex 
                 [NSGraphicsContext restoreGraphicsState];
                 CGContextRestoreGState(cg);
             } else {
+#ifndef QT_NO_ANIMATION
                 d->stopAnimation(opt->styleObject);
-
+#endif
                 if (usingYosemiteOrLater && cc == CC_Slider) {
                     // Fix min and max positions. (See also getSliderInfo()
                     // for the slider values adjustments.)
@@ -6739,7 +6784,9 @@ QSize QMacStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
     case QStyle::CT_MenuItem:
         if (const QStyleOptionMenuItem *mi = qstyleoption_cast<const QStyleOptionMenuItem *>(opt)) {
             int maxpmw = mi->maxIconWidth;
+#ifndef QT_NO_COMBOBOX
             const QComboBox *comboBox = qobject_cast<const QComboBox *>(widget);
+#endif
             int w = sz.width(),
                 h = sz.height();
             if (mi->menuItemType == QStyleOptionMenuItem::Separator) {
@@ -6750,11 +6797,14 @@ QSize QMacStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
             } else {
                 h = mi->fontMetrics.height() + 2;
                 if (!mi->icon.isNull()) {
+#ifndef QT_NO_COMBOBOX
                     if (comboBox) {
                         const QSize &iconSize = comboBox->iconSize();
                         h = qMax(h, iconSize.height() + 4);
                         maxpmw = qMax(maxpmw, iconSize.width());
-                    } else {
+                    } else
+#endif
+                    {
                         int iconExtent = proxy()->pixelMetric(PM_SmallIconSize);
                         h = qMax(h, mi->icon.actualSize(QSize(iconExtent, iconExtent)).height() + 4);
                     }
@@ -6768,6 +6818,7 @@ QSize QMacStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
                 w += maxpmw + 6;
             // add space for a check. All items have place for a check too.
             w += 20;
+#ifndef QT_NO_COMBOBOX
             if (comboBox && comboBox->isVisible()) {
                 QStyleOptionComboBox cmb;
                 cmb.initFrom(comboBox);
@@ -6777,7 +6828,9 @@ QSize QMacStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
                 w = qMax(w, subControlRect(QStyle::CC_ComboBox, &cmb,
                                                    QStyle::SC_ComboBoxEditField,
                                                    comboBox).width());
-            } else {
+            } else
+#endif
+            {
                 w += 12;
             }
             sz = QSize(w, h);
@@ -6823,10 +6876,12 @@ QSize QMacStyle::sizeFromContents(ContentsType ct, const QStyleOption *opt,
         }
         break;
     case CT_ItemViewItem:
+#ifndef QT_NO_ITEMVIEWS
         if (const QStyleOptionViewItem *vopt = qstyleoption_cast<const QStyleOptionViewItem *>(opt)) {
             sz = QCommonStyle::sizeFromContents(ct, vopt, csz, widget);
             sz.setHeight(sz.height() + 2);
         }
+#endif
         break;
 
     default:

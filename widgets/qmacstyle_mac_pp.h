@@ -1,18 +1,9 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtWidgets module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -41,13 +32,15 @@
 #include "qmacstyle_mac_p.h"
 #include "qcommonstyle_p.h"
 #include <private/qapplication_p.h>
-#include <private/qcombobox_p.h>
 #include <private/qpainter_p.h>
 #include <private/qstylehelper_p.h>
 #include <qapplication.h>
 #include <qbitmap.h>
 #include <qcheckbox.h>
+#ifndef QT_NO_COMBOBOX
 #include <qcombobox.h>
+#include <private/qcombobox_p.h>
+#endif
 #include <qdialogbuttonbox.h>
 #include <qdockwidget.h>
 #include <qevent.h>
@@ -55,10 +48,8 @@
 #include <qformlayout.h>
 #include <qgroupbox.h>
 #include <qhash.h>
-#include <qheaderview.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qlistview.h>
 #include <qmainwindow.h>
 #include <qmap.h>
 #include <qmenubar.h>
@@ -78,17 +69,23 @@
 #include <qtextstream.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#ifndef QT_NO_ITEMVIEWS
 #include <qtreeview.h>
 #include <qtableview.h>
+#include <qlistview.h>
+#include <qheaderview.h>
+#include <qdatetimeedit.h>
+#endif
 #include <qwizard.h>
 #include <qdebug.h>
 #include <qlibrary.h>
-#include <qdatetimeedit.h>
 #include <qmath.h>
 #include <qpair.h>
 #include <qvector.h>
+#ifndef QT_NO_GRAPHICSVIEW
 #include <QtWidgets/qgraphicsproxywidget.h>
 #include <QtWidgets/qgraphicsview.h>
+#endif
 
 
 

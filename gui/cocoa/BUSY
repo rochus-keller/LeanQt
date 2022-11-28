@@ -2,7 +2,10 @@
 # licensed under GPL/LGPL
 
 let config * : Config {
-	.defines += [ "QT_BUILD_COCOA_PLUGIN" "QT_NO_WIDGETS" "QT_NO_FREETYPE" "QT_NO_PRINTER" ]
+	.defines += [ "QT_BUILD_COCOA_PLUGIN" "QT_NO_FREETYPE" "QT_NO_PRINTER" ]
+	if !^HAVE_WIDGETS {
+		.defines += "QT_NO_WIDGETS"
+	}
 	.frameworks += [ "Cocoa" "Carbon" ] # TODO -lcups
 	.ldflags += [ ]
 }

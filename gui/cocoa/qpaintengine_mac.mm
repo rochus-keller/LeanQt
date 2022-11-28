@@ -25,6 +25,7 @@
 
 #include "qpaintengine_mac_p.h"
 #ifndef QT_NO_PRINTER
+#include <qprinter.h>
 #include "qprintengine_mac_p.h"
 #endif
 
@@ -33,10 +34,11 @@
 #include <qpainterpath.h>
 #include <qpixmapcache.h>
 #include <private/qpaintengine_raster_p.h>
-// TODO #include <qprinter.h>
 #include <qstack.h>
 #include <qtextcodec.h>
-// TODO #include <qwidget.h>
+#ifndef QT_NO_WIDGETS
+#include <QtWidgets/qwidget.h>
+#endif
 #include <qvarlengtharray.h>
 #include <qdebug.h>
 #include <qcoreapplication.h>
