@@ -56,7 +56,7 @@ The following features are available:
 - [x] QImage, QImageReader/Writer (separated from QtGui)
 - [x] mimetypes
 - [x] QtGui (tested on Linux x86 & x64 & ARMv7, Win x86 & x64, Mac x64 & M1)
-- [ ] QtWidgets (basic widgets work on Linux x86)
+- [x] QtWidgets (basic widgets work on Linux, Windows and Mac, the latter only fusion style)
 
 ### Long term plan
 

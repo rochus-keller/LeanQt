@@ -1125,6 +1125,10 @@ QStyle *QApplication::style()
         // Compile-time search for default style
         //
         QString style;
+#ifdef QT_STYLE_OVERRIDE
+        if( QApplicationPrivate::styleOverride.isEmpty() )
+            QApplicationPrivate::styleOverride = QT_STYLE_OVERRIDE;
+#endif
         if (!QApplicationPrivate::styleOverride.isEmpty()) {
             style = QApplicationPrivate::styleOverride;
         } else {

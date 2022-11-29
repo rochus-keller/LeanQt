@@ -8,6 +8,10 @@ let lib_config : Config {
 		"QT_NO_STYLE_WINDOWSXP" "QT_NO_STYLE_WINDOWSCE" "QT_NO_STYLE_WINDOWSMOBILE" 
 		"QT_NO_STATEMACHINE"
 	]
+	
+	if ^QT_STYLE_OVERRIDE != "" {
+		.defines += "QT_STYLE_OVERRIDE=\"" + ^QT_STYLE_OVERRIDE + "\""
+	}
 }
 
 let config * : Config {

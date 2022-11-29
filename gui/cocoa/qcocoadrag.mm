@@ -188,11 +188,16 @@ QPixmap QCocoaDrag::dragPixmap(QDrag *drag, QPoint &hotSpot) const
                     if (const QWindow *sourceWindow = qobject_cast<QWindow *>(drag->source())) {
                         dpr = sourceWindow->devicePixelRatio();
                     }
+#if 0       
+	// TODO RK: this code causes a circular dependency with the widgets module; if we really need this
+	// feature, we should superclass QWidget as QVisualObject here with a window() and windowHandle method,
+	// and QWidget would inherit from QVisualObject instead of directly QObject         
 #ifndef QT_NO_WIDGETS
                     else if (const QWidget *sourceWidget = qobject_cast<QWidget *>(drag->source())) {
                         if (const QWindow *sourceWindow = sourceWidget->window()->windowHandle())
                             dpr = sourceWindow->devicePixelRatio();
                     }
+#endif
 #endif
                     pm = QPixmap(width * dpr, height * dpr);
                     pm.setDevicePixelRatio(dpr);

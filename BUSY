@@ -304,6 +304,8 @@ let gui_client_config * : Config {
 }
 
 ######################################################################
+let QT_STYLE_OVERRIDE- = "fusion"
+
 submod widgets else ./missing.busy
 
 let _widgets_sources * = widgets.sources
