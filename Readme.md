@@ -92,6 +92,8 @@ The following features are available:
 
 - QMimeData and QTextBoundaryFinder belong to the gui module, not the core module
 - QEasingCurve belong to the widgets module, not the core module
+- QModelIndex, QPersistentModelIndex, QAbstractItemModel, QAbstractListModel, QAbstractProxyModel, QIdentityProxyModel, QItemSelectionRange, QItemSelectionModel, QItemSelection, QSortFilterProxyModel, and QStringListModel belong to the itemviews module, not the core module
+- QStandardItemModel belong to the itemviews module, not the gui module
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 

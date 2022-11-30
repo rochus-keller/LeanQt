@@ -1,1 +1,1 @@
-#include "../../../widgets/qcombobox_p.h"
+#include "../../../itemviews/qcombobox_p.h"

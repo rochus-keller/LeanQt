@@ -1,1 +1,1 @@
-#include "../../widgets/qinputdialog.h"
+#include "../../itemviews/qinputdialog.h"

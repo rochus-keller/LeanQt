@@ -98,3 +98,30 @@ let calculator* : Executable {
 	.configs += ^widgets_client_config	
 }
 
+let chart_moc : Moc {
+	.sources += ./chart.h
+}
+
+let chart* : Executable {
+	.sources += ./chart.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets chart_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += ^widgets_client_config	
+}
+
+let colorlist_moc : Moc {
+	.sources += ./colorlist.h
+}
+
+let colorlist* : Executable {
+	.sources += ./colorlist.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets colorlist_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += ^widgets_client_config	
+}
+
+

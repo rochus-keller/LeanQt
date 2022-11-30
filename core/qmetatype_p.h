@@ -189,7 +189,7 @@ template<> struct TypeDefinition<QJsonDocument> { static const bool IsAvailable 
 template<> struct TypeDefinition<QJsonObject> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QJsonValue> { static const bool IsAvailable = false; };
 #endif
-#if defined(QT_NO_ITEMMODELS) || defined(QT_BOOTSTRAPPED)
+#if !defined(NOT_SUPPORTED_BY_LEANQT) || defined(QT_BOOTSTRAPPED)
 template<> struct TypeDefinition<QModelIndex> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QPersistentModelIndex> { static const bool IsAvailable = false; };
 #endif
@@ -203,7 +203,7 @@ template<> struct TypeDefinition<QLineF> { static const bool IsAvailable = false
 template<> struct TypeDefinition<QPoint> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QPointF> { static const bool IsAvailable = false; };
 #endif
-#if defined(QT_NO_ANIMATION) || defined(QT_BOOTSTRAPPED)
+#if !defined(NOT_SUPPORTED_BY_LEANQT) || defined(QT_BOOTSTRAPPED)
 template<> struct TypeDefinition<QEasingCurve> { static const bool IsAvailable = false; };
 #endif
 #ifdef QT_NO_QOBJECT

@@ -19,9 +19,6 @@ let config * : Config {
 		# these are official Qt defines
 		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]
-	.defines += [
-		"QT_NO_ITEMMODELS" # public
-	]
 	
 	if !^HAVE_PLUGINS {
 		.defines += "QT_NO_PLUGINS" # public
@@ -520,6 +517,8 @@ let run_moc : Moc {
 		.sources += ./qpluginloader.h
 		.sources += ./qfactoryloader_p.h
 	}
+	
+	.defines += "QT_NO_GESTURES"
 }
 
 let moc_sources * : SourceSet {

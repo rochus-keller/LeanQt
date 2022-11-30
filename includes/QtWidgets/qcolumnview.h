@@ -1,1 +1,1 @@
-#include "../../widgets/qcolumnview.h"
+#include "../../itemviews/qcolumnview.h"

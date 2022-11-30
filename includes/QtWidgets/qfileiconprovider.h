@@ -1,1 +1,1 @@
-#include "../../src/widgets/itemviews/qfileiconprovider.h"
+#include "../../itemviews/qfileiconprovider.h"

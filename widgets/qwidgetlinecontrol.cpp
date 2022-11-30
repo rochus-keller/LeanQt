@@ -26,7 +26,9 @@
 
 #ifndef QT_NO_LINEEDIT
 
-//#include "qabstractitemview.h"
+#ifndef QT_NO_ITEMVIEWS
+#include "qabstractitemview.h"
+#endif
 #include "qclipboard.h"
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>

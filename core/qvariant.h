@@ -237,11 +237,11 @@ class Q_CORE_EXPORT QVariant
 #ifndef QT_NO_URL_VARIANT
     QVariant(const QUrl &url);
 #endif
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
     QVariant(const QEasingCurve &easing);
 #endif
     QVariant(const QUuid &uuid);
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     QVariant(const QModelIndex &modelIndex);
     QVariant(const QPersistentModelIndex &modelIndex);
 #endif
@@ -319,11 +319,11 @@ class Q_CORE_EXPORT QVariant
 #ifndef QT_NO_URL_VARIANT
     QUrl toUrl() const;
 #endif
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
     QEasingCurve toEasingCurve() const;
 #endif
     QUuid toUuid() const;
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     QModelIndex toModelIndex() const;
     QPersistentModelIndex toPersistentModelIndex() const;
 #endif

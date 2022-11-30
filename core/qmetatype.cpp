@@ -33,7 +33,7 @@
 #include "qstringlist.h"
 #include "qvector.h"
 #include "qlocale.h"
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
 #include "qeasingcurve.h"
 #endif
 #include "quuid.h"
@@ -45,7 +45,7 @@
 #  include "qbitarray.h"
 #  include "qurl.h"
 #  include "qvariant.h"
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
 #  include "qabstractitemmodel.h"
 #endif
 #  include "qregularexpression.h"
@@ -1254,7 +1254,7 @@ bool QMetaType::save(QDataStream &stream, int type, const void *data)
 #ifndef QT_NO_QOBJECT
     case QMetaType::QObjectStar:
 #endif
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     case QMetaType::QModelIndex:
     case QMetaType::QPersistentModelIndex:
 #endif
@@ -1396,7 +1396,7 @@ bool QMetaType::save(QDataStream &stream, int type, const void *data)
         stream << *static_cast<const NS(QRegularExpression)*>(data);
         break;
 #endif // QT_NO_REGULAREXPRESSION
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
     case QMetaType::QEasingCurve:
         stream << *static_cast<const NS(QEasingCurve)*>(data);
         break;
@@ -1483,7 +1483,7 @@ bool QMetaType::load(QDataStream &stream, int type, void *data)
 #ifndef QT_NO_QOBJECT
     case QMetaType::QObjectStar:
 #endif
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     case QMetaType::QModelIndex:
     case QMetaType::QPersistentModelIndex:
 #endif
@@ -1631,7 +1631,7 @@ bool QMetaType::load(QDataStream &stream, int type, void *data)
         stream >> *static_cast< NS(QRegularExpression)*>(data);
         break;
 #endif // QT_NO_REGULAREXPRESSION
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
     case QMetaType::QEasingCurve:
         stream >> *static_cast< NS(QEasingCurve)*>(data);
         break;

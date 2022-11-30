@@ -1,1 +1,1 @@
-#include "../../widgets/qabstractitemdelegate.h"
+#include "../../itemviews/qabstractitemdelegate.h"

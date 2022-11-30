@@ -192,7 +192,7 @@ let run_moc : Moc {
 		./qtextobject.h
 		./qtexttable.h
 		./qwindow.h		
-		./qevent.h
+		#./qevent.h
 		./qbrush.h
 		./qfontdatabase.h
 		./qfont.h

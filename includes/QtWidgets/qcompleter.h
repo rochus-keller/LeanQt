@@ -1,1 +1,1 @@
-#include "../../widgets/qcompleter.h"
+#include "../../itemviews/qcompleter.h"

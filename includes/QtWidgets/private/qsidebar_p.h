@@ -1,1 +1,1 @@
-#include "../../../widgets/qsidebar_p.h"
+#include "../../../itemviews/qsidebar_p.h"

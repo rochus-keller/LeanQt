@@ -42,6 +42,8 @@ param HAVE_FONTCONFIG = false  # Linux GUI option; use fontconfig to locate font
 							   # environment variable, or applicationDirPath() + "/fonts", or QStandardPaths::FontsLocation; requires -lfontconfig
 						
 param HAVE_WIDGETS = false     # takes care that GUI is enabled
+param HAVE_ITEMVIEWS = false   # takes care that WIDGETS is enabled
+param HAVE_GRAPHICS = false    # takes care that WIDGETS is enabled
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -63,6 +65,16 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 		HAVE_OBJECT = true
 		HAVE_URL = true
 	}
+}
+
+if HAVE_GRAPHICS && !HAVE_WIDGETS {
+	message("enabling HAVE_WIDGETS required by HAVE_GRAPHICS")
+	HAVE_GRAPHICS = true
+}
+
+if HAVE_ITEMVIEWS && !HAVE_WIDGETS {
+	message("enabling HAVE_WIDGETS required by HAVE_ITEMVIEWS")
+	HAVE_WIDGETS = true
 }
 
 if HAVE_WIDGETS && !HAVE_GUI {
@@ -313,15 +325,30 @@ let _widgets_sources * = widgets.sources
 let _widgets_linker_config - : Config {
 }
 
+let _widgets_config - = widgets.config
+
 let widgets_client_config * : Config {
-	.configs += [ image_client_config gui_client_config widgets.config _widgets_linker_config ]
+	.configs += [ image_client_config gui_client_config _widgets_config _widgets_linker_config ]
+}
+
+######################################################################
+submod itemviews else ./missing.busy
+
+let _itemviews_sources * = itemviews.sources
+
+let _itemviews_linker_config - : Config {
+}
+
+let itemviews_client_config * : Config {
+	.configs += [ image_client_config gui_client_config widgets_client_config itemviews.config _itemviews_linker_config ]
 }
 
 ######################################################################
 submod tools
 
-let rcc * = tools.rcc.rcc
-let moc * = tools.moc.moc
+let rcc * = tools.rcc.exe
+let moc * = tools.moc.exe
+let uic * = tools.uic.exe
 
 ######################################################################
 
@@ -350,9 +377,15 @@ let gui_sources * : Group {
 }
 
 let widgets_sources * : Group {
-	.deps += [ moc widgets.moc_sources ] 
+	.deps += [ rcc widgets.moc_sources ] 
 	.deps += _widgets_sources
 }
+
+let itemviews_sources * : Group {
+	.deps += itemviews.moc_sources; # we don't need uic since ui_qfiledialog.h is already there
+	.deps += _itemviews_sources
+}
+
 
 ######################################################################
 let libqtcore * : Library {
@@ -444,6 +477,9 @@ let libqtwidgets * : Library {
 	}else{ 
 		.lib_type = `static
 	}
+	if HAVE_ITEMVIEWS {
+		.deps += itemviews_sources 
+	}
 	.name = "qtwidgets"
 }
 
@@ -481,6 +517,9 @@ let build_examples ! : Copy {
 	}
 	if HAVE_WIDGETS {
 		.deps += examples.calculator
+	}
+	if HAVE_ITEMVIEWS {
+		.deps += [ examples.chart examples.colorlist ]
 	}
 	.outputs += ./{{source_file_part}}
 }

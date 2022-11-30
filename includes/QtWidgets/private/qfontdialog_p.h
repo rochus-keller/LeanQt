@@ -1,1 +1,1 @@
-#include "../../../widgets/qfontdialog_p.h"
+#include "../../../itemviews/qfontdialog_p.h"

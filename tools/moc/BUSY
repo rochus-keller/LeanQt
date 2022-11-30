@@ -5,7 +5,8 @@ let err : Message {
 	.text = "moc can only be built if HAVE_FILEIO and HAVE_COREAPP are set"
 }
 
-let moc * : Executable {
+let exe * : Executable {
+	.name = "moc"
 	.sources += [
 		./generator.cpp  ./main.cpp  ./token.cpp
 		./moc.cpp   ./parser.cpp      ./preprocessor.cpp

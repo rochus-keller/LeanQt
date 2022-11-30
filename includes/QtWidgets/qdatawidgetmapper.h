@@ -1,1 +1,1 @@
-#include "../../widgets/qdatawidgetmapper.h"
+#include "../../itemviews/qdatawidgetmapper.h"

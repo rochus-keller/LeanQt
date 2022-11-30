@@ -1,0 +1,104 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	if !^HAVE_MIME {
+		.defines += "QT_NO_MIMETYPE"
+	}
+}
+
+let config * : Config {
+}
+
+let err : Message {
+	.text = "widget module requires HAVE_WIDGETS"
+}
+
+let sources* : SourceSet {
+	.sources += [
+		./qabstractitemmodel.cpp   ./qidentityproxymodel.cpp  ./qsortfilterproxymodel.cpp
+		./qabstractproxymodel.cpp  ./qitemselectionmodel.cpp  ./qstringlistmodel.cpp
+		
+		./qabstractitemdelegate.cpp  ./qdirmodel.cpp           ./qsidebar.cpp
+		./qabstractitemview.cpp      ./qfileiconprovider.cpp   ./qstyleditemdelegate.cpp
+		./qbsptree.cpp               ./qfontcombobox.cpp       ./qtableview.cpp
+		./qcalendarwidget.cpp        ./qfontdialog.cpp         ./qtablewidget.cpp
+		./qcolumnview.cpp            ./qheaderview.cpp         ./qtreeview.cpp
+		./qcolumnviewgrip.cpp        ./qinputdialog.cpp        ./qtreewidget.cpp
+		./qcombobox.cpp              ./qitemdelegate.cpp       ./qtreewidgetitemiterator.cpp
+		./qcompleter.cpp             ./qitemeditorfactory.cpp  ./qundoview.cpp
+		./qdatawidgetmapper.cpp      ./qlistview.cpp
+		./qdatetimeedit.cpp          ./qlistwidget.cpp         ./qfiledialog.cpp
+		./qstandarditemmodel.cpp	 ./qfilesystemmodel.cpp    ./qfileinfogatherer.cpp
+	]
+	
+	if !^HAVE_WIDGETS {
+		.deps += err
+	}
+
+	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config lib_config config ]
+	.include_dirs += build_dir() # for the embedded .moc files
+}
+
+let run_moc : Moc {
+	.sources += [		
+		./qabstractitemmodel.h
+		./qabstractitemmodel.h
+		./qabstractitemmodel.h
+		./qabstractproxymodel.h
+		./qidentityproxymodel.h
+		./qitemselectionmodel.h
+		./qsortfilterproxymodel.h
+		./qstringlistmodel.h
+		./qabstractitemdelegate.h
+		./qabstractitemview.h
+		./qcalendarwidget.cpp
+		./qcalendarwidget.h
+		./qcolumnviewgrip_p.h
+		./qcolumnview.h
+		./qcombobox.h
+		./qcombobox_p.h
+		./qcompleter.h
+		./qcompleter_p.h
+		./qdatawidgetmapper.h
+		./qdatetimeedit.h
+		./qdatetimeedit_p.h
+		./qdirmodel.h
+		./qfontcombobox.cpp
+		./qfontcombobox.h
+		./qfontdialog.cpp
+		./qfontdialog.h
+		./qheaderview.h
+		./qinputdialog.cpp
+		./qinputdialog.h
+		./qitemdelegate.h
+		./qitemeditorfactory.cpp
+		./qitemeditorfactory_p.h
+		./qlistview.h
+		./qlistwidget.cpp
+		./qlistwidget.h
+		./qlistwidget_p.h
+		./qtreeview.h
+		./qtreewidget.h
+		./qtreewidget_p.h
+		./qtablewidget.h
+		./qtablewidget_p.h
+		./qsidebar_p.h
+		./qtableview.cpp
+		./qtableview.h
+		./qundoview.cpp
+		./qundoview.h
+		./qstyleditemdelegate.h
+		./qstandarditemmodel.h
+		./qfilesystemmodel.h
+		./qfileinfogatherer_p.h
+		./qfiledialog.h
+	]
+		
+	.defines += config.defines + ^_core_config.defines + "QT_NO_ANIMATION" + "QT_NO_ACCESSIBILITY" + "QT_NO_GESTURES"
+}
+
+let moc_sources * : SourceSet {
+	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config config lib_config ]
+	.deps += run_moc
+} 

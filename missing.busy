@@ -14,3 +14,7 @@ let sources* : SourceSet {
 
 let moc_sources* : SourceSet {
 }
+
+let exe* : Executable {
+	.deps += err
+}

@@ -1,1 +1,1 @@
-#include "../../widgets/qfontcombobox.h"
+#include "../../itemviews/qfontcombobox.h"

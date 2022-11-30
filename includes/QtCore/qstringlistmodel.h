@@ -1,0 +1,1 @@
+#include "../../itemviews/qstringlistmodel.h"

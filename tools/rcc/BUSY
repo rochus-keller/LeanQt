@@ -5,7 +5,8 @@ let err : Message {
 	.text = "rcc can only be built if HAVE_FILEIO and HAVE_COREAPP are set"
 }
 
-let rcc * : Executable {
+let exe * : Executable {
+	.name = "rcc"
 	.sources += [
 		./main.cpp
 		./rcc.cpp

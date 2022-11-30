@@ -31,7 +31,7 @@
 #include "qdebug.h"
 #include "qmap.h"
 #include "qdatetime.h"
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
 #include "qeasingcurve.h"
 #endif
 #include "qlist.h"
@@ -44,7 +44,7 @@
 #include "qlocale.h"
 #include "quuid.h"
 #ifndef QT_BOOTSTRAPPED
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
 #include "qabstractitemmodel.h"
 #endif
 #ifndef QT_NO_JSON
@@ -398,7 +398,7 @@ static bool convert(const QVariant::Private *d, int t, void *result, bool *ok)
         }
         break;
 #endif
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     case QVariant::ModelIndex:
         switch (d->type) {
         case QVariant::PersistentModelIndex:
@@ -1773,7 +1773,7 @@ QVariant::QVariant(const QDateTime &val)
     : d(DateTime)
 { v_construct<QDateTime>(&d, val); }
 #ifndef QT_BOOTSTRAPPED
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
 QVariant::QVariant(const QEasingCurve &val)
     : d(EasingCurve)
 { v_construct<QEasingCurve>(&d, val); }
@@ -1836,7 +1836,7 @@ QVariant::QVariant(const QRegularExpression &re)
 QVariant::QVariant(const QUuid &uuid)
     : d(Uuid)
 { v_construct<QUuid>(&d, uuid); }
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
 QVariant::QVariant(const QModelIndex &modelIndex)
     : d(ModelIndex)
 { v_construct<QModelIndex>(&d, modelIndex); }
@@ -2365,7 +2365,7 @@ QDateTime QVariant::toDateTime() const
     \sa canConvert(), convert()
 */
 #ifndef QT_BOOTSTRAPPED
-#ifndef QT_NO_ANIMATION
+#ifdef NOT_SUPPORTED_BY_LEANQT
 QEasingCurve QVariant::toEasingCurve() const
 {
     return qVariantToHelper<QEasingCurve>(d, handlerManager);
@@ -2580,7 +2580,7 @@ QUuid QVariant::toUuid() const
 
     \sa canConvert(), convert(), toPersistentModelIndex()
 */
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
 QModelIndex QVariant::toModelIndex() const
 {
     return qVariantToHelper<QModelIndex>(d, handlerManager);
@@ -3071,7 +3071,7 @@ static bool canConvertMetaObject(int fromId, int toId, QObject *fromObject)
 */
 bool QVariant::canConvert(int targetTypeId) const
 {
-#ifndef QT_NO_ITEMMODELS
+#ifdef NOT_SUPPORTED_BY_LEANQT
     if ((targetTypeId == QMetaType::QModelIndex && d.type == QMetaType::QPersistentModelIndex)
         || (targetTypeId == QMetaType::QPersistentModelIndex && d.type == QMetaType::QModelIndex))
         return true;
