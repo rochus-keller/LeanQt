@@ -1162,6 +1162,35 @@ QString QIcon::themeName()
 
     \sa themeName(), setThemeName(), themeSearchPaths()
 */
+
+#if 0
+struct QIconNameUrlMap { const char* name; const char* url; };
+static QIconNameUrlMap s_mapRaw[] = {
+    { "folder-open", ":/qt-project.org/styles/commonstyle/images/diropen-32.png" },
+    { "folder", ":/qt-project.org/styles/commonstyle/images/dirclosed-32.png" },
+    { "computer", ":/qt-project.org/styles/commonstyle/images/computer-32.png" },
+    { "up", ":/qt-project.org/styles/commonstyle/images/up-32.png" },
+    { "down", ":/qt-project.org/styles/commonstyle/images/down-32.png" },
+    { "forward", ":/qt-project.org/styles/commonstyle/images/right-32.png" },
+    { "back", ":/qt-project.org/styles/commonstyle/images/left-32.png" },
+    { "drive-harddisk",":/qt-project.org/styles/commonstyle/images/harddrive-32.png" },
+    //{ "user-home",":/qt-project.org/styles/commonstyle/images/" },
+    { "go-previous",":/qt-project.org/styles/commonstyle/images/left-32.png" },
+    { "go-next",":/qt-project.org/styles/commonstyle/images/right-32.png" },
+    { "go-up",":/qt-project.org/styles/commonstyle/images/up-32.png" },
+    { "go-down",":/qt-project.org/styles/commonstyle/images/down-32.png" },
+    { "view-list-icons",":/qt-project.org/styles/commonstyle/images/viewlist-32.png" },
+    { "folder-new",":/qt-project.org/styles/commonstyle/images/newdirectory-32.png" },
+    { "","" },
+    { "","" },
+    { "","" },
+    { "","" },
+    { "","" },
+   { 0, 0 }
+};
+static QHash<QString,QString> s_map;
+#endif
+
 QIcon QIcon::fromTheme(const QString &name, const QIcon &fallback)
 {
     QIcon icon;
@@ -1179,7 +1208,26 @@ QIcon QIcon::fromTheme(const QString &name, const QIcon &fallback)
     }
 
     if (qApp && icon.availableSizes().isEmpty())
+    {
+#if 0
+        if( fallback.availableSizes().isEmpty() )
+        {
+            if( s_map.isEmpty() )
+            {
+                QIconNameUrlMap* p = s_mapRaw;
+                while( p->name != 0 )
+                {
+                    s_map.insert( QString::fromUtf8(p->name), QString::fromUtf8(p->url) );
+                    p++;
+                }
+            }
+            QHash<QString,QString>::const_iterator i = s_map.find(name);
+            if( i != s_map.end() )
+                return QIcon(QPixmap(i.value()));
+        }
+#endif
         return fallback;
+    }
 
     return icon;
 }

@@ -1710,38 +1710,24 @@ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
 
     QString translatedTextAboutQtCaption;
     translatedTextAboutQtCaption = QMessageBox::tr(
-        "<h3>About Qt</h3>"
-        "<p>This program uses Qt version %1.</p>"
+        "<h3>About LeanQt</h3>"
+        "<p>This program uses LeanQt which is based on Qt version 5.6.</p>"
         ).arg(QLatin1String(QT_VERSION_STR));
     QString translatedTextAboutQtText;
     translatedTextAboutQtText = QMessageBox::tr(
-        "<p>Qt is a C++ toolkit for cross-platform application "
-        "development.</p>"
-        "<p>Qt provides single-source portability across all major desktop "
-        "operating systems. It is also available for embedded Linux and other "
-        "embedded and mobile operating systems.</p>"
-        "<p>Qt is available under three different licensing options designed "
-        "to accommodate the needs of our various users.</p>"
-        "<p>Qt licensed under our commercial license agreement is appropriate "
-        "for development of proprietary/commercial software where you do not "
-        "want to share any source code with third parties or otherwise cannot "
-        "comply with the terms of the GNU LGPL version 3 or GNU LGPL version 2.1.</p>"
-        "<p>Qt licensed under the GNU LGPL version 3 is appropriate for the "
-        "development of Qt&nbsp;applications provided you can comply with the terms "
+        "<p>LeanQt is a C++ toolkit for cross-platform application development.</p>"
+        "<p>LeanQt provides single-source portability across major desktop operating systems. </p>"
+        "<p>LeanQt is available under two different licensing options.</p>"
+        "<p>LeanQt licensed under the GNU LGPL version 3 is appropriate for the "
+        "development of applications provided you can comply with the terms "
         "and conditions of the GNU LGPL version 3.</p>"
-        "<p>Qt licensed under the GNU LGPL version 2.1 is appropriate for the "
-        "development of Qt&nbsp;applications provided you can comply with the terms "
+        "<p>LeanQt licensed under the GNU LGPL version 2.1 is appropriate for the "
+        "development of applications provided you can comply with the terms "
         "and conditions of the GNU LGPL version 2.1.</p>"
-        "<p>Please see <a href=\"http://%2/\">%2</a> "
-        "for an overview of Qt licensing.</p>"
-        "<p>Copyright (C) %1 The Qt Company Ltd and other "
-        "contributors.</p>"
+        "<p>Copyright (C) by The Qt Company Ltd and other contributors.</p>"
         "<p>Qt and the Qt logo are trademarks of The Qt Company Ltd.</p>"
-        "<p>Qt is The Qt Company Ltd product developed as an open source "
-        "project. See <a href=\"http://%3/\">%3</a> for more information.</p>"
-        ).arg(QStringLiteral("2017"),
-              QStringLiteral("qt.io/licensing"),
-              QStringLiteral("qt.io"));
+        "<p>See <a href=\"https://github.com/rochus-keller/LeanQt\">the Github page</a> for more information.</p>"
+        );
     QMessageBox *msgBox = new QMessageBox(parent);
     msgBox->setAttribute(Qt::WA_DeleteOnClose);
     msgBox->setWindowTitle(title.isEmpty() ? tr("About Qt") : title);

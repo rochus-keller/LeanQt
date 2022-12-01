@@ -33,9 +33,7 @@
 #include "qmainwindow.h"
 #include "qtoolbar.h"
 #include "qtoolbarlayout_p.h"
-#ifndef QT_NO_ANIMATION
 #include "qwidgetanimator_p.h"
-#endif
 #include "qrubberband.h"
 #include "qtabbar_p.h"
 
@@ -1772,9 +1770,7 @@ QLayoutItem *QMainWindowLayout::takeAt(int index)
     if (QLayoutItem *ret = layoutState.takeAt(index, &x)) {
         // the widget might in fact have been destroyed by now
         if (QWidget *w = ret->widget()) {
-#ifndef QT_NO_ANIMATION
             widgetAnimator.abort(w);
-#endif
             if (w == pluggingWidget)
                 pluggingWidget = 0;
         }
@@ -1991,9 +1987,7 @@ bool QMainWindowLayout::plug(QLayoutItem *widgetItem)
         QRect globalRect = dwgw->layoutInfo()->tabContentRect();
         globalRect.moveTopLeft(dwgw->mapToGlobal(globalRect.topLeft()));
         pluggingWidget = widget;
-#ifndef QT_NO_ANIMATION
         widgetAnimator.animate(widget, globalRect, dockOptions & QMainWindow::AnimatedDocks);
-#endif
         return true;
     }
 #endif
@@ -2038,9 +2032,7 @@ bool QMainWindowLayout::plug(QLayoutItem *widgetItem)
         }
     }
 #endif
-#ifndef QT_NO_ANIMATION
     widgetAnimator.animate(widget, globalRect, dockOptions & QMainWindow::AnimatedDocks);
-#endif
 
     return true;
 }
@@ -2141,9 +2133,7 @@ void QMainWindowLayout::animationFinished(QWidget *widget)
 #endif
     }
 
-#ifndef QT_NO_ANIMATION
     if (!widgetAnimator.animating()) 
-#endif
     {
         //all animations are finished
 #ifndef QT_NO_DOCKWIDGET
@@ -2187,9 +2177,7 @@ QMainWindowLayout::QMainWindowLayout(QMainWindow *mainwindow, QLayout *parentLay
 #endif
 #endif
 #endif // QT_NO_DOCKWIDGET
-#ifndef QT_NO_ANIMATION
     , widgetAnimator(this)
-#endif
     , pluggingWidget(0)
 #ifdef Q_DEAD_CODE_FROM_QT4_MAC
     , blockVisiblityCheck(false)
@@ -2366,11 +2354,7 @@ QLayoutItem *QMainWindowLayout::unplug(QWidget *widget, bool group)
 void QMainWindowLayout::updateGapIndicator()
 {
 #ifndef QT_NO_RUBBERBAND
-    if ((
-#ifndef QT_NO_ANIMATION
-    !widgetAnimator.animating() && 
-#endif
-    !currentGapPos.isEmpty()) || currentHoveredFloat) {
+    if (( !widgetAnimator.animating() && !currentGapPos.isEmpty()) || currentHoveredFloat) {
         QWidget *expectedParent = currentHoveredFloat ? currentHoveredFloat.data() : parentWidget();
         if (!gapIndicator) {
             gapIndicator = new QRubberBand(QRubberBand::Rectangle, expectedParent);

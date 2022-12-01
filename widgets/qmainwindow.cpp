@@ -42,9 +42,6 @@
 
 #include <private/qwidget_p.h>
 #include "qtoolbar_p.h"
-#ifndef QT_NO_ANIMATION
-#include "qwidgetanimator_p.h"
-#endif
 #ifdef Q_OS_OSX
 #include <qpa/qplatformnativeinterface.h>
 #endif

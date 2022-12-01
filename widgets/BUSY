@@ -81,7 +81,7 @@ let sources* : SourceSet {
 		./qstatusbar.cpp           ./qwindowsstyle.cpp
 		./qkeysequenceedit.cpp     ./qstyle.cpp               ./qwizard.cpp
 		./qlabel.cpp               ./qstylefactory.cpp        
-		./qeasingcurve.cpp
+		./qeasingcurve.cpp	       ./qwidgetanimator.cpp
 	]
 	
 	if !^HAVE_GUI {
@@ -203,6 +203,7 @@ let run_moc : Moc {
 		./qwindowsstyle_p.h
 		./qwizard.h
 		./qsizepolicy.h
+		./qwidgetanimator_p.h
 	]
 	
 	if target_os == `linux {

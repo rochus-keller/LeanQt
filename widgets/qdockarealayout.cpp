@@ -33,9 +33,7 @@
 #include "qdockarealayout_p.h"
 #include "qdockwidget.h"
 #include "qmainwindow.h"
-#ifndef QT_NO_ANIMATION
 #include "qwidgetanimator_p.h"
-#endif
 #include "qmainwindowlayout_p.h"
 #include "qdockwidget_p.h"
 #include <private/qlayoutengine_p.h>
@@ -1483,10 +1481,7 @@ bool QDockAreaLayoutInfo::hasFixedSize() const
 
 void QDockAreaLayoutInfo::apply(bool animate)
 {
-#ifndef QT_NO_ANIMATION
     QWidgetAnimator &widgetAnimator = mainWindowLayout()->widgetAnimator;
-#endif
-
 #ifndef QT_NO_TABBAR
     if (tabbed) {
         QRect tab_rect;
@@ -1518,9 +1513,7 @@ void QDockAreaLayoutInfo::apply(bool animate)
             }
         }
 
-#ifndef QT_NO_ANIMATION
         widgetAnimator.animate(tabBar, tab_rect, animate);
-#endif
     }
 #endif // QT_NO_TABBAR
 
@@ -1543,9 +1536,7 @@ void QDockAreaLayoutInfo::apply(bool animate)
         QWidget *w = item.widgetItem->widget();
 
         QRect geo = w->geometry();
-#ifndef QT_NO_ANIMATION
         widgetAnimator.animate(w, r, animate);
-#endif
         if (!w->isHidden() && w->window()->isVisible()) {
             QDockWidget *dw = qobject_cast<QDockWidget*>(w);
             if (!r.isValid() && geo.right() >= 0 && geo.bottom() >= 0) {
@@ -3194,18 +3185,13 @@ void QDockAreaLayout::splitDockWidget(QDockWidget *after,
 
 void QDockAreaLayout::apply(bool animate)
 {
-#ifndef QT_NO_ANIMATION
     QWidgetAnimator &widgetAnimator = qt_mainwindow_layout(mainWindow)->widgetAnimator;
-#endif
 
     for (int i = 0; i < QInternal::DockCount; ++i)
         docks[i].apply(animate);
-#ifndef QT_NO_ANIMATION
     if (centralWidgetItem != 0 && !centralWidgetItem->isEmpty()) {
-        widgetAnimator.animate(centralWidgetItem->widget(), centralWidgetRect,
-                                animate);
+        widgetAnimator.animate(centralWidgetItem->widget(), centralWidgetRect, animate);
     }
-#endif
 #ifndef QT_NO_TABBAR
     if (sep == 1)
         updateSeparatorWidgets();

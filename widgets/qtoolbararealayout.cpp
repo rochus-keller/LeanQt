@@ -30,9 +30,7 @@
 
 #include "qtoolbararealayout_p.h"
 #include "qmainwindowlayout_p.h"
-#ifndef QT_NO_ANIMATION
 #include "qwidgetanimator_p.h"
-#endif
 #include "qtoolbarlayout_p.h"
 #include "qtoolbar_p.h"
 
@@ -921,9 +919,7 @@ void QToolBarAreaLayout::apply(bool animate)
                 if (visible && dock.o == Qt::Horizontal)
                     geo = QStyle::visualRect(dir, line.rect, geo);
 
-#ifndef QT_NO_ANIMATION
                 layout->widgetAnimator.animate(widget, geo, animate);
-#endif
             }
         }
     }

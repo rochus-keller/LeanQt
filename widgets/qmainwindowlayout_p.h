@@ -46,9 +46,7 @@
 #include "QtCore/qset.h"
 #include "QtCore/qbasictimer.h"
 #include "private/qlayoutengine_p.h"
-#ifndef QT_NO_ANIMATION
 #include "private/qwidgetanimator_p.h"
-#endif
 
 #include "qdockarealayout_p.h"
 #include "qtoolbararealayout_p.h"
@@ -279,9 +277,7 @@ public:
 
     // animations
 
-#ifndef QT_NO_ANIMATION
     QWidgetAnimator widgetAnimator;
-#endif
     QList<int> currentGapPos;
     QRect currentGapRect;
     QWidget *pluggingWidget;

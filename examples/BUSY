@@ -124,4 +124,17 @@ let colorlist* : Executable {
 	.configs += ^widgets_client_config	
 }
 
+let mainwindow_moc : Moc {
+	.sources += [ ./mainwindow.h ./mainwindow.cpp ]
+}
+
+let mainwindow* : Executable {
+	.sources += ./mainwindow.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets mainwindow_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += ^widgets_client_config;
+	.include_dirs += build_dir()
+}
 

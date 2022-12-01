@@ -107,13 +107,15 @@ extern bool qt_wince_is_pocket_pc();  //qguifunctions_wince.cpp
 
 static void initResources()
 {
-#if 0 // TODO
+#if 0
 #if defined(Q_OS_WINCE)
     Q_INIT_RESOURCE(qstyle_wince);
 #else
     Q_INIT_RESOURCE(qstyle);
 #endif
     Q_INIT_RESOURCE(qmessagebox);
+#else
+    Q_INIT_RESOURCE(images);
 #endif
 }
 
