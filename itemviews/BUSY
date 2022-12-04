@@ -2,6 +2,7 @@
 # licensed under GPL/LGPL
 
 let lib_config : Config {
+	.defines += "QT_BUILD_WIDGETS_LIB"
 	if !^HAVE_MIME {
 		.defines += "QT_NO_MIMETYPE"
 	}
@@ -42,8 +43,6 @@ let sources* : SourceSet {
 
 let run_moc : Moc {
 	.sources += [		
-		./qabstractitemmodel.h
-		./qabstractitemmodel.h
 		./qabstractitemmodel.h
 		./qabstractproxymodel.h
 		./qidentityproxymodel.h

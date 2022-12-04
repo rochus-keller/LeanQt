@@ -31,6 +31,7 @@
 #include "qtimer.h"
 #include "qlabel.h"
 #include "qlayout.h"
+#include <QWindow>
 
 QT_BEGIN_NAMESPACE
 

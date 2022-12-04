@@ -46,6 +46,7 @@ The following features are available:
 - image handling, format conversion
 - window handling, events, 2D bitmap and vector graphics, fonts, rich text
 - pdf and odf writer 
+- widgets
 
 ### Planned or work-in-progress features
 
@@ -56,7 +57,11 @@ The following features are available:
 - [x] QImage, QImageReader/Writer (separated from QtGui)
 - [x] mimetypes
 - [x] QtGui (tested on Linux x86 & x64 & ARMv7, Win x86 & x64, Mac x64 & M1)
-- [x] QtWidgets (basic widgets work on Linux, Windows and Mac, the latter only fusion style)
+- [x] QtWidgets (see NOTE below)
+
+NOTE: All widgets (including item views) work on Linux, Windows and Mac (tested on x86 Linux and Windows, and x64 and M1 Mac).
+The "macintosh" style doesn't fully work yet, so LeanQt starts with "fusion" style also on Macintosh.
+Also note that on Mac the generated executables should be included in an application bundle using a separate tool to avoid that a terminal window is opened at start, and the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).  
 
 ### Long term plan
 

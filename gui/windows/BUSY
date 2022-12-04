@@ -4,7 +4,11 @@
 let config * : Config {
 	.defines += [ "QT_BUILD_WINDOWS_PLUGIN" "QT_NO_DIRECTWRITE" "QT_NO_FREETYPE" ]
 	.lib_names += [ "winspool" "imm32" "winmm" "oleaut32" "shlwapi" ] # see also _core_linker_config
-	.ldflags += [ "/SUBSYSTEM:WINDOWS" "/DYNAMICBASE" "/NXCOMPAT" "/INCREMENTAL:NO" ]
+	if target_toolchain == `msvc {
+		.ldflags += [ "/SUBSYSTEM:WINDOWS" "/DYNAMICBASE" "/NXCOMPAT" "/INCREMENTAL:NO" ]
+	}else if target_toolchain == `gcc {
+		.lib_names += "uuid"
+	}
 }
 
 let run_moc : Moc {

@@ -20,6 +20,10 @@ let config * : Config {
 		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]
 	
+	if !^HAVE_DEBUG {
+		.defines += "NDEBUG"
+	}
+	
 	if !^HAVE_PLUGINS {
 		.defines += "QT_NO_PLUGINS" # public
 	}

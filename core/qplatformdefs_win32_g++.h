@@ -123,7 +123,7 @@ typedef enum {
 # define QT_OPEN_BINARY         _O_BINARY
 #endif
 
-#include "../common/c89/qplatformdefs.h"
+#include "qplatformdefs_c89.h"
 
 #ifdef QT_LARGEFILE_SUPPORT
 #undef QT_FSEEK

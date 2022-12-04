@@ -196,8 +196,9 @@ if HAVE_OBJECT && !HAVE_THREADS {
 
 let debugconf : Config {
 	if target_toolchain == `msvc {
-		.cflags += [ "-MDd" "/Zi" "-Fddebug.pdb" ]
-		.ldflags += "/DEBUG"
+		.cflags += [ "-MDd" "/Zi" "-Fdbusy" ] # generate debug information and add it to the busy.pdb file in the current directory
+		#.cflags += [ "-MDd" "/Z7" ]          # include debug information in object files; needs much more space than a pdb file
+		#.ldflags += "/DEBUG"                 # generate a pdb file from the debug info included in the object files when linking
 	} else {
 		.cflags += "-g"
 	}
@@ -214,6 +215,12 @@ if HAVE_DEBUG && HAVE_NOOPT {
 }else if HAVE_DEBUG {
 	set_defaults(target_toolchain,debugconf)
 }else if HAVE_NOOPT {
+	# TODO: on Windows with VC2013 and HAVE_SHARED and HAVE_NOOPT this option causes a crash on load of qtwidgets.dll;
+	# same for x86 and x64; reason unknown so far; -Zc:strictStrings and -DNDEBUG don't change anything, neither /Gy
+	# Doesn't happen with HAVE_SHARED together with /O2, or without HAVE_SHARED. If I replace SHARED/NOOPT qtwidgets.dll 
+	# by one compiled with /O2, everything works fine; 
+	# TODO: the same applies to HAVE_DEBUG with HAVE_SHARED and the debug build in QtCreator with the generated qmake 
+	# project files; in QtCreator the cdb process simply crashes with no useful log output
 	set_defaults(target_toolchain,nooptconf)
 }
 
@@ -228,6 +235,11 @@ let _core_linker_config - : Config {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
 		]
+		if target_toolchain != `msvc {
+			# gcc and clang on windows
+			.lib_names += [ "stdc++" "m" ]
+			.ldflags += "-shared-libgcc"
+		}
 	} else {
 		.lib_names += [ "stdc++" "m" ]
 		.ldflags += "-shared-libgcc"
@@ -308,11 +320,8 @@ let _gui_sources * = gui.sources
 
 let _gui_config - = gui.config
 
-let _gui_linker_config - : Config {
-}
-
 let gui_client_config * : Config {
-	.configs += [ image_client_config _gui_config _gui_linker_config ]
+	.configs += [ image_client_config _gui_config ]
 }
 
 ######################################################################
@@ -322,13 +331,10 @@ submod widgets else ./missing.busy
 
 let _widgets_sources * = widgets.sources
 
-let _widgets_linker_config - : Config {
-}
-
 let _widgets_config - = widgets.config
 
 let widgets_client_config * : Config {
-	.configs += [ image_client_config gui_client_config _widgets_config _widgets_linker_config ]
+	.configs += [ image_client_config gui_client_config _widgets_config ]
 }
 
 ######################################################################
@@ -469,11 +475,11 @@ let libqtwinmain * : Library {
 }
 
 let libqtwidgets * : Library {
-	.deps += [ widgets_sources ]
+	.deps += widgets_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
 		.configs += widgets_client_config;
-		.deps += libqtgui
+		.deps += [ libqtcore libqtgui ]
 	}else{ 
 		.lib_type = `static
 	}
@@ -516,10 +522,10 @@ let build_examples ! : Copy {
 		.deps += examples.clock
 	}
 	if HAVE_WIDGETS {
-		.deps += [ examples.calculator examples.mainwindow ]
+		.deps += examples.calculator
 	}
 	if HAVE_ITEMVIEWS {
-		.deps += [ examples.chart examples.colorlist ]
+		.deps += [ examples.chart examples.colorlist examples.mainwindow ]
 	}
 	.outputs += ./{{source_file_part}}
 }

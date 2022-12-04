@@ -30,6 +30,9 @@ let config * : Config {
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" 
 		*/
 	]
+	if !^HAVE_DEBUG {
+		.defines += "NDEBUG"
+	}
 	if target_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
 		if target_toolchain == `msvc {

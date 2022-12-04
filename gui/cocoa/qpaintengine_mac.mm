@@ -347,6 +347,8 @@ CGColorSpaceRef QCoreGraphicsPaintEngine::macDisplayColorSpace(const QWidget *wi
     if (widget == 0) {
         displayID = CGMainDisplayID();
     } else {
+#if 0
+	// LeanQt not supported circular dependency between qui and widgets
 #ifndef QT_NO_WIDGETS
         const QRect &qrect = widget->window()->geometry();
         CGRect rect = CGRectMake(qrect.x(), qrect.y(), qrect.width(), qrect.height());
@@ -354,6 +356,7 @@ CGColorSpaceRef QCoreGraphicsPaintEngine::macDisplayColorSpace(const QWidget *wi
         CGDisplayErr dErr = CGGetDisplaysWithRect(rect, 1, &displayID, &throwAway);
         if (dErr != kCGErrorSuccess)
             return macDisplayColorSpace(0); // fall back on main display
+#endif
 #endif
     }
     if ((colorSpace = m_displayColorSpaceHash.value(displayID)))
@@ -551,6 +554,8 @@ QCoreGraphicsPaintEngine::begin(QPaintDevice *pdev)
 
     setActive(true);
 
+#if 0
+	// LeanQt not supported circular dependency between qui and widgets
 #ifndef QT_NO_WIDGETS
     if (d->pdev->devType() == QInternal::Widget) {                    // device is a widget
         QWidget *w = (QWidget*)d->pdev;
@@ -564,6 +569,7 @@ QCoreGraphicsPaintEngine::begin(QPaintDevice *pdev)
             qWarning("QCoreGraphicsPaintEngine::begin: Does not support unclipped painting");
         }
     } else
+#endif
 #endif
         if (d->pdev->devType() == QInternal::Pixmap) {             // device is a pixmap
         QPixmap *pm = (QPixmap*)d->pdev;
@@ -586,10 +592,13 @@ QCoreGraphicsPaintEngine::end()
 {
     Q_D(QCoreGraphicsPaintEngine);
     setActive(false);
+#if 0
+	// LeanQt not supported circular dependency between qui and widgets
 #ifndef QT_NO_WIDGETS
     if (d->pdev->devType() == QInternal::Widget && static_cast<QWidget*>(d->pdev)->windowType() == Qt::Desktop) {
         // ### need to do [qt_mac_window_for(static_cast<QWidget *>(d->pdev)) orderOut]; (need to rename)
     }
+#endif
 #endif
     if (d->shading) {
         CGShadingRelease(d->shading);
