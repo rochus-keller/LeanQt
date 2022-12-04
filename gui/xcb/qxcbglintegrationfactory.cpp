@@ -26,7 +26,6 @@
 #include "qxcbglintegrationfactory.h"
 #include "qxcbglintegrationplugin.h"
 
-#include "qxcbglintegrationplugin.h"
 #include "private/qfactoryloader_p.h"
 #include "qguiapplication.h"
 #include "qdir.h"

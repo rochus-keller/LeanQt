@@ -25,6 +25,9 @@ let run_moc : Moc {
 		./qxcbnativeinterface.h
 		../platformsupport/qunixeventdispatcher_qpa_p.h
 	]
+	if ^HAVE_PLUGINS {
+		.sources += ./qxcbglintegrationplugin.h
+	}
 }
 
 let sources * : SourceSet {

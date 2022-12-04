@@ -49,7 +49,7 @@ class Q_GUI_EXPORT QTextImageHandler : public QObject,
 {
     Q_OBJECT
 #ifndef QT_NO_PLUGINS
-    Q_INTERFACES(QTextObjectInterface)
+    // TODO we don't support interfaces yet Q_INTERFACES(QTextObjectInterface)
 #endif
 public:
     explicit QTextImageHandler(QObject *parent = 0);

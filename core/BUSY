@@ -103,6 +103,78 @@ let config * : Config {
 
 submod zlib = ../thirdparty/zlib else ../missing.busy
 
+let run_moc : Moc {
+	.sources += [
+		./qbuffer.h
+		./qobject.h
+		./qthread.h
+		./qiodevice.h
+		./qcoreapplication.h
+		./qeventloop.h
+		./qabstracteventdispatcher.h
+		./qthreadpool.h
+		./qlocale.h
+		./qfuturewatcher.h
+		./qtranslator.h
+		./qtextstream_p.h
+		./qnamespace.h
+		./qsocketnotifier.h
+		./qtimer.h
+	]
+	if ^HAVE_OBJECT {
+		.sources += ./qcoreevent.h
+	}
+	if ^HAVE_FILEIO {
+		.sources += [ 
+			./qfileselector.h 
+			./qfile.h
+			./qfiledevice.h
+			./qsettings.h
+			./qsavefile.h
+			./qtemporaryfile.h
+			./qfilesystemwatcher.h
+			./qfilesystemwatcher_p.h
+			./qfilesystemwatcher_polling_p.h
+		]
+		if target_os == `win32 {
+			.sources += [ ./qfilesystemwatcher_win_p.h ]
+		}else if target_os == `macos {
+			.sources += [ ./qfilesystemwatcher_kqueue_p.h ./qfilesystemwatcher_fsevents_p.h ]
+		}else{
+			.sources += [ ./qfilesystemwatcher_inotify_p.h ]
+		}
+	}
+	if ^HAVE_LIBRARY {
+		.sources += ./qlibrary.h
+	}
+	if ^HAVE_PROCESS {
+		.sources += ./qprocess.h
+	}
+	if ( ^HAVE_PROCESS || ^HAVE_LOCALSOCK ) && ( target_os == `win32 ) {
+		.sources += [
+			./qwindowspipereader_p.h
+			./qwindowspipewriter_p.h
+		]
+	}	
+	if ^HAVE_SHAREDMEM {
+		.sources += ./qsharedmemory.h
+	}
+	if target_os == `win32 {
+		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
+	}else {
+		if target_os == `macos {
+			.sources += [ ./qeventdispatcher_cf_p.h ]
+		}
+		.sources += [ ./qeventdispatcher_unix_p.h ]
+	}
+	if ^HAVE_PLUGINS {
+		.sources += ./qpluginloader.h
+		.sources += ./qfactoryloader_p.h
+	}
+	
+	.defines += "QT_NO_GESTURES"
+}
+
 let sources* : SourceSet {
 	.sources += [
 		./qbytearray.cpp
@@ -451,84 +523,12 @@ let sources* : SourceSet {
 	}
 	
 	.configs += [ config lib_config ]
-}
-
-let run_moc : Moc {
-	.sources += [
-		./qbuffer.h
-		./qobject.h
-		./qthread.h
-		./qiodevice.h
-		./qcoreapplication.h
-		./qeventloop.h
-		./qabstracteventdispatcher.h
-		./qthreadpool.h
-		./qlocale.h
-		./qfuturewatcher.h
-		./qtranslator.h
-		./qtextstream_p.h
-		./qnamespace.h
-		./qsocketnotifier.h
-		./qtimer.h
-	]
-	if ^HAVE_OBJECT {
-		.sources += ./qcoreevent.h
-	}
-	if ^HAVE_FILEIO {
-		.sources += [ 
-			./qfileselector.h 
-			./qfile.h
-			./qfiledevice.h
-			./qsettings.h
-			./qsavefile.h
-			./qtemporaryfile.h
-			./qfilesystemwatcher.h
-			./qfilesystemwatcher_p.h
-			./qfilesystemwatcher_polling_p.h
-		]
-		if target_os == `win32 {
-			.sources += [ ./qfilesystemwatcher_win_p.h ]
-		}else if target_os == `macos {
-			.sources += [ ./qfilesystemwatcher_kqueue_p.h ./qfilesystemwatcher_fsevents_p.h ]
-		}else{
-			.sources += [ ./qfilesystemwatcher_inotify_p.h ]
-		}
-	}
-	if ^HAVE_LIBRARY {
-		.sources += ./qlibrary.h
-	}
-	if ^HAVE_PROCESS {
-		.sources += ./qprocess.h
-	}
-	if ( ^HAVE_PROCESS || ^HAVE_LOCALSOCK ) && ( target_os == `win32 ) {
-		.sources += [
-			./qwindowspipereader_p.h
-			./qwindowspipewriter_p.h
-		]
-	}	
-	if ^HAVE_SHAREDMEM {
-		.sources += ./qsharedmemory.h
-	}
-	if target_os == `win32 {
-		.sources += [ ./qeventdispatcher_win_p.h ./qwineventnotifier.h ]
-	}else {
-		if target_os == `macos {
-			.sources += [ ./qeventdispatcher_cf_p.h ]
-		}
-		.sources += [ ./qeventdispatcher_unix_p.h ]
-	}
-	if ^HAVE_PLUGINS {
-		.sources += ./qpluginloader.h
-		.sources += ./qfactoryloader_p.h
-	}
 	
-	.defines += "QT_NO_GESTURES"
+	if ^HAVE_OBJECT {
+		.deps += run_moc
+	}
 }
 
-let moc_sources * : SourceSet {
-	.configs += [ config lib_config ]
-	.deps += run_moc # run_moc produces the source file compiled here
-}
 
 /*
 # not supported

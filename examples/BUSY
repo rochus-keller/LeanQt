@@ -37,13 +37,13 @@ let dnslookup_moc : Moc {
 let dnslookup* : Executable {
 	.sources += ./dnslookup.cpp
 	.deps += [ ^libqtcore ^libqtnetwork dnslookup_moc ]
-	.configs += ^net_client_config
+	.configs += [ ^core_client_config ^net_client_config ]
 }
 
 let runner* : Executable {
 	.sources += ./runner.cpp
 	.deps += [ ^libqtcore ^libqtconcurrent ]
-	.configs += ^concurrent_client_config
+	.configs += [ ^core_client_config ^concurrent_client_config ]
 }
 
 let download_moc : Moc {
@@ -54,7 +54,7 @@ let download* : Executable {
 	.sources += ./download.cpp
 	.deps += [ ^libqtcore ^libqtnetwork download_moc ]
 	.include_dirs += build_dir()
-	.configs += ^net_client_config
+	.configs += [ ^core_client_config ^net_client_config ]
 }
 
 let transform* : Executable {
@@ -65,10 +65,10 @@ let transform* : Executable {
 		if target_os == `win32 {
 			.deps += ^libqtwinmain
 		}
-		.configs += ^gui_client_config	
+		.configs += [ ^core_client_config ^gui_client_config ]
 	} else {
 		.deps += ^libqtimage;
-		.configs += ^image_client_config
+		.configs += [ ^core_client_config ^image_client_config ]
 	}
 }
 
@@ -82,7 +82,7 @@ let clock* : Executable {
 	if target_os == `win32 {
 		.deps += ^libqtwinmain
 	}
-	.configs += ^gui_client_config	
+	.configs += [ ^core_client_config ^gui_client_config ]
 }
 
 let calc_moc : Moc {
@@ -95,7 +95,7 @@ let calculator* : Executable {
 	if target_os == `win32 {
 		.deps += ^libqtwinmain
 	}
-	.configs += ^widgets_client_config	
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
 }
 
 let chart_moc : Moc {
@@ -108,7 +108,7 @@ let chart* : Executable {
 	if target_os == `win32 {
 		.deps += ^libqtwinmain
 	}
-	.configs += ^widgets_client_config	
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
 }
 
 let colorlist_moc : Moc {
@@ -121,7 +121,7 @@ let colorlist* : Executable {
 	if target_os == `win32 {
 		.deps += ^libqtwinmain
 	}
-	.configs += ^widgets_client_config	
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
 }
 
 let mainwindow_moc : Moc {
@@ -134,7 +134,7 @@ let mainwindow* : Executable {
 	if target_os == `win32 {
 		.deps += ^libqtwinmain
 	}
-	.configs += ^widgets_client_config;
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
 	.include_dirs += build_dir()
 }
 

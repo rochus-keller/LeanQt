@@ -42,65 +42,6 @@ let images : Rcc {
 	.sources += ./images.qrc
 }
 
-let sources* : SourceSet {
-	.sources += [
-		./qabstractbutton.cpp      ./qlayout.cpp              ./qstylehelper.cpp
-		./qabstractscrollarea.cpp  ./qlayoutengine.cpp        ./qstyleoption.cpp
-		./qabstractslider.cpp      ./qlayoutitem.cpp          ./qstylepainter.cpp
-		./qabstractspinbox.cpp     ./qlcdnumber.cpp           ./qstyleplugin.cpp
-		./qaction.cpp              ./qlineedit.cpp            ./qstylesheetstyle.cpp
-		./qactiongroup.cpp         ./qlineedit_p.cpp          ./qstylesheetstyle_default.cpp
-		./qapplication.cpp         ./qmainwindow.cpp          ./qsystemtrayicon.cpp
-		./qboxlayout.cpp           ./qmainwindowlayout.cpp    
-		./qbuttongroup.cpp         ./qmdiarea.cpp             
-		./qmdisubwindow.cpp        
-		./qcheckbox.cpp            ./qmenubar.cpp             ./qtabbar.cpp
-		./qcolordialog.cpp         ./qmenu.cpp                ./qtabwidget.cpp
-		./qcolormap.cpp            ./qmessagebox.cpp          ./qtextbrowser.cpp
-		./qplaintextedit.cpp       ./qtextedit.cpp
-		./qcommandlinkbutton.cpp   ./qprogressbar.cpp         ./qtoolbararealayout.cpp
-		./qcommonstyle.cpp         ./qprogressdialog.cpp      ./qtoolbar.cpp
-		./qproxystyle.cpp          ./qtoolbarextension.cpp
-		./qpushbutton.cpp          ./qtoolbarlayout.cpp
-		./qdesktopwidget.cpp       ./qradiobutton.cpp         ./qtoolbarseparator.cpp
-		./qdial.cpp                ./qrubberband.cpp          ./qtoolbox.cpp
-		./qdialogbuttonbox.cpp     ./qscrollarea.cpp          ./qtoolbutton.cpp
-		./qdialog.cpp              ./qscrollbar.cpp           ./qtooltip.cpp
-		./qdockarealayout.cpp      ./qscroller.cpp            ./qundogroup.cpp
-		./qdockwidget.cpp          ./qscrollerproperties.cpp  ./qundostack.cpp
-		./qdrawutil.cpp            ./qshortcut.cpp            ./qwhatsthis.cpp
-		./qerrormessage.cpp        ./qwidgetaction.cpp
-		./qfocusframe.cpp          ./qsizegrip.cpp            ./qwidgetbackingstore.cpp
-		./qsizepolicy.cpp          ./qwidget.cpp
-		./qslider.cpp              ./qwidgetlinecontrol.cpp
-		./qformlayout.cpp          ./qspinbox.cpp             ./qwidgetresizehandler.cpp
-		./qframe.cpp               ./qsplashscreen.cpp        ./qwidgetsvariant.cpp
-		./qfusionstyle.cpp         ./qsplitter.cpp            ./qwidgettextcontrol.cpp
-		./qgridlayout.cpp          ./qstackedlayout.cpp       ./qwidgetwindow.cpp
-		./qgroupbox.cpp            ./qstackedwidget.cpp       ./qwindowcontainer.cpp
-		./qstatusbar.cpp           ./qwindowsstyle.cpp
-		./qkeysequenceedit.cpp     ./qstyle.cpp               ./qwizard.cpp
-		./qlabel.cpp               ./qstylefactory.cpp        
-		./qeasingcurve.cpp	       ./qwidgetanimator.cpp
-	]
-	
-	if !^HAVE_GUI {
-		.deps += err
-	}
-	
-	if target_os == `linux {
-		.sources += ./qsystemtrayicon_x11.cpp
-	}else if target_os == `win32 {
-		.sources += [ ./qwizard_win.cpp ./qsystemtrayicon_win.cpp ]
-	}else if target_os == `macos {
-		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ./qmacnativewidget_mac.mm ./qsystemtrayicon_qpa.cpp ]
-	}
-
-	.configs += [ ^_core_config ^_image_config ^_gui_config lib_config config ]
-	.include_dirs += build_dir() # for the embedded .moc files
-	.deps += images
-}
-
 let run_moc : Moc {
 	.sources += [		
 		./qabstractbutton.h
@@ -217,7 +158,62 @@ let run_moc : Moc {
 	.defines += config.defines + ^_core_config.defines + "QT_NO_ANIMATION" + "QT_NO_ACCESSIBILITY"
 }
 
-let moc_sources * : SourceSet {
-	.configs += [ ^_core_config ^_image_config ^_gui_config config lib_config ]
-	.deps += run_moc
-} 
+let sources* : SourceSet {
+	.sources += [
+		./qabstractbutton.cpp      ./qlayout.cpp              ./qstylehelper.cpp
+		./qabstractscrollarea.cpp  ./qlayoutengine.cpp        ./qstyleoption.cpp
+		./qabstractslider.cpp      ./qlayoutitem.cpp          ./qstylepainter.cpp
+		./qabstractspinbox.cpp     ./qlcdnumber.cpp           ./qstyleplugin.cpp
+		./qaction.cpp              ./qlineedit.cpp            ./qstylesheetstyle.cpp
+		./qactiongroup.cpp         ./qlineedit_p.cpp          ./qstylesheetstyle_default.cpp
+		./qapplication.cpp         ./qmainwindow.cpp          ./qsystemtrayicon.cpp
+		./qboxlayout.cpp           ./qmainwindowlayout.cpp    
+		./qbuttongroup.cpp         ./qmdiarea.cpp             
+		./qmdisubwindow.cpp        
+		./qcheckbox.cpp            ./qmenubar.cpp             ./qtabbar.cpp
+		./qcolordialog.cpp         ./qmenu.cpp                ./qtabwidget.cpp
+		./qcolormap.cpp            ./qmessagebox.cpp          ./qtextbrowser.cpp
+		./qplaintextedit.cpp       ./qtextedit.cpp
+		./qcommandlinkbutton.cpp   ./qprogressbar.cpp         ./qtoolbararealayout.cpp
+		./qcommonstyle.cpp         ./qprogressdialog.cpp      ./qtoolbar.cpp
+		./qproxystyle.cpp          ./qtoolbarextension.cpp
+		./qpushbutton.cpp          ./qtoolbarlayout.cpp
+		./qdesktopwidget.cpp       ./qradiobutton.cpp         ./qtoolbarseparator.cpp
+		./qdial.cpp                ./qrubberband.cpp          ./qtoolbox.cpp
+		./qdialogbuttonbox.cpp     ./qscrollarea.cpp          ./qtoolbutton.cpp
+		./qdialog.cpp              ./qscrollbar.cpp           ./qtooltip.cpp
+		./qdockarealayout.cpp      ./qscroller.cpp            ./qundogroup.cpp
+		./qdockwidget.cpp          ./qscrollerproperties.cpp  ./qundostack.cpp
+		./qdrawutil.cpp            ./qshortcut.cpp            ./qwhatsthis.cpp
+		./qerrormessage.cpp        ./qwidgetaction.cpp
+		./qfocusframe.cpp          ./qsizegrip.cpp            ./qwidgetbackingstore.cpp
+		./qsizepolicy.cpp          ./qwidget.cpp
+		./qslider.cpp              ./qwidgetlinecontrol.cpp
+		./qformlayout.cpp          ./qspinbox.cpp             ./qwidgetresizehandler.cpp
+		./qframe.cpp               ./qsplashscreen.cpp        ./qwidgetsvariant.cpp
+		./qfusionstyle.cpp         ./qsplitter.cpp            ./qwidgettextcontrol.cpp
+		./qgridlayout.cpp          ./qstackedlayout.cpp       ./qwidgetwindow.cpp
+		./qgroupbox.cpp            ./qstackedwidget.cpp       ./qwindowcontainer.cpp
+		./qstatusbar.cpp           ./qwindowsstyle.cpp
+		./qkeysequenceedit.cpp     ./qstyle.cpp               ./qwizard.cpp
+		./qlabel.cpp               ./qstylefactory.cpp        
+		./qeasingcurve.cpp	       ./qwidgetanimator.cpp
+	]
+	
+	if !^HAVE_GUI {
+		.deps += err
+	}
+	
+	if target_os == `linux {
+		.sources += ./qsystemtrayicon_x11.cpp
+	}else if target_os == `win32 {
+		.sources += [ ./qwizard_win.cpp ./qsystemtrayicon_win.cpp ]
+	}else if target_os == `macos {
+		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ./qmacnativewidget_mac.mm ./qsystemtrayicon_qpa.cpp ]
+	}
+
+	.configs += [ ^_core_config ^_image_config ^_gui_config lib_config config ]
+	.include_dirs += build_dir() # for the embedded .moc files
+	.deps += [ run_moc images ]
+}
+

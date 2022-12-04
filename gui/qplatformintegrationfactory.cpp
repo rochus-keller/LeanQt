@@ -32,14 +32,12 @@
 #include "qguiapplication.h"
 #include "qdebug.h"
 
-#ifdef QT_NO_PLUGINS
 #if defined(Q_OS_LINUX)
 #include <xcb/qxcbintegration.h>
 #elif defined(Q_OS_WIN)
 #include <windows/qwindowsgdiintegration.h>
 #elif defined(Q_OS_MAC)
 #include <cocoa/qcocoaintegrationfactory.h>
-#endif
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -80,15 +78,16 @@ QPlatformIntegration *QPlatformIntegrationFactory::create(const QString &platfor
     Q_UNUSED(argc);
     Q_UNUSED(argv);
     Q_UNUSED(platformPluginPath);
+#endif
 #if defined(Q_OS_LINUX)
     return new QXcbIntegration(paramList, argc, argv);
 #elif defined(Q_OS_WIN)
     return new QWindowsGdiIntegration(paramList);
 #elif defined(Q_OS_MAC)
     return QCocoaIntegrationFactory::create(paramList);
-#endif
-#endif
+#else
     return 0;
+#endif
 }
 
 /*!
@@ -100,8 +99,15 @@ QPlatformIntegration *QPlatformIntegrationFactory::create(const QString &platfor
 
 QStringList QPlatformIntegrationFactory::keys(const QString &platformPluginPath)
 {
-#ifndef QT_NO_PLUGINS
     QStringList list;
+#if defined(Q_OS_LINUX)
+    list << "xcb";
+#elif defined(Q_OS_WIN)
+    list << "windows";
+#elif defined(Q_OS_MAC)
+    list << "cocoa";
+#endif
+#ifndef QT_NO_PLUGINS
     if (!platformPluginPath.isEmpty()) {
         QCoreApplication::addLibraryPath(platformPluginPath);
         list = directLoader()->keyMap().values();
@@ -115,18 +121,8 @@ QStringList QPlatformIntegrationFactory::keys(const QString &platformPluginPath)
         }
     }
     list.append(loader()->keyMap().values());
+#endif
     return list;
-#else
-    QStringList keys;
-#if defined(Q_OS_LINUX)
-    keys << "xcb";
-#elif defined(Q_OS_WIN)
-    keys << "windows";
-#elif defined(Q_OS_MAC)
-    keys << "cocoa";
-#endif
-    return keys;
-#endif
 }
 
 QT_END_NAMESPACE

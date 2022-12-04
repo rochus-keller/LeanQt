@@ -1712,7 +1712,7 @@ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
     translatedTextAboutQtCaption = QMessageBox::tr(
         "<h3>About LeanQt</h3>"
         "<p>This program uses LeanQt which is based on Qt version 5.6.</p>"
-        ).arg(QLatin1String(QT_VERSION_STR));
+        );
     QString translatedTextAboutQtText;
     translatedTextAboutQtText = QMessageBox::tr(
         "<p>LeanQt is a C++ toolkit for cross-platform application development.</p>"

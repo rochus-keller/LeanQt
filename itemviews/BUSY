@@ -15,32 +15,6 @@ let err : Message {
 	.text = "widget module requires HAVE_WIDGETS"
 }
 
-let sources* : SourceSet {
-	.sources += [
-		./qabstractitemmodel.cpp   ./qidentityproxymodel.cpp  ./qsortfilterproxymodel.cpp
-		./qabstractproxymodel.cpp  ./qitemselectionmodel.cpp  ./qstringlistmodel.cpp
-		
-		./qabstractitemdelegate.cpp  ./qdirmodel.cpp           ./qsidebar.cpp
-		./qabstractitemview.cpp      ./qfileiconprovider.cpp   ./qstyleditemdelegate.cpp
-		./qbsptree.cpp               ./qfontcombobox.cpp       ./qtableview.cpp
-		./qcalendarwidget.cpp        ./qfontdialog.cpp         ./qtablewidget.cpp
-		./qcolumnview.cpp            ./qheaderview.cpp         ./qtreeview.cpp
-		./qcolumnviewgrip.cpp        ./qinputdialog.cpp        ./qtreewidget.cpp
-		./qcombobox.cpp              ./qitemdelegate.cpp       ./qtreewidgetitemiterator.cpp
-		./qcompleter.cpp             ./qitemeditorfactory.cpp  ./qundoview.cpp
-		./qdatawidgetmapper.cpp      ./qlistview.cpp
-		./qdatetimeedit.cpp          ./qlistwidget.cpp         ./qfiledialog.cpp
-		./qstandarditemmodel.cpp	 ./qfilesystemmodel.cpp    ./qfileinfogatherer.cpp
-	]
-	
-	if !^HAVE_WIDGETS {
-		.deps += err
-	}
-
-	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config lib_config config ]
-	.include_dirs += build_dir() # for the embedded .moc files
-}
-
 let run_moc : Moc {
 	.sources += [		
 		./qabstractitemmodel.h
@@ -97,7 +71,30 @@ let run_moc : Moc {
 	.defines += config.defines + ^_core_config.defines + "QT_NO_ANIMATION" + "QT_NO_ACCESSIBILITY" + "QT_NO_GESTURES"
 }
 
-let moc_sources * : SourceSet {
-	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config config lib_config ]
-	.deps += run_moc
-} 
+let sources* : SourceSet {
+	.sources += [
+		./qabstractitemmodel.cpp   ./qidentityproxymodel.cpp  ./qsortfilterproxymodel.cpp
+		./qabstractproxymodel.cpp  ./qitemselectionmodel.cpp  ./qstringlistmodel.cpp
+		
+		./qabstractitemdelegate.cpp  ./qdirmodel.cpp           ./qsidebar.cpp
+		./qabstractitemview.cpp      ./qfileiconprovider.cpp   ./qstyleditemdelegate.cpp
+		./qbsptree.cpp               ./qfontcombobox.cpp       ./qtableview.cpp
+		./qcalendarwidget.cpp        ./qfontdialog.cpp         ./qtablewidget.cpp
+		./qcolumnview.cpp            ./qheaderview.cpp         ./qtreeview.cpp
+		./qcolumnviewgrip.cpp        ./qinputdialog.cpp        ./qtreewidget.cpp
+		./qcombobox.cpp              ./qitemdelegate.cpp       ./qtreewidgetitemiterator.cpp
+		./qcompleter.cpp             ./qitemeditorfactory.cpp  ./qundoview.cpp
+		./qdatawidgetmapper.cpp      ./qlistview.cpp
+		./qdatetimeedit.cpp          ./qlistwidget.cpp         ./qfiledialog.cpp
+		./qstandarditemmodel.cpp	 ./qfilesystemmodel.cpp    ./qfileinfogatherer.cpp
+	]
+	
+	if !^HAVE_WIDGETS {
+		.deps += err
+	}
+
+	.deps += run_moc;
+	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config lib_config config ]
+	.include_dirs += build_dir() # for the embedded .moc files
+}
+

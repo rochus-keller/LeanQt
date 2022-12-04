@@ -34,16 +34,19 @@ param HAVE_AUTH = false        # include QAuthenticator
 param HAVE_NET_ALL = false	   # switches on all flags which add code
 param HAVE_NET_MINIMUM = false # takes care that core is compiled with HAVE_OBJECT and HAVE_URL support
 
+param HAVE_XML = false		   # takes care that libqt included QtXml classes
 param HAVE_CONCURRENT = false  # takes care that core is compiled with HAVE_THREADS support
 param HAVE_IMAGE = false       # takes care that core is compiled with HAVE_GEOM and HAVE_DSTREAM support
 param HAVE_GUI = false		   # takes care that core is compiled with HAVE_IMAGE and HAVE_OBJECT
 
 param HAVE_FONTCONFIG = false  # Linux GUI option; use fontconfig to locate fonts; otherwise use the path provided via QT_QPA_FONTDIR
 							   # environment variable, or applicationDirPath() + "/fonts", or QStandardPaths::FontsLocation; requires -lfontconfig
-						
+
 param HAVE_WIDGETS = false     # takes care that GUI is enabled
 param HAVE_ITEMVIEWS = false   # takes care that WIDGETS is enabled
 param HAVE_GRAPHICS = false    # takes care that WIDGETS is enabled
+
+# NOTE: HAVE_PLUGINS has not yet been tested; it compiles, but might not work.
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
@@ -215,19 +218,25 @@ if HAVE_DEBUG && HAVE_NOOPT {
 }else if HAVE_DEBUG {
 	set_defaults(target_toolchain,debugconf)
 }else if HAVE_NOOPT {
-	# TODO: on Windows with VC2013 and HAVE_SHARED and HAVE_NOOPT this option causes a crash on load of qtwidgets.dll;
-	# same for x86 and x64; reason unknown so far; -Zc:strictStrings and -DNDEBUG don't change anything, neither /Gy
-	# Doesn't happen with HAVE_SHARED together with /O2, or without HAVE_SHARED. If I replace SHARED/NOOPT qtwidgets.dll 
-	# by one compiled with /O2, everything works fine; 
+	# TODO: on Windows with HAVE_SHARED and HAVE_NOOPT VC2013 and 2017 generated qtwidgets.dll causes a crash on load;
+	# same for x86 and x64; reason unknown so far; -Zc:strictStrings and -DNDEBUG don't change anything, neither /Gy.
+	# Doesn't happen with HAVE_SHARED and no HAVE_NOOPT, or without HAVE_SHARED. If I replace a SHARED/NOOPT qtwidgets.dll 
+	# by one compiled without NOOPT, everything works fine. 
 	# TODO: the same applies to HAVE_DEBUG with HAVE_SHARED and the debug build in QtCreator with the generated qmake 
-	# project files; in QtCreator the cdb process simply crashes with no useful log output
+	# project files; in QtCreator the cdb.exe process simply crashes with no useful log output
+	# NOTE: so don't use HAVE_SHARED if you want to debug LeanQt, and don't use HAVE_NOOPT together with HAVE_SHARED.
 	set_defaults(target_toolchain,nooptconf)
+}
+
+if (target_toolchain == `msvc) && HAVE_SHARED && (HAVE_NOOPT || HAVE_DEBUG) {
+	error("with MSVC, libqtwidget and libqt currently only work with HAVE_SHARED when neither HAVE_NOOPT nor HAVE_NOOPT are selected")
 }
 
 ######################################################################
 submod core
 
-let _core_sources - = core.sources
+let _core_sources - = core.sources # see below for public core_sources
+
 let _core_config - = core.config
 
 let _core_linker_config - : Config {
@@ -260,14 +269,21 @@ let core_client_config * : Config {
 }
 
 ######################################################################
+submod mime else ./missing.busy
+
+# mime is optional part of core
+
+######################################################################
 submod xml else ./missing.busy
 
 let xml_sources * = xml.sources
 
+let xml_client_config * = xml.config
+
 ######################################################################
 submod net else ./missing.busy
 
-let _net_sources = net.sources
+let net_sources * = net.sources 
 
 let _net_linker_config - : Config {
 	if target_os == `win32 {
@@ -284,20 +300,15 @@ let _net_linker_config - : Config {
 }
 
 let net_client_config * : Config {
-	.configs += [ core_client_config net.config _net_linker_config ]
+	.configs += [ net.config _net_linker_config ]
 }
 
 ######################################################################
 submod concurrent else ./missing.busy
 
-let concurrent_sources = concurrent.sources
+let concurrent_sources * = concurrent.sources
 
-let _concurrent_linker_config - : Config {
-}
-
-let concurrent_client_config * : Config {
-	.configs += [ core_client_config concurrent.config _concurrent_linker_config ]
-}
+let concurrent_client_config * = concurrent.config
 
 ######################################################################
 submod image else ./missing.busy
@@ -306,17 +317,13 @@ let image_sources * = image.sources
 
 let _image_config - = image.config
 
-let _image_linker_config - : Config {
-}
-
-let image_client_config * : Config {
-	.configs += [ core_client_config _image_config _image_linker_config ]
-}
+# use either image_client_config or gui_client_config, but not both
+let image_client_config * = image.config
 
 ######################################################################
 submod gui else ./missing.busy
 
-let _gui_sources * = gui.sources
+let _gui_sources = gui.sources # see below for public gui_sources
 
 let _gui_config - = gui.config
 
@@ -329,25 +336,18 @@ let QT_STYLE_OVERRIDE- = "fusion"
 
 submod widgets else ./missing.busy
 
-let _widgets_sources * = widgets.sources
+let widgets_sources * = widgets.sources
 
 let _widgets_config - = widgets.config
 
-let widgets_client_config * : Config {
-	.configs += [ image_client_config gui_client_config _widgets_config ]
-}
+let widgets_client_config * = widgets.config
 
 ######################################################################
 submod itemviews else ./missing.busy
 
-let _itemviews_sources * = itemviews.sources
+let itemviews_sources * = itemviews.sources
 
-let _itemviews_linker_config - : Config {
-}
-
-let itemviews_client_config * : Config {
-	.configs += [ image_client_config gui_client_config widgets_client_config itemviews.config _itemviews_linker_config ]
-}
+let itemviews_client_config * = itemviews.config
 
 ######################################################################
 submod tools
@@ -358,10 +358,9 @@ let uic * = tools.uic.exe
 
 ######################################################################
 
-submod mime else ./missing.busy
 let core_sources * : Group {
 	if HAVE_OBJECT {
-		.deps += [ moc core.moc_sources ]
+		.deps += moc
 	}
 	.deps += _core_sources
 	if HAVE_MIME {
@@ -369,31 +368,18 @@ let core_sources * : Group {
 	}
 }
 
-let net_sources * : Group {
-	.deps += [ moc net.moc_sources ] # do this first because of .moc includes
-	.deps += _net_sources;
-}
-
 let gui_sources * : Group {
-	if (target_os == `macos) || (target_os == `win32) {
+	if (target_os == `macos) || (target_os == `win32) || HAVE_WIDGETS {
 		.deps += rcc
 	}
-	.deps += [ moc gui.moc_sources ] 
 	.deps += _gui_sources
 }
 
-let widgets_sources * : Group {
-	.deps += [ rcc widgets.moc_sources ] 
-	.deps += _widgets_sources
-}
-
-let itemviews_sources * : Group {
-	.deps += itemviews.moc_sources; # we don't need uic since ui_qfiledialog.h is already there
-	.deps += _itemviews_sources
-}
-
+# we don't need uic for itemviews since the generated ui_qfiledialog.h is already there
 
 ######################################################################
+## Separate client libraries 
+
 let libqtcore * : Library {
 	.deps += core_sources 
 	if HAVE_SHARED {
@@ -421,7 +407,7 @@ let libqtnetwork * : Library {
 	.deps += net_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += net_client_config;
+		.configs += [ core_client_config net_client_config ]
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -433,7 +419,7 @@ let libqtconcurrent * : Library {
 	.deps += concurrent_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += concurrent_client_config;
+		.configs += [ core_client_config concurrent_client_config ]
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -445,7 +431,7 @@ let libqtimage * : Library {
 	.deps += image_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += image_client_config;
+		.configs += [ core_client_config image_client_config ]
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -458,7 +444,7 @@ let libqtgui * : Library {
 	.deps += [ image_sources gui_sources ]
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += gui_client_config;
+		.configs += [ core_client_config gui_client_config ]
 		.deps += libqtcore
 	}else{ 
 		.lib_type = `static
@@ -478,7 +464,7 @@ let libqtwidgets * : Library {
 	.deps += widgets_sources
 	if HAVE_SHARED {
 		.lib_type = `shared
-		.configs += widgets_client_config;
+		.configs += [ core_client_config gui_client_config widgets_client_config ]
 		.deps += [ libqtcore libqtgui ]
 	}else{ 
 		.lib_type = `static
@@ -487,6 +473,66 @@ let libqtwidgets * : Library {
 		.deps += itemviews_sources 
 	}
 	.name = "qtwidgets"
+}
+
+######################################################################
+## All in one client library
+
+# use this Config instead of the above X_client_config when you use libqt
+let qt_client_config * : Config {
+	.configs += core_client_config
+	if HAVE_XML {
+		.configs += xml_client_config
+	}
+	if HAVE_NET_MINIMUM {
+		.configs += net_client_config
+	}
+	if HAVE_CONCURRENT {
+		.configs += concurrent_client_config
+	}
+	if HAVE_IMAGE && !HAVE_GUI {
+		.configs += image_client_config
+	}
+	if HAVE_GUI {
+		.configs += gui_client_config
+	}
+	if HAVE_WIDGETS {
+		.configs += widgets_client_config
+	}
+}
+
+# use this library instead of the above libqtX to ease deployment;
+# libqtwinmain is still required on Windows
+let libqt * : Library {
+	.deps += core_sources 
+	if HAVE_XML {
+		.deps += xml_sources
+	}
+	if HAVE_NET_MINIMUM {
+		.deps += net_sources
+	}
+	if HAVE_CONCURRENT {
+		.deps += concurrent_sources
+	}
+	if HAVE_IMAGE {
+		.deps += image_sources
+	}
+	if HAVE_GUI {
+		.deps += gui_sources
+	}
+	if HAVE_WIDGETS {
+		.deps += widgets_sources
+	}
+	if HAVE_ITEMVIEWS {
+		.deps += itemviews_sources 
+	}
+	if HAVE_SHARED {
+		.lib_type = `shared
+		.configs += qt_client_config
+	}else{
+		.lib_type = `static
+	}
+	.name = "qt"
 }
 
 ######################################################################

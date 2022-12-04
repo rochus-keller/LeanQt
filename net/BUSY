@@ -32,6 +32,83 @@ let err : Message {
 	.text = "The net module requires HAVE_OBJECT and HAVE_URL"
 }
 
+let run_moc : Moc {
+	.sources += [
+		./qabstractsocket.h
+		./qtcpserver.h	
+		./qftp.h
+		./qftp_p.h
+		./qdnslookup.h		
+		./qhostinfo_p.h
+		./qhttpsocketengine_p.h
+		./qnativesocketengine_p.h
+		./qabstractsocketengine_p.h
+		./qsocks5socketengine_p.h
+		./qudpsocket.h
+		./qtcpsocket.h
+		./qdnslookup_p.h
+	]
+	if ^HAVE_BEARER {
+		.sources += [
+			./qbearerengine_p.h
+			./qbearerplugin_p.h
+			./qnetworkconfigmanager.h
+			./qnetworkconfigmanager_p.h
+			./qnetworksession.h
+			./qnetworksession_p.h
+		]
+	}
+	if ^HAVE_NETACCESS {
+		.sources += [
+			./qnetworkaccessmanager.h
+			./qhttpnetworkconnection_p.h
+			./qhttpnetworkconnectionchannel_p.h
+			./qnetworkreplyimpl_p.h
+			./qnetworkreplydataimpl_p.h
+			./qnoncontiguousbytedevice_p.h
+			./qhttpnetworkreply_p.h
+			./qnetworkreply.h
+			./qnetworkaccesscache_p.h
+			./qabstractnetworkcache.h
+			./qnetworkcookiejar.h
+			./qnetworkaccessftpbackend_p.h
+			./qnetworkaccessbackend_p.h
+			./qhttpmultipart.h
+			./qnetworkreplyhttpimpl_p.h
+			./qhttpthreaddelegate_p.h
+			./qspdyprotocolhandler_p.h
+		]
+		if ^HAVE_FILEIO {
+			.sources += [
+				./qnetworkaccessfilebackend_p.h
+				./qnetworkreplyfileimpl_p.h
+				./qnetworkdiskcache.h
+			]
+		}
+	}
+	if ^HAVE_SSL {
+		.sources += [
+			./qsslsocket.h
+		]
+		if target_os == `win32 {
+			.sources += ./qsslsocket_openssl_p.h
+		}
+	}
+	if ^HAVE_LOCALSOCK {
+		.sources += [
+			./qlocalserver.h
+			./qlocalsocket.h
+		]
+	}
+	.defines += config.defines # use += instead of = to make a copy
+	if !^HAVE_BEARER {
+		.defines += "QT_NO_BEARERMANAGEMENT"
+	}
+	if target_os == `win32 {
+		.defines += "Q_OS_WIN"
+	}
+}
+
 let sources* : SourceSet {
 	.sources += [
 		./qabstractsocket.cpp
@@ -179,88 +256,8 @@ let sources* : SourceSet {
 	}
 
 	.configs += [ ^_core_config lib_config config ]
+	.deps += run_moc;
 	.include_dirs += build_dir() 
 }
 
-let run_moc : Moc {
-	.sources += [
-		./qabstractsocket.h
-		./qtcpserver.h	
-		./qftp.h
-		./qftp_p.h
-		./qdnslookup.h		
-		./qhostinfo_p.h
-		./qhttpsocketengine_p.h
-		./qnativesocketengine_p.h
-		./qabstractsocketengine_p.h
-		./qsocks5socketengine_p.h
-		./qudpsocket.h
-		./qtcpsocket.h
-		./qdnslookup_p.h
-	]
-	if ^HAVE_BEARER {
-		.sources += [
-			./qbearerengine_p.h
-			./qbearerplugin_p.h
-			./qnetworkconfigmanager.h
-			./qnetworkconfigmanager_p.h
-			./qnetworksession.h
-			./qnetworksession_p.h
-		]
-	}
-	if ^HAVE_NETACCESS {
-		.sources += [
-			./qnetworkaccessmanager.h
-			./qhttpnetworkconnection_p.h
-			./qhttpnetworkconnectionchannel_p.h
-			./qnetworkreplyimpl_p.h
-			./qnetworkreplydataimpl_p.h
-			./qnoncontiguousbytedevice_p.h
-			./qhttpnetworkreply_p.h
-			./qnetworkreply.h
-			./qnetworkaccesscache_p.h
-			./qabstractnetworkcache.h
-			./qnetworkcookiejar.h
-			./qnetworkaccessftpbackend_p.h
-			./qnetworkaccessbackend_p.h
-			./qhttpmultipart.h
-			./qnetworkreplyhttpimpl_p.h
-			./qhttpthreaddelegate_p.h
-			./qspdyprotocolhandler_p.h
-		]
-		if ^HAVE_FILEIO {
-			.sources += [
-				./qnetworkaccessfilebackend_p.h
-				./qnetworkreplyfileimpl_p.h
-				./qnetworkdiskcache.h
-			]
-		}
-	}
-	if ^HAVE_SSL {
-		.sources += [
-			./qsslsocket.h
-		]
-		if target_os == `win32 {
-			.sources += ./qsslsocket_openssl_p.h
-		}
-	}
-	if ^HAVE_LOCALSOCK {
-		.sources += [
-			./qlocalserver.h
-			./qlocalsocket.h
-		]
-	}
-	.defines += config.defines # use += instead of = to make a copy
-	if !^HAVE_BEARER {
-		.defines += "QT_NO_BEARERMANAGEMENT"
-	}
-	if target_os == `win32 {
-		.defines += "Q_OS_WIN"
-	}
-}
-
-let moc_sources * : SourceSet {
-	.configs += [ ^_core_config config lib_config ]
-	.deps += run_moc 
-} 
 

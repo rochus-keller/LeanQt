@@ -57,7 +57,7 @@ public:
     static void destroy(QPersistentModelIndexData *data);
 };
 
-class QAbstractItemModelPrivate : public QObjectPrivate
+class Q_WIDGETS_EXPORT QAbstractItemModelPrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QAbstractItemModel)
 

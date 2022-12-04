@@ -22,7 +22,7 @@ let config * : Config {
 	}else if target_os == `macos {
 		.configs += cocoa.config
 	}
-	if target_os == `win32 {
+	if target_toolchain == `msvc {
 		.ldflags += "/IGNORE:4217,4049"
 	}
 }
@@ -33,6 +33,68 @@ let err : Message {
 
 submod harfbuzz = ../thirdparty/harfbuzz
 submod freetype = ../thirdparty/freetype else ../missing.busy
+
+let run_moc : Moc {
+	.sources += [
+		./qpixmapcache.cpp
+		./qabstracttextdocumentlayout.h
+		./qclipboard.h
+		./qdnd_p.h
+		./qdrag.h
+		./qguiapplication.h
+		./qiconengineplugin.h
+		./qinputcontrol_p.h
+		./qinputdevicemanager_p.h
+		./qinputmethod.h
+		./qkeymapper_p.h
+		./qmimedata.h
+		./qoffscreensurface.h
+		./qpaintdevicewindow.h
+		./qpdfwriter.h
+		./qplatformdialoghelper.h
+		./qplatformgraphicsbuffer.h
+		./qplatforminputcontext.h
+		./qplatforminputcontextplugin_p.h
+		./qplatformintegrationplugin.h
+		./qplatformmenu.h
+		./qplatformnativeinterface.h
+		./qplatformsharedgraphicscache.h
+		./qplatformsystemtrayicon.h
+		./qplatformthemeplugin.h
+		./qrasterwindow.h
+		./qscreen.h
+		./qshapedpixmapdndwindow_p.h
+		./qstylehints.h
+		./qsyntaxhighlighter.h
+		./qtextdocument.h
+		./qtextdocumentlayout_p.h
+		./qtextimagehandler_p.h
+		./qtextlist.h
+		./qtextobject.h
+		./qtexttable.h
+		./qwindow.h		
+		#./qevent.h
+		./qbrush.h
+		./qfontdatabase.h
+		./qfont.h
+		./qkeysequence.h
+		./qpainter.h
+		./qpalette.h
+		./qtextformat.h
+		./qtouchdevice.h
+		./qdesktopservices.cpp
+		./qvalidator.h
+	]
+
+	if ^HAVE_PLUGINS {
+		.sources += [ 
+			./qgenericplugin.h
+			./qpictureformatplugin.h
+		]
+	}
+
+	.defines += config.defines + ^_core_config.defines + "QT_NO_SESSIONMANAGER" + "QT_NO_TABLETEVENT"
+}
 
 let sources* : SourceSet {
 	.sources += [
@@ -151,72 +213,6 @@ let sources* : SourceSet {
 		.deps += cocoa.sources;
 		.configs += cocoa.config
 	}
+	.deps += run_moc
 }
-
-let run_moc : Moc {
-	.sources += [
-		./qpixmapcache.cpp
-		./qabstracttextdocumentlayout.h
-		./qclipboard.h
-		./qdnd_p.h
-		./qdrag.h
-		./qguiapplication.h
-		./qiconengineplugin.h
-		./qinputcontrol_p.h
-		./qinputdevicemanager_p.h
-		./qinputmethod.h
-		./qkeymapper_p.h
-		./qmimedata.h
-		./qoffscreensurface.h
-		./qpaintdevicewindow.h
-		./qpdfwriter.h
-		./qplatformdialoghelper.h
-		./qplatformgraphicsbuffer.h
-		./qplatforminputcontext.h
-		./qplatforminputcontextplugin_p.h
-		./qplatformintegrationplugin.h
-		./qplatformmenu.h
-		./qplatformnativeinterface.h
-		./qplatformsharedgraphicscache.h
-		./qplatformsystemtrayicon.h
-		./qplatformthemeplugin.h
-		./qrasterwindow.h
-		./qscreen.h
-		./qshapedpixmapdndwindow_p.h
-		./qstylehints.h
-		./qsyntaxhighlighter.h
-		./qtextdocument.h
-		./qtextdocumentlayout_p.h
-		./qtextimagehandler_p.h
-		./qtextlist.h
-		./qtextobject.h
-		./qtexttable.h
-		./qwindow.h		
-		#./qevent.h
-		./qbrush.h
-		./qfontdatabase.h
-		./qfont.h
-		./qkeysequence.h
-		./qpainter.h
-		./qpalette.h
-		./qtextformat.h
-		./qtouchdevice.h
-		./qdesktopservices.cpp
-		./qvalidator.h
-	]
-
-	if ^HAVE_PLUGINS {
-		.sources += [ 
-			./qgenericplugin.h
-			./qpictureformatplugin.h
-		]
-	}
-
-	.defines += config.defines + ^_core_config.defines + "QT_NO_SESSIONMANAGER" + "QT_NO_TABLETEVENT"
-}
-
-let moc_sources * : SourceSet {
-	.configs += [ ^_core_config ^_image_config config lib_config ]
-	.deps += run_moc 
-} 
 
