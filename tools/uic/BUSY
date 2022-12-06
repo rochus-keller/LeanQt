@@ -40,5 +40,5 @@ let exe * : Executable {
 	}
 	.defines += "QT_FORCE_XMLSTREAM"
 	.include_dirs += .
-	# TODO: do we need this? uic_path = build_dir() + ./uic
+	# TODO: do we need this? uic_path = build_dir()
 }

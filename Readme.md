@@ -61,11 +61,13 @@ The following features are available:
 
 NOTE: 
 - All widgets (including item views) work on Linux, Windows and Mac (tested on x86 Linux and Windows, and x64 and M1 Mac).
+- Also the Oberon+ IDE builds and works fine (the modified Oberon BUSY file is not commited yet).
 - The "macintosh" style doesn't fully work yet, so LeanQt starts with "fusion" style also on Macintosh.
 - Also note that on Mac the generated executables should be included in an application bundle using a separate tool to avoid that a terminal window is opened at start, and the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
-- With the MSVC compiler on Windows the combination of HAVE_SHARED and HAVE_NOOPT/DEBUG doesn't work; the generated widgets DLL crashes on load, and even crashes CDB.EXE. But optimized shared builds as well as static builds work. So if you use HAVE_SHARED don't use HAVE_NOOPT or HAVE_DEBUG.
+- With the MSVC compiler on Windows the combination of HAVE_SHARED and HAVE_NOOPT/DEBUG is sensitive to the order of how the object files are presented to the linker; if the moc files are listed after the other object files when linking the libqtwidgets DLL, the generated DLL crashes on load, and even crashes CDB.EXE, without any error or warning by the linker (/IGNORE:4217,4049 has no influence). This is not the case for optimized shared builds as well as static builds. 
 - MingW on Windows works with static builds, but not yet with shared builds; so don't use HAVE_SHARED with MingW on Windows.
 - HAVE_PLUGINS builds run, but the result has not been tested and might not work.
+- Use the BUSY version in the "leanqt" branch to build this version of LeanQt.
 
 ### Long term plan
 

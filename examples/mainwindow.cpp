@@ -805,22 +805,6 @@ void MainWindow::setupMenuBar()
     action->setChecked(dockOptions() & VerticalTabs);
     connect(action, &QAction::toggled, this, &MainWindow::setDockOptions);
 
-    /*
-    action = mainWindowMenu->addAction(tr("Grouped dragging"));
-    action->setCheckable(true);
-    action->setChecked(dockOptions() & GroupedDragging);
-    connect(action, &QAction::toggled, this, &MainWindow::setDockOptions);
-    */
-
-#ifdef Q_OS_OSX
-    toolBarMenu->addSeparator();
-
-    action = toolBarMenu->addAction(tr("Unified"));
-    action->setCheckable(true);
-    action->setChecked(unifiedTitleAndToolBarOnMac());
-    connect(action, &QAction::toggled, this, &QMainWindow::setUnifiedTitleAndToolBarOnMac);
-#endif
-
     dockWidgetMenu = menuBar()->addMenu(tr("&Dock Widgets"));
 }
 

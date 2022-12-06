@@ -32,5 +32,5 @@ let exe * : Executable {
 		.configs += ^core_client_config;
 	}
 	.include_dirs += .
-	moc_path = build_dir() + ./moc
+	moc_path = build_dir()
 }
