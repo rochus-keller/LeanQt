@@ -104,6 +104,7 @@ let config * : Config {
 submod zlib = ../thirdparty/zlib else ../missing.busy
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./qbuffer.h
 		./qobject.h

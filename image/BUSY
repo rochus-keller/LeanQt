@@ -29,6 +29,7 @@ submod libpng = ../thirdparty/libpng
 submod zlib = ../thirdparty/zlib
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./qimageiohandler.h
 	]

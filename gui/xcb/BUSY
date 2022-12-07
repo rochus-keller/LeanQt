@@ -16,6 +16,7 @@ submod lib_xcb = ../../thirdparty/xcb
 submod lib_xkb = ../../thirdparty/xkbcommon
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./qxcbclipboard.cpp
 		./qxcbmain.cpp

@@ -39,10 +39,12 @@ let err : Message {
 }
 
 let images : Rcc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./images.qrc
 }
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [		
 		./qabstractbutton.h
 		./qabstractscrollarea.h

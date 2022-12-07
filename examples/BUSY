@@ -8,6 +8,7 @@ let hello* : Executable {
 }
 
 let objects_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./objects.cpp
 }
 
@@ -31,6 +32,7 @@ let process* : Executable {
 }
 
 let dnslookup_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./dnslookup.h
 }
 
@@ -47,6 +49,7 @@ let runner* : Executable {
 }
 
 let download_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./download.cpp
 }
 
@@ -73,6 +76,7 @@ let transform* : Executable {
 }
 
 let clock_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./rasterwindow.h
 }
 
@@ -86,6 +90,7 @@ let clock* : Executable {
 }
 
 let calc_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./calculator.h
 }
 
@@ -99,6 +104,7 @@ let calculator* : Executable {
 }
 
 let chart_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./chart.h
 }
 
@@ -112,6 +118,7 @@ let chart* : Executable {
 }
 
 let colorlist_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./colorlist.h
 }
 
@@ -125,6 +132,7 @@ let colorlist* : Executable {
 }
 
 let mainwindow_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [ ./mainwindow.h ./mainwindow.cpp ]
 }
 

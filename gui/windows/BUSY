@@ -12,6 +12,7 @@ let config * : Config {
 }
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./main.cpp
 		./qwindowsdialoghelpers.cpp
@@ -23,6 +24,7 @@ let run_moc : Moc {
 }
 
 let run_rcc : Rcc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./cursors.qrc
 }
 

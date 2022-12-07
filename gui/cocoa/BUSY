@@ -11,6 +11,7 @@ let config * : Config {
 }
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./main.mm
 		./qcocoaclipboard.h
@@ -22,6 +23,7 @@ let run_moc : Moc {
 }
 
 let run_rcc : Rcc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += ./qcocoaresources.qrc
 }
 

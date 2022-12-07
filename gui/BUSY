@@ -35,6 +35,7 @@ submod harfbuzz = ../thirdparty/harfbuzz
 submod freetype = ../thirdparty/freetype else ../missing.busy
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./qpixmapcache.cpp
 		./qabstracttextdocumentlayout.h

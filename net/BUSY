@@ -33,6 +33,7 @@ let err : Message {
 }
 
 let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
 	.sources += [
 		./qabstractsocket.h
 		./qtcpserver.h	

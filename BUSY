@@ -228,6 +228,8 @@ if HAVE_DEBUG && HAVE_NOOPT {
 	set_defaults(target_toolchain,nooptconf)
 }
 
+let root_path - = relpath()
+
 ######################################################################
 submod core
 
@@ -348,9 +350,19 @@ let itemviews_client_config * = itemviews.config
 ######################################################################
 submod tools
 
-let rcc * = tools.rcc.exe
-let moc * = tools.moc.exe
 let uic * = tools.uic.exe
+
+let moc * : Copy {
+	.use_deps += `executable
+	.deps += tools.moc.exe;
+	.outputs += ./{{source_file_part}}
+}
+
+let rcc * : Copy {
+	.use_deps += `executable
+	.deps += tools.rcc.exe;
+	.outputs += ./{{source_file_part}}
+}
 
 ######################################################################
 
