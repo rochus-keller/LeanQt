@@ -1034,12 +1034,17 @@ void QWidgetPrivate::adjustFlags(Qt::WindowFlags &flags, QWidget *w)
         // Only enable this on non-Mac platforms. Since the old way of doing this would
         // interpret WindowSystemMenuHint as a close button and we can't change that behavior
         // we can't just add this in.
+#ifndef Q_DEAD_CODE_FROM_QT4_MAC
         if ((flags & (Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowContextHelpButtonHint))
 #  ifdef Q_OS_WIN
             && type != Qt::Dialog // QTBUG-2027, allow for menu-less dialogs.
 #  endif
            ) {
             flags |= Qt::WindowSystemMenuHint;
+#else
+        if (flags & (Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                     | Qt::WindowSystemMenuHint)) {
+#endif
             flags |= Qt::WindowTitleHint;
             flags &= ~Qt::FramelessWindowHint;
         }
@@ -4766,10 +4771,16 @@ void QWidget::setCursor(const QCursor &cursor)
 {
     Q_D(QWidget);
 // On Mac we must set the cursor even if it is the ArrowCursor.
-    d->createExtra();
-    QCursor *newCursor = new QCursor(cursor);
-    delete d->extra->curs;
-    d->extra->curs = newCursor;
+#if !defined(Q_DEAD_CODE_FROM_QT4_MAC)
+    if (cursor.shape() != Qt::ArrowCursor
+        || (d->extra && d->extra->curs))
+#endif
+    {
+        d->createExtra();
+        QCursor *newCursor = new QCursor(cursor);
+        delete d->extra->curs;
+        d->extra->curs = newCursor;
+    }
     setAttribute(Qt::WA_SetCursor);
     d->setCursor_sys(cursor);
 
@@ -5192,9 +5203,11 @@ void QWidgetPrivate::render_helper(QPainter *painter, const QPoint &targetOffset
     Q_ASSERT(!toBePainted.isEmpty());
 
     Q_Q(QWidget);
+#ifndef Q_DEAD_CODE_FROM_QT4_MAC
     const QTransform originalTransform = painter->worldTransform();
     const bool useDeviceCoordinates = originalTransform.isScaling();
     if (!useDeviceCoordinates) {
+#endif
         // Render via a pixmap.
         const QRect rect = toBePainted.boundingRect();
         const QSize size = rect.size();
@@ -5217,6 +5230,7 @@ void QWidgetPrivate::render_helper(QPainter *painter, const QPoint &targetOffset
         if (restore)
             painter->setRenderHints(QPainter::SmoothPixmapTransform, false);
 
+#ifndef Q_DEAD_CODE_FROM_QT4_MAC
     } else {
         // Render via a pixmap in device coordinates (to avoid pixmap scaling).
         QTransform transform = originalTransform;
@@ -5247,6 +5261,7 @@ void QWidgetPrivate::render_helper(QPainter *painter, const QPoint &targetOffset
         painter->drawPixmap(deviceRect.topLeft(), pixmap);
         painter->setTransform(originalTransform);
     }
+#endif
 }
 
 void QWidgetPrivate::drawWidget(QPaintDevice *pdev, const QRegion &rgn, const QPoint &offset, int flags,
@@ -5473,6 +5488,7 @@ void QWidgetPrivate::render(QPaintDevice *target, const QPoint &targetOffset,
     if (paintRegion.isEmpty())
         return;
 
+#ifndef Q_DEAD_CODE_FROM_QT4_MAC
     QPainter *oldSharedPainter = inRenderWithPainter ? sharedPainter() : 0;
 
     // Use the target's shared painter if set (typically set when doing
@@ -5485,6 +5501,7 @@ void QWidgetPrivate::render(QPaintDevice *target, const QPoint &targetOffset,
                 setSharedPainter(targetPainter);
         }
     }
+#endif
 
     // Use the target's redirected device if set and adjust offset and paint
     // region accordingly. This is typically the case when people call render

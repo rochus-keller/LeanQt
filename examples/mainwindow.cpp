@@ -40,15 +40,14 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QFile>
+#include <QDir>
 #include <QDataStream>
-#include <QFileDialog>
 #include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QApplication>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QLineEdit>
-#include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QTextEdit>
@@ -62,11 +61,14 @@
 #include <QImage>
 #include <QColor>
 #include <QDialog>
-#include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QSpinBox>
 #include <QHBoxLayout>
 #include <QBitmap>
+#ifndef QT_NO_ITEMVIEWS
+#include <QComboBox>
+#include <QFileDialog>
+#endif
 
 #undef DEBUG_SIZEHINTS
 
@@ -833,8 +835,12 @@ void MainWindow::setDockOptions()
 
 void MainWindow::saveLayout()
 {
-    QString fileName
-        = QFileDialog::getSaveFileName(this, tr("Save layout"));
+    QString fileName =
+#ifndef QT_NO_ITEMVIEWS
+        QFileDialog::getSaveFileName(this, tr("Save layout"));
+#else
+          "";
+#endif
     if (fileName.isEmpty())
         return;
     QFile file(fileName);
@@ -864,8 +870,12 @@ void MainWindow::saveLayout()
 
 void MainWindow::loadLayout()
 {
-    QString fileName
-        = QFileDialog::getOpenFileName(this, tr("Load layout"));
+    QString fileName =
+#ifndef QT_NO_ITEMVIEWS
+        QFileDialog::getOpenFileName(this, tr("Load layout"));
+#else
+        "";
+#endif
     if (fileName.isEmpty())
         return;
     QFile file(fileName);
@@ -1024,13 +1034,17 @@ public:
 
 private:
     QLineEdit *m_objectName;
+#ifndef QT_NO_ITEMVIEWS
     QComboBox *m_location;
+#endif
 };
 
 CreateDockWidgetDialog::CreateDockWidgetDialog(QWidget *parent)
     : QDialog(parent)
     , m_objectName(new QLineEdit(this))
+#ifndef QT_NO_ITEMVIEWS
     , m_location(new QComboBox(this))
+#endif
 {
     setWindowTitle(tr("Add Dock Widget"));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -1040,6 +1054,7 @@ CreateDockWidgetDialog::CreateDockWidgetDialog(QWidget *parent)
     layout->addWidget(m_objectName, 0, 1);
 
     layout->addWidget(new QLabel(tr("Location:")), 1, 0);
+#ifndef QT_NO_ITEMVIEWS
     m_location->setEditable(false);
     m_location->addItem(tr("Top"));
     m_location->addItem(tr("Left"));
@@ -1047,6 +1062,7 @@ CreateDockWidgetDialog::CreateDockWidgetDialog(QWidget *parent)
     m_location->addItem(tr("Bottom"));
     m_location->addItem(tr("Restore"));
     layout->addWidget(m_location, 1, 1);
+#endif
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -1056,6 +1072,7 @@ CreateDockWidgetDialog::CreateDockWidgetDialog(QWidget *parent)
 
 Qt::DockWidgetArea CreateDockWidgetDialog::location() const
 {
+#ifndef QT_NO_ITEMVIEWS
     switch (m_location->currentIndex()) {
         case 0: return Qt::TopDockWidgetArea;
         case 1: return Qt::LeftDockWidgetArea;
@@ -1064,6 +1081,7 @@ Qt::DockWidgetArea CreateDockWidgetDialog::location() const
         default:
             break;
     }
+#endif
     return Qt::NoDockWidgetArea;
 }
 

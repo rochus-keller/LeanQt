@@ -576,10 +576,10 @@ let build_examples ! : Copy {
 		.deps += examples.clock
 	}
 	if HAVE_WIDGETS {
-		.deps += examples.calculator
+		.deps += [ examples.calculator examples.mainwindow ]
 	}
 	if HAVE_ITEMVIEWS {
-		.deps += [ examples.chart examples.colorlist examples.mainwindow ]
+		.deps += [ examples.chart examples.colorlist ]
 	}
 	.outputs += ./{{source_file_part}}
 }
