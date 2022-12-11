@@ -104,7 +104,8 @@ let config * : Config {
 submod zlib = ../thirdparty/zlib else ../missing.busy
 
 let run_moc : Moc {
-	.tool_dir = root_build_dir + ^root_path;
+	.tool_dir = root_build_dir + ^root_path; # we explicitly add this here because more than one instance of LeanQt as a
+											 # submodule could exist in a build with arbitrary effects on global moc_path
 	.sources += [
 		./qbuffer.h
 		./qobject.h

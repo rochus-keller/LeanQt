@@ -352,23 +352,23 @@ submod tools
 
 let uic * = tools.uic.exe
 
-let moc * : Copy {
+let copy_moc * : Copy {
 	.use_deps += `executable
 	.deps += tools.moc.exe;
-	.outputs += ./{{source_file_part}}
+	.outputs += root_path + ./{{source_file_part}}
 }
 
-let rcc * : Copy {
+let copy_rcc * : Copy {
 	.use_deps += `executable
 	.deps += tools.rcc.exe;
-	.outputs += ./{{source_file_part}}
+	.outputs += root_path + ./{{source_file_part}}
 }
 
 ######################################################################
 
 let core_sources * : Group {
 	if HAVE_OBJECT {
-		.deps += moc
+		.deps += copy_moc
 	}
 	.deps += _core_sources
 	if HAVE_MIME {
@@ -378,7 +378,7 @@ let core_sources * : Group {
 
 let gui_sources * : Group {
 	if (target_os == `macos) || (target_os == `win32) || HAVE_WIDGETS {
-		.deps += rcc
+		.deps += copy_rcc
 	}
 	.deps += _gui_sources
 }
@@ -581,6 +581,6 @@ let build_examples ! : Copy {
 	if HAVE_ITEMVIEWS {
 		.deps += [ examples.chart examples.colorlist ]
 	}
-	.outputs += ./{{source_file_part}}
+	.outputs += root_path + ./{{source_file_part}}
 }
 
