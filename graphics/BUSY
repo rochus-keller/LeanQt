@@ -1,0 +1,62 @@
+# Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let lib_config : Config {
+	.defines += "QT_BUILD_WIDGETS_LIB"
+}
+
+let config * : Config {
+
+	#.defines += "QT_NO_GRAPHICSVIEW"
+}
+
+let err : Message {
+	.text = "graphics module requires HAVE_WIDGETS"
+}
+
+let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
+	.sources += [	
+		./qgraphicsanchorlayout.h
+		./qgraphicsitem.h
+		./qgraphicsitemanimation.h
+		./qgraphicsproxywidget.h
+		./qgraphicsscene.h
+		./qgraphicsscenebsptreeindex_p.h
+		./qgraphicssceneindex_p.h
+		./qgraphicsscenelinearindex_p.h
+		./qgraphicstransform.h
+		./qgraphicsview.h
+		./qgraphicswidget.h
+		./qtimeline.h
+	]
+		
+	.defines += config.defines + ^_core_config.defines;
+	.defines += [ "QT_NO_ANIMATION" "QT_NO_ACCESSIBILITY" "QT_NO_GESTURES" "QT_NO_GRAPHICSEFFECT" ]
+}
+
+let sources* : SourceSet {
+	.sources += [
+		./qgraphicsanchorlayout.cpp      ./qgraphicsscene_bsp.cpp
+		./qgraphicsanchorlayout_p.cpp    ./qgraphicsscenebsptreeindex.cpp
+		./qgraphicsgridlayout.cpp        ./qgraphicsscene.cpp
+		./qgraphicsgridlayoutengine.cpp  ./qgraphicssceneevent.cpp
+		./qgraphicsitemanimation.cpp     ./qgraphicssceneindex.cpp
+		./qgraphicsitem.cpp              ./qgraphicsscenelinearindex.cpp
+		./qgraphicslayout.cpp            ./qgraphicstransform.cpp
+		./qgraphicslayoutitem.cpp        ./qgraphicsview.cpp
+		./qgraphicslayout_p.cpp          ./qgraphicswidget.cpp
+		./qgraphicslayoutstyleinfo.cpp   ./qgraphicswidget_p.cpp
+		./qgraphicslinearlayout.cpp      ./qsimplex_p.cpp
+		./qgraphicsproxywidget.cpp		 ./qtimeline.cpp
+	]
+	
+	if !^HAVE_WIDGETS {
+		.deps += err
+	}
+
+	.deps += run_moc;
+	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config lib_config config ]
+	.include_dirs += build_dir() # for the embedded .moc files
+}
+

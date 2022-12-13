@@ -57,6 +57,7 @@ class QMouseEvent;
 class QWheelEvent;
 class QHoverEvent;
 class QKeyEvent;
+class QGraphicsProxyWidget;
 class QFocusEvent;
 class QPaintEvent;
 class QMoveEvent;
@@ -81,13 +82,6 @@ class QPixmap;
 #ifndef QT_NO_DEBUG_STREAM
 class QDebug;
 #endif
-
-class QGraphicsProxyWidget
-{
-public:
-    virtual void* scene() = 0;
-    virtual QRectF sceneRect() = 0;
-};
 
 class QWidgetData
 {

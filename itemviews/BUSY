@@ -12,7 +12,7 @@ let config * : Config {
 }
 
 let err : Message {
-	.text = "widget module requires HAVE_WIDGETS"
+	.text = "itemviews module requires HAVE_WIDGETS"
 }
 
 let run_moc : Moc {

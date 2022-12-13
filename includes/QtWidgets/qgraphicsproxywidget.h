@@ -1,0 +1,1 @@
+#include "../../graphics/qgraphicsproxywidget.h"

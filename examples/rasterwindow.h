@@ -3,8 +3,6 @@
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
-** This file is part of the examples of the Qt Toolkit.
-**
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
 **

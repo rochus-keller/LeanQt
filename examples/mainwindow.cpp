@@ -1,9 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the demonstration applications of the Qt Toolkit.
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage

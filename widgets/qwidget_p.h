@@ -48,13 +48,14 @@
 #include "QtWidgets/qsizepolicy.h"
 #include "QtWidgets/qstyle.h"
 #include "QtWidgets/qapplication.h"
-/*
-#include <private/qgraphicseffect_p.h>
+
+//#include <private/qgesture_p.h>
+//#include <private/qgraphicseffect_p.h>
+#ifndef QT_NO_GRAPHICSVIEW
 #include "QtWidgets/qgraphicsproxywidget.h"
 #include "QtWidgets/qgraphicsscene.h"
 #include "QtWidgets/qgraphicsview.h"
-#include <private/qgesture_p.h>
-*/
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -64,7 +65,6 @@ QT_BEGIN_NAMESPACE
 class QPaintEngine;
 class QPixmap;
 class QWidgetBackingStore;
-class QGraphicsProxyWidget;
 class QWidgetItemV2;
 class QOpenGLContext;
 class QPlatformTextureList;
@@ -522,14 +522,11 @@ public:
         if (ancestorProxy) {
             if (!bypassGraphicsProxyWidget(widget) && ancestorProxy->scene() != 0) {
                 // One view, let be smart and return the viewport rect then the popup is aligned
-#ifdef _TODO_
                 if (ancestorProxy->scene()->views().size() == 1) {
                     QGraphicsView *view = ancestorProxy->scene()->views().at(0);
                     screen = view->mapToScene(view->viewport()->rect()).boundingRect().toRect();
-                } else
-#endif
-                {
-                    screen = ancestorProxy->sceneRect().toRect();
+                } else {
+                    screen = ancestorProxy->scene()->sceneRect().toRect();
                 }
             }
         }

@@ -37,8 +37,8 @@
 // We mean it.
 //
 
-#include "QtCore/qobject.h"
-#include "QtGui/qabstracttextdocumentlayout.h"
+#include "qobject.h"
+#include "qabstracttextdocumentlayout.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -49,7 +49,7 @@ class Q_GUI_EXPORT QTextImageHandler : public QObject,
 {
     Q_OBJECT
 #ifndef QT_NO_PLUGINS
-    // TODO we don't support interfaces yet Q_INTERFACES(QTextObjectInterface)
+    Q_INTERFACES(QTextObjectInterface)
 #endif
 public:
     explicit QTextImageHandler(QObject *parent = 0);

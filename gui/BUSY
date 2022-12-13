@@ -180,7 +180,6 @@ let sources* : SourceSet {
 	if ^HAVE_PLUGINS {
 		.sources += [ 
 			./qgenericplugin.cpp
-			./qgenericpluginfactory.cpp
 			./qpictureformatplugin.cpp 
 		]
 	}

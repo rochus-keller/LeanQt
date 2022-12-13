@@ -46,10 +46,15 @@ param HAVE_WIDGETS = false     # takes care that GUI is enabled
 param HAVE_ITEMVIEWS = false   # takes care that WIDGETS is enabled
 param HAVE_GRAPHICS = false    # takes care that WIDGETS is enabled
 
-# NOTE: HAVE_PLUGINS has not yet been tested; it compiles, but might not work.
+param HAVE_ALL = false		   # enbles all features
+
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
+
+if HAVE_ALL {
+	HAVE_CORE_ALL = true; HAVE_NET_ALL = true; HAVE_XML = true; HAVE_CONCURRENT = true; HAVE_GRAPHICS = true;
+}
 
 if HAVE_CORE_ALL {
 	HAVE_GEOM = true; HAVE_JSON = true; HAVE_XMLSTREAM = true; HAVE_URL = true; HAVE_DSTREAM = true
@@ -72,7 +77,7 @@ if HAVE_NET_MINIMUM || HAVE_SSL || HAVE_LOCALSOCK || HAVE_NETACCESS || HAVE_BEAR
 
 if HAVE_GRAPHICS && !HAVE_WIDGETS {
 	message("enabling HAVE_WIDGETS required by HAVE_GRAPHICS")
-	HAVE_GRAPHICS = true
+	HAVE_WIDGETS = true
 }
 
 if HAVE_ITEMVIEWS && !HAVE_WIDGETS {
@@ -348,6 +353,13 @@ let itemviews_sources * = itemviews.sources
 let itemviews_client_config * = itemviews.config
 
 ######################################################################
+submod graphics else ./missing.busy
+
+let graphics_sources * = graphics.sources
+
+let graphics_client_config * = graphics.config
+
+######################################################################
 submod tools
 
 let uic * = tools.uic.exe
@@ -480,6 +492,9 @@ let libqtwidgets * : Library {
 	if HAVE_ITEMVIEWS {
 		.deps += itemviews_sources 
 	}
+	if HAVE_GRAPHICS {
+		.deps += graphics_sources
+	}
 	.name = "qtwidgets"
 }
 
@@ -507,6 +522,9 @@ let qt_client_config * : Config {
 	if HAVE_WIDGETS {
 		.configs += widgets_client_config
 	}
+	if HAVE_GRAPHICS {
+		.configs += graphics_client_config
+	}
 }
 
 # use this library instead of the above libqtX to ease deployment;
@@ -533,6 +551,9 @@ let libqt * : Library {
 	}
 	if HAVE_ITEMVIEWS {
 		.deps += itemviews_sources 
+	}
+	if HAVE_GRAPHICS {
+		.deps += graphics_sources
 	}
 	if HAVE_SHARED {
 		.lib_type = `shared
@@ -580,6 +601,9 @@ let build_examples ! : Copy {
 	}
 	if HAVE_ITEMVIEWS {
 		.deps += [ examples.chart examples.colorlist ]
+	}
+	if HAVE_GRAPHICS {
+		.deps += [ examples.elasticnodes examples.anchorlayout ]
 	}
 	.outputs += root_path + ./{{source_file_part}}
 }

@@ -1,9 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2012 Jeremy Lainé <jeremy.laine@m4x.org>
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:

@@ -40,13 +40,13 @@ The following features are available:
 - objects and events
 - rcc (resource compiler)
 - moc (meta object compiler)
-- library and plugins
+- library and (partially) plugins
 - async and sync networking
 - map/reduce, filter/reduce, async computation
 - image handling, format conversion
 - window handling, events, 2D bitmap and vector graphics, fonts, rich text
 - pdf and odf writer 
-- widgets
+- widgets and graphics framework
 
 ### Planned or work-in-progress features
 
@@ -56,17 +56,16 @@ The following features are available:
 - [x] QtConcurrent
 - [x] QImage, QImageReader/Writer (separated from QtGui)
 - [x] mimetypes
-- [x] QtGui (tested on Linux x86 & x64 & ARMv7, Win x86 & x64, Mac x64 & M1)
-- [x] QtWidgets (see NOTE below)
+- [x] QtGui (see NOTES below)
+- [x] QtWidgets (see NOTES below)
 
-NOTE: 
+NOTES: 
+- The gui module has been tested on Linux x86 & x64 & ARMv7 (Raspi), Win x86 & x64, Mac x64 & M1
 - All widgets (including item views) work on Linux, Windows and Mac (tested on x86 Linux and Windows, and x64 and M1 Mac).
-- Also the Oberon+ IDE builds and works fine (the modified Oberon BUSY file is not commited yet).
-- The "macintosh" style doesn't fully work yet, so LeanQt starts with "fusion" style also on Macintosh.
-- Also note that on Mac the generated executables should be included in an application bundle using a separate tool to avoid that a terminal window is opened at start, and the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
-- With the MSVC compiler on Windows the combination of HAVE_SHARED and HAVE_NOOPT/DEBUG is sensitive to the order of how the object files are presented to the linker; if the moc files are listed after the other object files when linking the libqtwidgets DLL, the generated DLL crashes on load, and even crashes CDB.EXE, without any error or warning by the linker (/IGNORE:4217,4049 has no influence). This is not the case for optimized shared builds as well as static builds. 
+- The Oberon+ IDE builds and works fine (the modified Oberon BUSY file is not committed yet).
+- The "macintosh" style doesn't work yet (display errors and crashes), so LeanQt starts with "fusion" style also on Macintosh.
+- Also note that on Mac the generated executables must be included in an application bundle using a separate tool if you don't want a terminal window to open to run the app, and the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
 - MingW on Windows works with static builds, but not yet with shared builds; so don't use HAVE_SHARED with MingW on Windows.
-- HAVE_PLUGINS builds run, but the result has not been tested and might not work.
 - Use the BUSY version in the "leanqt" branch to build this version of LeanQt.
 
 ### Long term plan
@@ -74,13 +73,14 @@ NOTE:
 - [ ] printing
 - [ ] SIMD support
 - [ ] Linux framebuffer platform
+- [ ] Make "macintosh" style work (use "fusion" style for the time being)
 
 ### No support planned
 
 - qmake
 - statemachine
 - other than minimal codecs
-- animation
+- animation (except in the graphics module)
 - dbus
 - sql
 - svg
@@ -105,6 +105,7 @@ NOTE:
 - QEasingCurve belong to the widgets module, not the core module
 - QModelIndex, QPersistentModelIndex, QAbstractItemModel, QAbstractListModel, QAbstractProxyModel, QIdentityProxyModel, QItemSelectionRange, QItemSelectionModel, QItemSelection, QSortFilterProxyModel, and QStringListModel belong to the itemviews module, not the core module
 - QStandardItemModel belong to the itemviews module, not the gui module
+- QTimeLine belongs to the graphics module, not the core module
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 

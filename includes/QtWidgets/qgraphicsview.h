@@ -1,0 +1,1 @@
+#include "../../graphics/qgraphicsview.h"

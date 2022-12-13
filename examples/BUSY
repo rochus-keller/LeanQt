@@ -146,3 +146,26 @@ let mainwindow* : Executable {
 	.include_dirs += build_dir()
 }
 
+let elasticnodes_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
+	.sources += ./elasticnodes.h
+}
+
+let elasticnodes* : Executable {
+	.sources += ./elasticnodes.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets elasticnodes_moc ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
+}
+
+let anchorlayout* : Executable {
+	.sources += ./anchorlayout.cpp
+	.deps += [ ^libqtcore ^libqtgui ^libqtwidgets ]
+	if target_os == `win32 {
+		.deps += ^libqtwinmain
+	}
+	.configs += [ ^core_client_config ^gui_client_config ^widgets_client_config	]
+}
+
