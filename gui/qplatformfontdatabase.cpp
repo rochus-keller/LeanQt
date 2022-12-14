@@ -387,6 +387,8 @@ QString QPlatformFontDatabase::fontDir() const
         fontpath = QLibraryInfo::location(QLibraryInfo::LibrariesPath);
         fontpath += QLatin1String("/fonts");
 #else
+        // LEANQT: look for fonts in the /fonts subdir of the executable
+        // TODO: consider mac bundles
         fontpath = QGuiApplication::applicationDirPath() + QLatin1String("/fonts");
         if( !QDir(fontpath).exists() )
         {

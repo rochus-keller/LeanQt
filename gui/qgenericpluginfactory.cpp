@@ -61,7 +61,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 QObject *QGenericPluginFactory::create(const QString& key, const QString &specification)
 {
-#if (!defined(Q_OS_WIN32) || defined(QT_SHARED)) && !defined(QT_NO_LIBRARY)
+#if (!defined(Q_OS_WIN32) || defined(QT_SHARED)) && !defined(QT_NO_PLUGINS)
     const QString driver = key.toLower();
     if (QObject *object = qLoadPlugin1<QObject, QGenericPlugin>(loader(), driver, specification))
         return object;
@@ -82,7 +82,7 @@ QStringList QGenericPluginFactory::keys()
     QStringList list;
 
 #if !defined(Q_OS_WIN32) || defined(QT_SHARED)
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_PLUGINS
     typedef QMultiMap<int, QString> PluginKeyMap;
     typedef PluginKeyMap::const_iterator PluginKeyMapConstIterator;
 

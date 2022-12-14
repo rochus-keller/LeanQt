@@ -57,7 +57,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_PLUGINS
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     (QStyleFactoryInterface_iid, QLatin1String("/styles"), Qt::CaseInsensitive))
 #endif
@@ -145,7 +145,7 @@ QStyle *QStyleFactory::create(const QString& key)
     } else
 #endif
     { } // Keep these here - they make the #ifdefery above work
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_PLUGINS
     if (!ret)
         ret = qLoadPlugin<QStyle, QStylePlugin>(loader(), style);
 #endif
@@ -163,7 +163,7 @@ QStyle *QStyleFactory::create(const QString& key)
 QStringList QStyleFactory::keys()
 {
     QStringList list;
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_PLUGINS
     typedef QMultiMap<int, QString> PluginKeyMap;
 
     const PluginKeyMap keyMap = loader()->keyMap();

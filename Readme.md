@@ -2,11 +2,13 @@
 
 LeanQt is a stripped-down Qt version which includes the essential features and is easy to build from source and to integrate with an application.
 
-My primary motivation for LeanQt was to make my Oberon compiler (and also the IDE in future) easier to compile and deploy on all relevant platforms with as few dependencies as possible. Many of my tools are based on Qt 5, which is an excellent framework that provides all the necessary features in a platform-independent way. Qt 5 has low requirements for the C++ compiler and is available virtually on all platforms where there is a C++98 compiler. 
+My primary motivation for LeanQt was to make my Oberon compiler and IDE easier to compile and deploy on all relevant platforms with as few dependencies as possible. Many of my tools are based on Qt 5, which is an excellent framework that provides all the necessary features in a platform-independent way. Qt 5 has low requirements for the C++ compiler and is available virtually on all platforms where there is a C++98 compiler. 
 
-Unfortunately, there has been a certain proliferation over the years where Qt has been bloated with all sorts of features with questionable value. The standard binary installation of Qt swallows several gigabytes and requires a login to a commercial company server, which discourages many people. The non-essential features make the build more complicated (higher probability of missing dependencies or incompatiblities). The now initiated development with Qt 6 makes higher demands on compiler and system, and follows a development that I cannot make sense of. For applications using only the non-gui part of Qt, or only basic GUI features, these are significant impediments. 
+Unfortunately, there has been a certain proliferation over the years where Qt has been bloated with all sorts of features with questionable value. The standard binary installation of Qt is huge and requires a login to a commercial company server, which discourages many people. The official build is rather complicated with a lot of dependencies and sometimes incompatibility issues (depending on the OS and required Qt version). The now initiated development with Qt 6 makes higher demands on compiler and system, and follows a development that I cannot make sense of. For applications using only the non-gui part of Qt, or only basic GUI features, these are significant impediments. 
 
 For LeanQt I used the code of Qt 5.6.3 which was the last Qt version available under both LGPL v2.1 and v3. Instead of qmake the BUSY build system (see https://github.com/rochus-keller/BUSY) is used, which was one of the reasons I implemented it. LeanQt has a different source tree structure compared to the original Qt toolkit; a lot of the original subdirectories (e.g. mkspecs, qmake) are no longer required; there are no longer separate subdirectories under corelib or gui since each was depending on every other anyway. I also added additional configuration options so it is possible to use a minimal version even without the file engine and core application (see the BUSY file in the root for more information); many changes were necessary to the original source code for this, but the API is mostly the same and thus the original Qt documentation is still valid.
+
+In contrast to original Qt, where by default everything is included and minimization takes a lot of work, the default configuration of LeanQt is minimal, and features are added on demand using the HAVE_x parameters (where 'x' is e.g. THREADS, FILEIO, SSL, WIDGETS and the like, see below).
 
 It is not necessary to deploy the whole source tree; if an application doesn't e.g. require image or gui support, the corresponding source code
 directories can be deleted. BUSY has a fallback mechanism for the case when a module is not present; if e.g. the image or net directories are deleted,
@@ -15,7 +17,9 @@ want's to use them anyway; see also the thirdparty/Readme.txt file for potential
 
 ### State of development
 
-This version is suited to successfully build and run the command line version of my Oberon+ compiler and the LeanQt examples with different configurations on Windows x86, on macOS x86_64 and M1, and on Linux x86 and x86_64; other Linux architectures are work in progress.
+This version is suitable to successfully build and run my [Oberon+ compiler and IDE](https://github.com/rochus-keller/Oberon/).
+
+LeanQt and its examples have been successfully tested with different configurations on Windows x86 & x86_64, on macOS x86_64 and M1, and on Linux x86, ARMv7 (Raspi) and x86_64.
 
 The following features are available: 
 
@@ -60,11 +64,9 @@ The following features are available:
 - [x] QtWidgets (see NOTES below)
 
 NOTES: 
-- The gui module has been tested on Linux x86 & x64 & ARMv7 (Raspi), Win x86 & x64, Mac x64 & M1
-- All widgets (including item views) work on Linux, Windows and Mac (tested on x86 Linux and Windows, and x64 and M1 Mac).
-- The Oberon+ IDE builds and works fine (the modified Oberon BUSY file is not committed yet).
-- The "macintosh" style doesn't work yet (display errors and crashes), so LeanQt starts with "fusion" style also on Macintosh.
-- Also note that on Mac the generated executables must be included in an application bundle using a separate tool if you don't want a terminal window to open to run the app, and the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
+- All widgets (including item and graphics views) work on Linux, Windows and Mac.
+- The "macintosh" style doesn't fully work yet (some display errors), so LeanQt starts with "fusion" style also on Macintosh. It can be manually enabled e.g. by addign -style macintosh to the application command line. 
+- Also note that on Mac the generated executables must be included in an application bundle using a separate tool if you don't want a terminal window to open to run the app, or the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
 - MingW on Windows works with static builds, but not yet with shared builds; so don't use HAVE_SHARED with MingW on Windows.
 - Use the BUSY version in the "leanqt" branch to build this version of LeanQt.
 

@@ -53,7 +53,8 @@ param HAVE_ALL = false		   # enbles all features
 #       patches are welcome, in case you find a combination which doesn't work
 
 if HAVE_ALL {
-	HAVE_CORE_ALL = true; HAVE_NET_ALL = true; HAVE_XML = true; HAVE_CONCURRENT = true; HAVE_GRAPHICS = true;
+	HAVE_CORE_ALL = true; HAVE_NET_ALL = true; HAVE_XML = true; HAVE_CONCURRENT = true; 
+	HAVE_IMAGE = true; HAVE_GUI = true; HAVE_WIDGETS = true; HAVE_ITEMVIEWS = true; HAVE_GRAPHICS = true;
 }
 
 if HAVE_CORE_ALL {
@@ -90,6 +91,11 @@ if HAVE_WIDGETS && !HAVE_GUI {
 	HAVE_GUI = true
 }
 
+if HAVE_WIDGETS && (target_os == `macos) && !HAVE_LIBRARY {
+	message("enabling HAVE_LIBRARY required by QMacStyle")
+	HAVE_LIBRARY = true
+}
+
 if HAVE_GUI && !HAVE_IMAGE {
 	message("enabling HAVE_IMAGE required by HAVE_GUI")
 	HAVE_IMAGE = true
@@ -110,7 +116,7 @@ if HAVE_GUI && !HAVE_URL {
 	HAVE_URL = true
 }
 
-if HAVE_GUI && (host_os == `macos) && !HAVE_MIME {
+if HAVE_GUI && (target_os == `macos) && !HAVE_MIME {
 	message("enabling HAVE_MIME required by HAVE_GUI on macOS")
 	HAVE_MIME = true
 }

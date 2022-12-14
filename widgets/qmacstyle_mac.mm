@@ -1795,7 +1795,8 @@ QMacStylePrivate::QMacStylePrivate()
         ptrHIShapeGetBounds = reinterpret_cast<PtrHIShapeGetBounds>(library.resolve("HIShapeGetBounds"));
 #endif
     }
-
+    if( ptrHIShapeGetBounds == 0 )
+    	qFatal("cannot resolve HIShapeGetBounds in /System/Library/Frameworks/Carbon.framework/Carbon");
 }
 
 QMacStylePrivate::~QMacStylePrivate()

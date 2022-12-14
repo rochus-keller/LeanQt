@@ -211,7 +211,7 @@ let sources* : SourceSet {
 	}else if target_os == `win32 {
 		.sources += [ ./qwizard_win.cpp ./qsystemtrayicon_win.cpp ]
 	}else if target_os == `macos {
-		.sources += [ ./qmacstyle_mac.mm  ./qmenu_mac.mm  ./qscroller_mac.mm ./qmacnativewidget_mac.mm ./qsystemtrayicon_qpa.cpp ]
+		.sources += [ ./qmacstyle_mac.mm ./qmenu_mac.mm  ./qscroller_mac.mm ./qmacnativewidget_mac.mm ./qsystemtrayicon_qpa.cpp ]
 	}
 
 	.configs += [ ^_core_config ^_image_config ^_gui_config lib_config config ]

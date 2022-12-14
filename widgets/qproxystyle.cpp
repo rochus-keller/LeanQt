@@ -83,8 +83,8 @@ void QProxyStylePrivate::ensureBaseStyle() const
     if (!baseStyle) // Use application desktop style
         baseStyle = QStyleFactory::create(QApplicationPrivate::desktopStyleKey());
 
-    if (!baseStyle) // Fallback to windows style
-        baseStyle = QStyleFactory::create(QLatin1String("windows"));
+    if (!baseStyle) // Fallback to fusion style
+        baseStyle = QStyleFactory::create(QLatin1String("fusion"));
 
     baseStyle->setProxy(const_cast<QProxyStyle*>(q));
     baseStyle->setParent(const_cast<QProxyStyle*>(q)); // Take ownership
