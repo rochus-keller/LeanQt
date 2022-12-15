@@ -76,7 +76,7 @@ QStringList QXcbGlIntegrationFactory::keys(const QString &pluginPath)
 
 QXcbGlIntegration *QXcbGlIntegrationFactory::create(const QString &platform, const QString &pluginPath)
 {
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_PLUGINS
     // Try loading the plugin from platformPluginPath first:
     if (!pluginPath.isEmpty()) {
         QCoreApplication::addLibraryPath(pluginPath);
