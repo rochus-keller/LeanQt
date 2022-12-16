@@ -51,6 +51,7 @@ The following features are available:
 - window handling, events, 2D bitmap and vector graphics, fonts, rich text
 - pdf and odf writer 
 - widgets and graphics framework
+- uic (user interface compiler)
 
 ### Planned or work-in-progress features
 
@@ -65,10 +66,9 @@ The following features are available:
 
 NOTES: 
 - All widgets (including item and graphics views) work on Linux, Windows and Mac.
-- The "macintosh" style doesn't fully work yet (some display errors), so LeanQt starts with "fusion" style also on Macintosh. It can be manually enabled e.g. by addign -style macintosh to the application command line. 
+- The "macintosh" style doesn't fully work yet (some display errors), so LeanQt starts with "fusion" style also on Macintosh. It can be manually enabled e.g. by addign `-style macintosh` to the application command line. 
 - Also note that on Mac the generated executables must be included in an application bundle using a separate tool if you don't want a terminal window to open to run the app, or the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
 - MingW on Windows works with static builds, but not yet with shared builds; so don't use HAVE_SHARED with MingW on Windows.
-- Use the BUSY version in the "leanqt" branch to build this version of LeanQt.
 
 ### Long term plan
 
@@ -108,6 +108,7 @@ NOTES:
 - QModelIndex, QPersistentModelIndex, QAbstractItemModel, QAbstractListModel, QAbstractProxyModel, QIdentityProxyModel, QItemSelectionRange, QItemSelectionModel, QItemSelection, QSortFilterProxyModel, and QStringListModel belong to the itemviews module, not the core module
 - QStandardItemModel belong to the itemviews module, not the gui module
 - QTimeLine belongs to the graphics module, not the core module
+- All moved classes still have include file redirects in their original module for backward compatibility
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 
@@ -119,6 +120,18 @@ NOTES:
 1. Download https://github.com/rochus-keller/BUSY/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "build".
 1. Open a command line in the build directory and type `cc *.c -O2 -lm -O2 -o lua` or `cl /O2 /MD /Fe:lua.exe *.c` depending on whether you are on a Unix or Windows machine; wait a few seconds until the Lua executable is built.
 1. Now type `./lua build.lua ../Oberon` (or `lua build.lua ../Oberon` on Windows); wait a few minutes until the OBXMC executable is built; you find it in the output subdirectory.
+
+### How to build the Oberon+ IDE with LeanQt
+
+1. Create a new directory; we call it the root directory here
+1. Download https://github.com/rochus-keller/Oberon/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "Oberon".
+1. Download https://github.com/rochus-keller/PeLib/archive/refs/heads/OBX.zip and unpack it to the root directory; rename the resulting directory to "PeLib".
+1. Download https://github.com/rochus-keller/MonoTools/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "MonoTools".
+1. Download https://github.com/rochus-keller/GuiTools/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "GuiTools".
+1. Download https://github.com/rochus-keller/LeanQt/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "LeanQt".
+1. Download https://github.com/rochus-keller/BUSY/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "build".
+1. Open a command line in the build directory and type `cc *.c -O2 -lm -O2 -o lua` or `cl /O2 /MD /Fe:lua.exe *.c` depending on whether you are on a Unix or Windows machine; wait a few seconds until the Lua executable is built.
+1. Now type `./lua build.lua ../Oberon -T ide` (or `lua build.lua ../Oberon -T ide` on Windows); wait until the ObxIDE executable is built; you find it in the output subdirectory.
 
 ### BUSY moc support
 
