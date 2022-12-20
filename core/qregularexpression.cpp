@@ -42,7 +42,7 @@
 #include <QtCore/qatomic.h>
 #include <QtCore/qdatastream.h>
 
-#include <pcre.h>
+#include <thirdparty/pcre.h>
 
 QT_BEGIN_NAMESPACE
 

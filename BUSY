@@ -22,6 +22,7 @@ param HAVE_COREAPP = false     # include QCoreApplication, QTranslator
 param HAVE_OBJECT = false	   # include QObject, QEvent, QEventDispatcher etc.
 param HAVE_LIBRARY = false     # include QLibrary
 param HAVE_PLUGINS = false     # include QPluginLoader
+param HAVE_RE = false 		   # include QRecularExpression, using pcre16
 
 param HAVE_CORE_ALL = false	   # switches on all flags which add code
 
@@ -368,7 +369,11 @@ let graphics_client_config * = graphics.config
 ######################################################################
 submod tools
 
-let uic * = tools.uic.exe
+let copy_uic * : Copy {
+	.use_deps += `executable
+	.deps += tools.uic.exe;
+	.outputs += root_path + ./{{source_file_part}}
+}
 
 let copy_moc * : Copy {
 	.use_deps += `executable
@@ -398,10 +403,11 @@ let gui_sources * : Group {
 	if (target_os == `macos) || (target_os == `win32) || HAVE_WIDGETS {
 		.deps += copy_rcc
 	}
+	if HAVE_WIDGETS {
+		.deps += copy_uic
+	}
 	.deps += _gui_sources
 }
-
-# we don't need uic for itemviews since the generated ui_qfiledialog.h is already there
 
 ######################################################################
 ## Separate client libraries 

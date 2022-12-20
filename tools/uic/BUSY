@@ -38,7 +38,7 @@ let exe * : Executable {
 			]
 		}
 	}
-	.defines += "QT_FORCE_XMLSTREAM"
+	.defines += [ "QT_FORCE_XMLSTREAM" "QT_UIC_CPP_GENERATOR" ]
 	.include_dirs += .
-	# TODO: do we need this? uic_path = build_dir()
+	uic_path = root_build_dir + ^root_path
 }

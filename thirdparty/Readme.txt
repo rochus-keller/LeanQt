@@ -11,6 +11,7 @@ BUSY module is not used.
 - freebsd: files included by qlocale_tools.cpp, required in any configuration
 - forkfd: includes files only used by HAVE_PROCESS
 - zlib: BUSY module, only used by HAVE_ZLIB and HAVE_IMAGE
+- pcre16: BUSY module, only used by HAVE_RE
 
 ### Things required by net
 

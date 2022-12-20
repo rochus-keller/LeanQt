@@ -72,6 +72,11 @@ let run_moc : Moc {
 	.defines += config.defines + ^_core_config.defines + "QT_NO_ANIMATION" + "QT_NO_ACCESSIBILITY" + "QT_NO_GESTURES"
 }
 
+let run_uic : Uic {
+	.tool_dir = root_build_dir + ^root_path;
+	.sources += ./qfiledialog.ui
+}
+
 let sources* : SourceSet {
 	.sources += [
 		./qabstractitemmodel.cpp   ./qidentityproxymodel.cpp  ./qsortfilterproxymodel.cpp
@@ -94,8 +99,8 @@ let sources* : SourceSet {
 		.deps += err
 	}
 
-	.deps += run_moc;
+	.deps += [ run_moc run_uic ]
 	.configs += [ ^_core_config ^_image_config ^_gui_config ^_widgets_config lib_config config ]
-	.include_dirs += build_dir() # for the embedded .moc files
+	.include_dirs += build_dir() # for the embedded .moc files and ui_*.h
 }
 

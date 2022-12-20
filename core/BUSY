@@ -1,8 +1,6 @@
 # Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 # licensed under GPL/LGPL
 
-let HAVE_RE = false 		# include QRecularExpression, using pcre16; not yet supported
-
 let lib_config : Config {
 	.defines += [
 		"QT_BUILD_CORE_LIB" # public, required to make resource system work at all
@@ -45,7 +43,7 @@ let config * : Config {
 		.defines += "QT_NO_URL_VARIANT" # public
 	}
 
-	if !HAVE_RE {
+	if !^HAVE_RE {
 		.defines += "QT_NO_REGULAREXPRESSION" # public
 	}
 	
@@ -102,6 +100,7 @@ let config * : Config {
 }
 
 submod zlib = ../thirdparty/zlib else ../missing.busy
+submod pcre16 = ../thirdparty/pcre16 else ../missing.busy
 
 let run_moc : Moc {
 	.tool_dir = root_build_dir + ^root_path; # we explicitly add this here because more than one instance of LeanQt as a
@@ -124,7 +123,7 @@ let run_moc : Moc {
 		./qtimer.h
 	]
 	if ^HAVE_OBJECT {
-		.sources += ./qcoreevent.h
+		.sources += [ ./qcoreevent.h ./qsignalmapper.h ]
 	}
 	if ^HAVE_FILEIO {
 		.sources += [ 
@@ -264,11 +263,9 @@ let sources* : SourceSet {
         }
 	}
 
-	if HAVE_RE {
-		if !trycompile("#include <pcre.h>") {
-			error("HAVE_RE required but the pcre headers are not available")
-		}
+	if ^HAVE_RE {
 		.sources += ./qregularexpression.cpp
+		.deps += pcre16.sources
 	}
 	
 	if ^HAVE_JSON {
@@ -479,6 +476,7 @@ let sources* : SourceSet {
 			./qtimer.cpp
 			./qfreelist.cpp
 			./qabstractnativeeventfilter.cpp
+			./qsignalmapper.cpp
 		]
 		if ^HAVE_FILEIO {
 			.sources += [ 
