@@ -107,7 +107,7 @@ NOTES:
 - QEasingCurve belong to the widgets module, not the core module
 - QModelIndex, QPersistentModelIndex, QAbstractItemModel, QAbstractListModel, QAbstractProxyModel, QIdentityProxyModel, QItemSelectionRange, QItemSelectionModel, QItemSelection, QSortFilterProxyModel, and QStringListModel belong to the itemviews module, not the core module
 - QStandardItemModel belong to the itemviews module, not the gui module
-- QTimeLine belongs to the graphics module, not the core module
+- QTimeLine belongs to the widgets module, not the core module
 - All moved classes still have include file redirects in their original module for backward compatibility
 
 ### How to build the Oberon+ command line compiler version with LeanQt

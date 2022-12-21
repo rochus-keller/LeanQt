@@ -239,9 +239,7 @@ Q_SIGNALS:
     void started(QPrivateSignal);
     void finished(int exitCode); // ### Qt 6: merge the two signals with a default value
     void finished(int exitCode, QProcess::ExitStatus exitStatus);
-#if QT_DEPRECATED_SINCE(5,6)
     void error(QProcess::ProcessError error);
-#endif
     void errorOccurred(QProcess::ProcessError error);
     void stateChanged(QProcess::ProcessState state, QPrivateSignal);
 

@@ -403,7 +403,7 @@ let gui_sources * : Group {
 	if (target_os == `macos) || (target_os == `win32) || HAVE_WIDGETS {
 		.deps += copy_rcc
 	}
-	if HAVE_WIDGETS {
+	if HAVE_ITEMVIEWS {
 		.deps += copy_uic
 	}
 	.deps += _gui_sources

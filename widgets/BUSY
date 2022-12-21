@@ -148,6 +148,7 @@ let run_moc : Moc {
 		./qsizepolicy.h
 		./qwidgetanimator_p.h
 		./qeasingcurve.h
+		./qtimeline.h
 	]
 	
 	if target_os == `linux {
@@ -198,7 +199,7 @@ let sources* : SourceSet {
 		./qgroupbox.cpp            ./qstackedwidget.cpp       ./qwindowcontainer.cpp
 		./qstatusbar.cpp           ./qwindowsstyle.cpp
 		./qkeysequenceedit.cpp     ./qstyle.cpp               ./qwizard.cpp
-		./qlabel.cpp               ./qstylefactory.cpp        
+		./qlabel.cpp               ./qstylefactory.cpp        ./qtimeline.cpp
 		./qeasingcurve.cpp	       ./qwidgetanimator.cpp
 	]
 	
