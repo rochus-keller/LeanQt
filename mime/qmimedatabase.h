@@ -40,6 +40,8 @@ class QIODevice;
 class QUrl;
 
 class QMimeDatabasePrivate;
+class QMimeMagicRulesMap;
+
 class Q_CORE_EXPORT QMimeDatabase
 {
     Q_DISABLE_COPY(QMimeDatabase)
@@ -75,6 +77,13 @@ public:
 
     QList<QMimeType> allMimeTypes() const;
 
+    // Qt Creator additions
+    static void addMimeTypes(const QString &fileName);
+    static QString allFiltersString(QString *allFilesFilter = 0);
+    static QStringList allGlobPatterns();
+    static void setGlobPatternsForMimeType(const QMimeType &mimeType, const QStringList &patterns);
+    static void magicRulesForMimeType(const QMimeType &mimeType, QMimeMagicRulesMap& out); // priority -> rules
+    static void setMagicRulesForMimeType(const QMimeType &mimeType, const QMimeMagicRulesMap &rules); // priority -> rules
 private:
     QMimeDatabasePrivate *d;
 };

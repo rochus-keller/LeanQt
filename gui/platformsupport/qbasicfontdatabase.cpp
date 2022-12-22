@@ -48,11 +48,31 @@ QT_BEGIN_NAMESPACE
 
 void QBasicFontDatabase::populateFontDatabase()
 {
+    int integrated = 0;
+    QFile list(":/fonts/fontlist.txt"); // TODO: well known resource path
+    if( list.open(QIODevice::ReadOnly) )
+    {
+        QByteArrayList all = list.readAll().split('\n');
+        foreach( const QByteArray& f, all )
+        {
+            const QString name = QString::fromUtf8(f.trimmed());
+            if( !name.isEmpty() )
+            {
+                QFile font(name);
+                if( font.open(QIODevice::ReadOnly ) )
+                {
+                    integrated++;
+                    QBasicFontDatabase::addTTFile(font.readAll(), f);
+                }
+            }
+        }
+    }
     QString fontpath = fontDir();
     QDir dir(fontpath);
 
     if (!dir.exists()) {
-        qWarning("QBasicFontDatabase: Cannot find font directory %s - is Qt installed correctly?",
+        if( integrated == 0 )
+            qWarning("QBasicFontDatabase: Cannot find font directory %s - is Qt installed correctly?",
                qPrintable(fontpath));
         return;
     }

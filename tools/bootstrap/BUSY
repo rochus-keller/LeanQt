@@ -16,7 +16,6 @@ let config * : Config {
 		"QT_NO_GEOM_VARIANT"
 		"QT_NO_URL_VARIANT"
 		"QT_NO_REGULAREXPRESSION"
-		"QT_NO_JSON"
 		"QT_NO_DATASTREAM"
 		"QT_NO_THREAD"
 		"QT_NO_QOBJECT"
@@ -30,6 +29,9 @@ let config * : Config {
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" 
 		*/
 	]
+	if !^HAVE_PLUGINS {
+		.defines += "QT_NO_JSON"
+	}
 	if !^HAVE_DEBUG {
 		.defines += "NDEBUG"
 	}
@@ -105,6 +107,13 @@ let sources* : SourceSet {
 		../../core/qsimd.cpp
 	]
 	
+	if ^HAVE_PLUGINS {
+		.sources += [
+			../../core/qjsonarray.cpp  ../../core/qjsondocument.cpp  ../../core/qjsonparser.cpp  ../../core/qjsonwriter.cpp
+			../../core/qjson.cpp       ../../core/qjsonobject.cpp    ../../core/qjsonvalue.cpp
+		]
+	}
+
 	# OBJECT
 	.sources += ../../core/NoObject.cpp
 	

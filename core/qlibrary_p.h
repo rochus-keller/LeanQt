@@ -108,7 +108,12 @@ public:
 
 #ifndef QT_NO_PLUGINS
     static inline QJsonDocument fromRawMetaData(const char *raw) {
-        raw += strlen("QTMETADATA  ");
+        static const char* prefix = "QTMETADATA  ";
+        const int len1 = strlen(raw);
+        const int len2 = strlen(prefix);
+        if( len1 < len2 || strncmp(raw,prefix,len2) != 0 )
+            return QJsonDocument();
+        raw += len2;
         // the size of the embedded JSON object can be found 8 bytes into the data (see qjson_p.h),
         // but doesn't include the size of the header (8 bytes)
         QByteArray json(raw, qFromLittleEndian<uint>(*(const uint *)(raw + 8)) + 8);

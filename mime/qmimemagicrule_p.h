@@ -1,18 +1,9 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -52,6 +43,7 @@
 #include <QtCore/qbytearray.h>
 #include <QtCore/qscopedpointer.h>
 #include <QtCore/qlist.h>
+#include <QtCore/qmap.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,6 +55,8 @@ public:
 
     QMimeMagicRule(const QString &typeStr, const QByteArray &value, const QString &offsets,
                    const QByteArray &mask, QString *errorString);
+    QMimeMagicRule(Type type, const QByteArray &value, int startPos, int endPos,
+                  const QByteArray &mask = QByteArray(), QString *errorString = 0);
     QMimeMagicRule(const QMimeMagicRule &other);
     ~QMimeMagicRule();
 
@@ -91,6 +85,11 @@ private:
     const QScopedPointer<QMimeMagicRulePrivate> d;
 };
 Q_DECLARE_TYPEINFO(QMimeMagicRule, Q_MOVABLE_TYPE);
+
+class QMimeMagicRulesMap : public QMap<int, QList<QMimeMagicRule> >
+{
+public:
+};
 
 QT_END_NAMESPACE
 

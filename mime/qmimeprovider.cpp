@@ -45,11 +45,6 @@
 #include <QDateTime>
 #include <QtEndian>
 
-static void initResources()
-{
-    // TODO Q_INIT_RESOURCE(mimetypes);
-}
-
 QT_BEGIN_NAMESPACE
 
 static QString fallbackParent(const QString &mimeTypeName)
@@ -715,12 +710,26 @@ void QMimeBinaryProvider::loadGenericIcon(QMimeTypePrivate &data)
     }
 }
 
+void QMimeBinaryProvider::magicRulesForMimeType(const QMimeType& mimeType, QMimeMagicRulesMap& out)
+{
+    // NOP
+}
+
+void QMimeBinaryProvider::setGlobPatternsForMimeType(const QMimeType& mimeType, const QStringList& patterns)
+{
+    // NOP
+}
+
+void QMimeBinaryProvider::setMagicRulesForMimeType(const QMimeType& mimeType, const QMimeMagicRulesMap& rules)
+{
+    // NOP
+}
+
 ////
 
 QMimeXMLProvider::QMimeXMLProvider(QMimeDatabasePrivate *db)
     : QMimeProviderBase(db), m_loaded(false)
 {
-    initResources();
 }
 
 QMimeXMLProvider::~QMimeXMLProvider()
@@ -788,8 +797,7 @@ void QMimeXMLProvider::ensureLoaded()
 #endif
 
         if (!fdoXmlFound) {
-            // We could instead install the file as part of installing Qt?
-            allFiles.prepend(QLatin1String(":/qt-project.org/qmime/freedesktop.org.xml"));
+            allFiles.prepend(QLatin1String(":/mime/freedesktop.org.xml")); // TODO: well known resource path
         }
 
         if (m_allFiles == allFiles)
@@ -892,6 +900,47 @@ QList<QMimeType> QMimeXMLProvider::allMimeTypes()
 void QMimeXMLProvider::addMagicMatcher(const QMimeMagicRuleMatcher &matcher)
 {
     m_magicMatchers.append(matcher);
+}
+
+void QMimeXMLProvider::addFile(const QString& filePath)
+{
+    m_additionalFiles.append(filePath);
+    m_loaded = false; // force reload to ensure correct load order for overridden mime types
+}
+
+void QMimeXMLProvider::magicRulesForMimeType(const QMimeType& mimeType, QMimeMagicRulesMap& out)
+{
+    out.clear();
+    foreach (const QMimeMagicRuleMatcher &matcher, m_magicMatchers) {
+        if (mimeType.matchesName(matcher.mimetype()))
+            out[matcher.priority()].append(matcher.magicRules());
+    }
+}
+
+void QMimeXMLProvider::setGlobPatternsForMimeType(const QMimeType& mimeType, const QStringList& patterns)
+{
+    // remove all previous globs
+    m_mimeTypeGlobs.removeMimeType(mimeType.name());
+    // add new patterns as case-insensitive default-weight patterns
+    foreach (const QString &pattern, patterns)
+        addGlobPattern(QMimeGlobPattern(pattern, mimeType.name()));
+    mimeType.d->globPatterns = patterns;
+}
+
+void QMimeXMLProvider::setMagicRulesForMimeType(const QMimeType& mimeType, const QMimeMagicRulesMap& rules)
+{
+    // remove all previous rules
+    QMutableListIterator<QMimeMagicRuleMatcher> matcherIt(m_magicMatchers);
+    while (matcherIt.hasNext()) {
+        if (matcherIt.next().mimetype() == mimeType.name())
+            matcherIt.remove();
+    }
+    // add new rules
+    for (QMimeMagicRulesMap::const_iterator it = rules.constBegin(); it != rules.constEnd(); ++it) {
+        QMimeMagicRuleMatcher matcher(mimeType.name(), it.key()/*priority*/);
+        matcher.addRules(it.value());
+        addMagicMatcher(matcher);
+    }
 }
 
 QT_END_NAMESPACE
