@@ -2,9 +2,18 @@
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Copyright (C) 2015 Klaralvdalens Datakonsult AB, a KDAB Group company, info@kdab.com, author David Faure <david.faure@kdab.com>
-** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL21$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -48,7 +57,6 @@
 QT_BEGIN_NAMESPACE
 
 class QMimeMagicRuleMatcher;
-class QMimeMagicRulesMap;
 
 class QMimeProviderBase
 {
@@ -67,11 +75,6 @@ public:
     virtual void loadMimeTypePrivate(QMimeTypePrivate &) {}
     virtual void loadIcon(QMimeTypePrivate &) {}
     virtual void loadGenericIcon(QMimeTypePrivate &) {}
-
-    // Qt Creator additions
-    virtual void magicRulesForMimeType(const QMimeType &mimeType, QMimeMagicRulesMap& out) = 0;
-    virtual void setGlobPatternsForMimeType(const QMimeType &mimeType, const QStringList &patterns) = 0;
-    virtual void setMagicRulesForMimeType(const QMimeType &mimeType, const QMimeMagicRulesMap &rules) = 0;
 
     QMimeDatabasePrivate *m_db;
 protected:
@@ -99,10 +102,6 @@ public:
     virtual void loadMimeTypePrivate(QMimeTypePrivate &) Q_DECL_OVERRIDE;
     virtual void loadIcon(QMimeTypePrivate &) Q_DECL_OVERRIDE;
     virtual void loadGenericIcon(QMimeTypePrivate &) Q_DECL_OVERRIDE;
-
-    void magicRulesForMimeType(const QMimeType &mimeType, QMimeMagicRulesMap& out);
-    void setGlobPatternsForMimeType(const QMimeType &mimeType, const QStringList &patterns);
-    void setMagicRulesForMimeType(const QMimeType &mimeType, const QMimeMagicRulesMap &rules);
 
 private:
     struct CacheFile;
@@ -153,11 +152,6 @@ public:
     void addAlias(const QString &alias, const QString &name);
     void addMagicMatcher(const QMimeMagicRuleMatcher &matcher);
 
-    // Qt Creator additions
-    void addFile(const QString &filePath);
-    void magicRulesForMimeType(const QMimeType &mimeType, QMimeMagicRulesMap& out);
-    void setGlobPatternsForMimeType(const QMimeType &mimeType, const QStringList &patterns);
-    void setMagicRulesForMimeType(const QMimeType &mimeType, const QMimeMagicRulesMap &rules);
 private:
     void ensureLoaded();
     void load(const QString &fileName);
@@ -176,9 +170,6 @@ private:
 
     QList<QMimeMagicRuleMatcher> m_magicMatchers;
     QStringList m_allFiles;
-
-    // Qt Creator additions
-    QStringList m_additionalFiles;
 };
 
 QT_END_NAMESPACE

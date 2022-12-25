@@ -2,9 +2,18 @@
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Copyright (C) 2015 Klaralvdalens Datakonsult AB, a KDAB Group company, info@kdab.com, author David Faure <david.faure@kdab.com>
-** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL21$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -427,40 +436,6 @@ QString QMimeType::filterString() const
     }
 
     return filter;
-}
-
-bool QMimeType::matchesName(const QString& nameOrAlias) const
-{
-    if (d->name == nameOrAlias)
-        return true;
-    return QMimeDatabasePrivate::instance()->provider()->resolveAlias(nameOrAlias) == d->name;
-}
-
-static QString suffixFromPattern(const QString &pattern)
-{
-    // Not a simple suffix if it looks like: README or *. or *.* or *.JP*G or *.JP?
-    if (pattern.startsWith(QLatin1String("*.")) &&
-            pattern.length() > 2 &&
-            pattern.indexOf(QLatin1Char('*'), 2) < 0 && pattern.indexOf(QLatin1Char('?'), 2) < 0) {
-        return pattern.mid(2);
-    }
-    return QString();
-}
-
-void QMimeType::setPreferredSuffix(const QString& suffix)
-{
-    QMimeDatabasePrivate::instance()->provider()->loadMimeTypePrivate(*d);
-
-    QStringList::iterator it = d->globPatterns.begin();
-    while( it != d->globPatterns.end() )
-    {
-        if( suffixFromPattern((*it)) == suffix )
-            break;
-        ++it;
-    }
-    if (it != d->globPatterns.end())
-        d->globPatterns.erase(it);
-    d->globPatterns.prepend(QLatin1String("*.") + suffix);
 }
 
 /*!

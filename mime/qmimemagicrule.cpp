@@ -1,9 +1,18 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Copyright (C) 2022 Rochus Keller (me@rochus-keller.ch) for LeanQt
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL21$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -301,114 +310,6 @@ QMimeMagicRule::QMimeMagicRule(const QString &typeStr,
         d->mask.squeeze();
         d->matchFunction = matchString;
         break;
-    case Byte:
-        if (d->number <= quint8(-1)) {
-            if (d->numberMask == 0)
-                d->numberMask = quint8(-1);
-            d->matchFunction = matchNumber<quint8>;
-        }
-        break;
-    case Big16:
-    case Host16:
-    case Little16:
-        if (d->number <= quint16(-1)) {
-            d->number = d->type == Little16 ? qFromLittleEndian<quint16>(d->number) : qFromBigEndian<quint16>(d->number);
-            if (d->numberMask == 0)
-                d->numberMask = quint16(-1);
-            d->matchFunction = matchNumber<quint16>;
-        }
-        break;
-    case Big32:
-    case Host32:
-    case Little32:
-        if (d->number <= quint32(-1)) {
-            d->number = d->type == Little32 ? qFromLittleEndian<quint32>(d->number) : qFromBigEndian<quint32>(d->number);
-            if (d->numberMask == 0)
-                d->numberMask = quint32(-1);
-            d->matchFunction = matchNumber<quint32>;
-        }
-        break;
-    default:
-        break;
-    }
-}
-
-QMimeMagicRule::QMimeMagicRule(QMimeMagicRule::Type theType, const QByteArray& theValue, int theStartPos,
-                               int theEndPos, const QByteArray& theMask, QString* errorString)
-    : d(new QMimeMagicRulePrivate)
-{
-    d->type = theType;
-    d->value = theValue;
-    d->startPos = theStartPos;
-    d->endPos = theEndPos;
-    d->mask = theMask;
-    d->matchFunction = 0;
-
-    if (d->value.isEmpty()) {
-        d->type = Invalid;
-        if (errorString)
-            *errorString = QLatin1String("Invalid empty magic rule value");
-        return;
-    }
-
-    if (d->type >= Host16 && d->type <= Byte) {
-        bool ok;
-        d->number = d->value.toUInt(&ok, 0); // autodetect
-        if (!ok) {
-            d->type = Invalid;
-            if (errorString)
-                *errorString = QString::fromLatin1("Invalid magic rule value \"%1\"").arg(
-                        QString::fromLatin1(d->value));
-            return;
-        }
-        d->numberMask = !d->mask.isEmpty() ? d->mask.toUInt(&ok, 0) : 0; // autodetect
-    }
-
-    switch (d->type) {
-    case String:
-        d->pattern = makePattern(d->value);
-        d->pattern.squeeze();
-        if (!d->mask.isEmpty()) {
-            if (d->mask.size() < 4 || !d->mask.startsWith("0x")) {
-                d->type = Invalid;
-                if (errorString)
-                    *errorString = QString::fromLatin1("Invalid magic rule mask \"%1\"").arg(
-                            QString::fromLatin1(d->mask));
-                return;
-            }
-            const QByteArray &tempMask = QByteArray::fromHex(QByteArray::fromRawData(
-                                                     d->mask.constData() + 2, d->mask.size() - 2));
-            if (tempMask.size() != d->pattern.size()) {
-                d->type = Invalid;
-                if (errorString)
-                    *errorString = QString::fromLatin1("Invalid magic rule mask size \"%1\"").arg(
-                            QString::fromLatin1(d->mask));
-                return;
-            }
-            d->mask = tempMask;
-        } else {
-            d->mask.fill(char(-1), d->pattern.size());
-        }
-        d->mask.squeeze();
-        d->matchFunction = matchString;
-        break;
-#if 0
-    case RegExp:
-        d->regexp.setPatternOptions(QRegularExpression::MultilineOption
-                                    | QRegularExpression::DotMatchesEverythingOption
-                                    | QRegularExpression::OptimizeOnFirstUsageOption
-                                    );
-        d->regexp.setPattern(QString::fromUtf8(d->value));
-        if (!d->regexp.isValid()) {
-            d->type = Invalid;
-            if (errorString)
-                *errorString = QString::fromLatin1("Invalid magic rule regexp value \"%1\"").arg(
-                        QString::fromLatin1(d->value));
-            return;
-        }
-        d->matchFunction = matchRegExp;
-        break;
-#endif
     case Byte:
         if (d->number <= quint8(-1)) {
             if (d->numberMask == 0)

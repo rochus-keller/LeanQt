@@ -83,10 +83,6 @@ public:
 
     QString filterString() const;
 
-    // Qt Creator additions
-    bool matchesName(const QString &nameOrAlias) const;
-    void setPreferredSuffix(const QString &suffix);
-
 protected:
     friend class QMimeTypeParserBase;
     friend class MimeTypeMapEntry;
