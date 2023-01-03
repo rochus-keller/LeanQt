@@ -410,7 +410,7 @@ let gui_sources * : Group {
 }
 
 ######################################################################
-## Separate client libraries 
+## Separate libraries
 
 let libqtcore * : Library {
 	.deps += core_sources 
@@ -511,7 +511,7 @@ let libqtwidgets * : Library {
 }
 
 ######################################################################
-## All in one client library
+## All in one library
 
 # use this Config instead of the above X_client_config when you use libqt
 let qt_client_config * : Config {

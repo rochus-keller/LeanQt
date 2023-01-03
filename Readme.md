@@ -1,3 +1,5 @@
+![icon](http://software.rochus-keller.ch/leanqt-logo-300x100.png)
+
 ## Welcome to LeanQt - the lean, adaptable Qt version
 
 LeanQt is a stripped-down Qt version which includes the essential features and is easy to build from source and to integrate with an application.
@@ -66,7 +68,7 @@ The following features are available:
 
 NOTES: 
 - All widgets (including item and graphics views) work on Linux, Windows and Mac.
-- The "macintosh" style doesn't fully work yet (some display errors), so LeanQt starts with "fusion" style also on Macintosh. It can be manually enabled e.g. by addign `-style macintosh` to the application command line. 
+- The "macintosh" style doesn't fully work yet (some display errors), so LeanQt starts with "fusion" style also on Macintosh. Mac style can be manually enabled e.g. by adding `-style macintosh` to the application command line. 
 - Also note that on Mac the generated executables must be included in an application bundle using a separate tool if you don't want a terminal window to open to run the app, or the menu has to be explicitly brought to the foreground (e.g. by first clicking on the desktop and then again on the startet application window).
 - MingW on Windows works with static builds, but not yet with shared builds; so don't use HAVE_SHARED with MingW on Windows.
 
