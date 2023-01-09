@@ -19,7 +19,7 @@ want's to use them anyway; see also the thirdparty/Readme.txt file for potential
 
 ### State of development
 
-This version is suitable to successfully build and run my [Oberon+ compiler and IDE](https://github.com/rochus-keller/Oberon/).
+This version is suitable to successfully build and run my [Oberon+ compiler and IDE](https://github.com/rochus-keller/Oberon/). No modifications to the source code were necessary; I can still either use LeanQt or original Qt to compile my compiler or IDE.
 
 LeanQt and its examples have been successfully tested with different configurations on Windows x86 & x86_64, on macOS x86_64 and M1, and on Linux x86, ARMv7 (Raspi) and x86_64.
 

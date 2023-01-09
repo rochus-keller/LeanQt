@@ -1711,7 +1711,7 @@ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
     QString translatedTextAboutQtCaption;
     translatedTextAboutQtCaption = QMessageBox::tr(
         "<h3>About LeanQt</h3>"
-        "<p>This program uses LeanQt which is based on Qt version 5.6.</p>"
+        "<p>This program uses LeanQt which is based on Qt version 5.6.3.</p>"
         );
     QString translatedTextAboutQtText;
     translatedTextAboutQtText = QMessageBox::tr(
@@ -1724,13 +1724,11 @@ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
         "<p>LeanQt licensed under the GNU LGPL version 2.1 is appropriate for the "
         "development of applications provided you can comply with the terms "
         "and conditions of the GNU LGPL version 2.1.</p>"
-        "<p>Copyright (C) by The Qt Company Ltd and other contributors.</p>"
-        "<p>Qt and the Qt logo are trademarks of The Qt Company Ltd.</p>"
         "<p>See <a href=\"https://github.com/rochus-keller/LeanQt\">the Github page</a> for more information.</p>"
         );
     QMessageBox *msgBox = new QMessageBox(parent);
     msgBox->setAttribute(Qt::WA_DeleteOnClose);
-    msgBox->setWindowTitle(title.isEmpty() ? tr("About Qt") : title);
+    msgBox->setWindowTitle(title.isEmpty() ? tr("About LeanQt") : title);
     msgBox->setText(translatedTextAboutQtCaption);
     msgBox->setInformativeText(translatedTextAboutQtText);
 
