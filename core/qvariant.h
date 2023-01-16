@@ -46,7 +46,6 @@ class QBitArray;
 class QDataStream;
 class QDate;
 class QDateTime;
-class QEasingCurve;
 class QLine;
 class QLineF;
 class QLocale;
@@ -145,10 +144,7 @@ class Q_CORE_EXPORT QVariant
         RegExp = QMetaType::QRegExp,
         RegularExpression = QMetaType::QRegularExpression,
         Hash = QMetaType::QVariantHash,
-        /*EasingCurve = QMetaType::QEasingCurve,*/
         Uuid = QMetaType::QUuid,
-        /*ModelIndex = QMetaType::QModelIndex,
-        PersistentModelIndex = QMetaType::QPersistentModelIndex,*/
         LastCoreType = QMetaType::LastCoreType,
 
         Font = QMetaType::QFont,
@@ -237,14 +233,7 @@ class Q_CORE_EXPORT QVariant
 #ifndef QT_NO_URL_VARIANT
     QVariant(const QUrl &url);
 #endif
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    QVariant(const QEasingCurve &easing);
-#endif
     QVariant(const QUuid &uuid);
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    QVariant(const QModelIndex &modelIndex);
-    QVariant(const QPersistentModelIndex &modelIndex);
-#endif
 #ifndef QT_NO_JSON
     QVariant(const QJsonValue &jsonValue);
     QVariant(const QJsonObject &jsonObject);
@@ -319,14 +308,7 @@ class Q_CORE_EXPORT QVariant
 #ifndef QT_NO_URL_VARIANT
     QUrl toUrl() const;
 #endif
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    QEasingCurve toEasingCurve() const;
-#endif
     QUuid toUuid() const;
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    QModelIndex toModelIndex() const;
-    QPersistentModelIndex toPersistentModelIndex() const;
-#endif
 #ifndef QT_NO_JSON
     QJsonValue toJsonValue() const;
     QJsonObject toJsonObject() const;

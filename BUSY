@@ -2,8 +2,8 @@
 # licensed under GPL/LGPL
 
 param HAVE_SHARED = false      # if true build shared instead of static libraries, and export marked symbols
-param HAVE_DEBUG = false       # if true don't optimize and compile with debug information
-param HAVE_NOOPT = false	   # if true don't optimize
+#param HAVE_DEBUG = false      # no longer supported; use -M debug instead
+#param HAVE_NOOPT = false	   # no longer supported; use -M nonoptimized instead
 
 param HAVE_GEOM = false 	   # include geometry classes like QRect, QPoint etc.
 param HAVE_JSON = false		   # include QJsonObject and friends
@@ -52,6 +52,10 @@ param HAVE_ALL = false		   # enbles all features
 
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
+
+if busy_version < "2023-01-15" {
+	error("this version of BUSY is not compatible with this build")
+}
 
 if HAVE_ALL {
 	HAVE_CORE_ALL = true; HAVE_NET_ALL = true; HAVE_XML = true; HAVE_CONCURRENT = true; 
@@ -209,36 +213,13 @@ if HAVE_OBJECT && !HAVE_THREADS {
 
 ######################################################################
 
-let debugconf : Config {
-	if target_toolchain == `msvc {
-		.cflags += [ "-MDd" "/Zi" "-Fdbusy" ] # generate debug information and add it to the busy.pdb file in the current directory
-		#.cflags += [ "-MDd" "/Z7" ]          # include debug information in object files; needs much more space than a pdb file
-		#.ldflags += "/DEBUG"                 # generate a pdb file from the debug info included in the object files when linking
-	} else {
-		.cflags += "-g"
-	}
-}
-
-let nooptconf : Config {
-	if target_toolchain == `msvc {
-		.cflags += "-MD"
-	}
-}
-
-if HAVE_DEBUG && HAVE_NOOPT {
-	error("cannot enable both HAVE_NOOPT and HAVE_DEBUG")
-}else if HAVE_DEBUG {
-	set_defaults(target_toolchain,debugconf)
-}else if HAVE_NOOPT {
-	# NOTE: on Windows with HAVE_SHARED and HAVE_NOOPT VC2013 and 2017 generated qtwidgets.dll causes a crash on load
-	# if the object files presented to the linker don't follow a specific order; the linker doesn't issue any warning or error;
-	# same for x86 and x64. The crash can be avoided if the moc generated files precede the other object files in the order;
-	# this can be done on BUSY file level by e.g. adding the Moc instance to the deps list of the other files SourceSet.
-	# The order isn't relevant with HAVE_SHARED and no HAVE_NOOPT, or without HAVE_SHARED. 
-	# The same applies to HAVE_DEBUG with HAVE_SHARED and the debug build in QtCreator with the generated qmake 
-	# project files; in QtCreator the cdb.exe process simply crashes with no useful log output
-	set_defaults(target_toolchain,nooptconf)
-}
+# NOTE: on Windows with HAVE_SHARED and HAVE_NOOPT VC2013 and 2017 generated qtwidgets.dll causes a crash on load
+# if the object files presented to the linker don't follow a specific order; the linker doesn't issue any warning or error;
+# same for x86 and x64. The crash can be avoided if the moc generated files precede the other object files in the order;
+# this can be done on BUSY file level by e.g. adding the Moc instance to the deps list of the other files SourceSet.
+# The order isn't relevant with HAVE_SHARED and no HAVE_NOOPT, or without HAVE_SHARED. 
+# The same applies to HAVE_DEBUG with HAVE_SHARED and the debug build in QtCreator with the generated qmake 
+# project files; in QtCreator the cdb.exe process simply crashes with no useful log output
 
 let root_path - = relpath()
 

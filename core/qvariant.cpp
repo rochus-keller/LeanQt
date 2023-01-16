@@ -398,26 +398,6 @@ static bool convert(const QVariant::Private *d, int t, void *result, bool *ok)
         }
         break;
 #endif
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    case QVariant::ModelIndex:
-        switch (d->type) {
-        case QVariant::PersistentModelIndex:
-            *static_cast<QModelIndex *>(result) = QModelIndex(*v_cast<QPersistentModelIndex>(d));
-            break;
-        default:
-            return false;
-        }
-        break;
-    case QVariant::PersistentModelIndex:
-        switch (d->type) {
-        case QVariant::ModelIndex:
-            *static_cast<QPersistentModelIndex *>(result) = QPersistentModelIndex(*v_cast<QModelIndex>(d));
-            break;
-        default:
-            return false;
-        }
-        break;
-#endif
 #endif // QT_BOOTSTRAPPED
     case QVariant::String: {
         QString *str = static_cast<QString *>(result);
@@ -1271,10 +1251,7 @@ Q_CORE_EXPORT void QVariantPrivate::registerHandler(const int /* Modules::Names 
     \value Date  a QDate
     \value DateTime  a QDateTime
     \value Double  a double
-    \value EasingCurve a QEasingCurve
     \value Uuid a QUuid
-    \value ModelIndex a QModelIndex
-    \value PersistentModelIndex a QPersistentModelIndex (since 5.5)
     \value Font  a QFont
     \value Hash a QVariantHash
     \value Icon  a QIcon
@@ -1505,31 +1482,10 @@ QVariant::QVariant(const char *val)
 */
 
 /*!
-    \since 4.7
-  \fn QVariant::QVariant(const QEasingCurve &val)
-
-    Constructs a new variant with an easing curve value, \a val.
-*/
-
-/*!
     \since 5.0
     \fn QVariant::QVariant(const QUuid &val)
 
     Constructs a new variant with an uuid value, \a val.
-*/
-
-/*!
-    \since 5.0
-    \fn QVariant::QVariant(const QModelIndex &val)
-
-    Constructs a new variant with a QModelIndex value, \a val.
-*/
-
-/*!
-    \since 5.5
-    \fn QVariant::QVariant(const QPersistentModelIndex &val)
-
-    Constructs a new variant with a QPersistentModelIndex value, \a val.
 */
 
 /*!
@@ -1772,13 +1728,6 @@ QVariant::QVariant(const QTime &val)
 QVariant::QVariant(const QDateTime &val)
     : d(DateTime)
 { v_construct<QDateTime>(&d, val); }
-#ifndef QT_BOOTSTRAPPED
-#ifdef NOT_SUPPORTED_BY_LEANQT
-QVariant::QVariant(const QEasingCurve &val)
-    : d(EasingCurve)
-{ v_construct<QEasingCurve>(&d, val); }
-#endif
-#endif
 QVariant::QVariant(const QList<QVariant> &list)
     : d(List)
 { v_construct<QVariantList>(&d, list); }
@@ -1836,14 +1785,6 @@ QVariant::QVariant(const QRegularExpression &re)
 QVariant::QVariant(const QUuid &uuid)
     : d(Uuid)
 { v_construct<QUuid>(&d, uuid); }
-#ifdef NOT_SUPPORTED_BY_LEANQT
-QVariant::QVariant(const QModelIndex &modelIndex)
-    : d(ModelIndex)
-{ v_construct<QModelIndex>(&d, modelIndex); }
-QVariant::QVariant(const QPersistentModelIndex &modelIndex)
-    : d(PersistentModelIndex)
-{ v_construct<QPersistentModelIndex>(&d, modelIndex); }
-#endif
 #ifndef QT_NO_JSON
 QVariant::QVariant(const QJsonValue &jsonValue)
     : d(QMetaType::QJsonValue)
@@ -2356,24 +2297,6 @@ QDateTime QVariant::toDateTime() const
 }
 
 /*!
-    \since 4.7
-    \fn QEasingCurve QVariant::toEasingCurve() const
-
-    Returns the variant as a QEasingCurve if the variant has userType()
-    \l QMetaType::QEasingCurve; otherwise returns a default easing curve.
-
-    \sa canConvert(), convert()
-*/
-#ifndef QT_BOOTSTRAPPED
-#ifdef NOT_SUPPORTED_BY_LEANQT
-QEasingCurve QVariant::toEasingCurve() const
-{
-    return qVariantToHelper<QEasingCurve>(d, handlerManager);
-}
-#endif
-#endif
-
-/*!
     \fn QByteArray QVariant::toByteArray() const
 
     Returns the variant as a QByteArray if the variant has userType()
@@ -2572,33 +2495,6 @@ QUuid QVariant::toUuid() const
     return qVariantToHelper<QUuid>(d, handlerManager);
 }
 
-/*!
-    \since 5.0
-
-    Returns the variant as a QModelIndex if the variant has userType() \l
-    QModelIndex; otherwise returns a default constructed QModelIndex.
-
-    \sa canConvert(), convert(), toPersistentModelIndex()
-*/
-#ifdef NOT_SUPPORTED_BY_LEANQT
-QModelIndex QVariant::toModelIndex() const
-{
-    return qVariantToHelper<QModelIndex>(d, handlerManager);
-}
-
-/*!
-    \since 5.5
-
-    Returns the variant as a QPersistentModelIndex if the variant has userType() \l
-    QPersistentModelIndex; otherwise returns a default constructed QPersistentModelIndex.
-
-    \sa canConvert(), convert(), toModelIndex()
-*/
-QPersistentModelIndex QVariant::toPersistentModelIndex() const
-{
-    return qVariantToHelper<QPersistentModelIndex>(d, handlerManager);
-}
-#endif
 /*!
     \since 5.0
 
@@ -3071,12 +2967,6 @@ static bool canConvertMetaObject(int fromId, int toId, QObject *fromObject)
 */
 bool QVariant::canConvert(int targetTypeId) const
 {
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    if ((targetTypeId == QMetaType::QModelIndex && d.type == QMetaType::QPersistentModelIndex)
-        || (targetTypeId == QMetaType::QPersistentModelIndex && d.type == QMetaType::QModelIndex))
-        return true;
-#endif
-
     if (targetTypeId == QMetaType::QVariantList
             && (d.type == QMetaType::QVariantList
               || d.type == QMetaType::QStringList

@@ -18,7 +18,7 @@ let config * : Config {
 		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]
 	
-	if !^HAVE_DEBUG {
+	if build_mode != `debug {
 		.defines += "NDEBUG"
 	}
 	

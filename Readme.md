@@ -108,6 +108,7 @@ NOTES:
 - QMimeData and QTextBoundaryFinder belong to the gui module, not the core module
 - QEasingCurve belong to the widgets module, not the core module
 - QModelIndex, QPersistentModelIndex, QAbstractItemModel, QAbstractListModel, QAbstractProxyModel, QIdentityProxyModel, QItemSelectionRange, QItemSelectionModel, QItemSelection, QSortFilterProxyModel, and QStringListModel belong to the itemviews module, not the core module
+- QModelIndex, QPersistentModelIndex and QEasingCurve are no longer well-known types to QVariant and QMetaType
 - QStandardItemModel belong to the itemviews module, not the gui module
 - QTimeLine belongs to the widgets module, not the core module
 - All moved classes still have include file redirects in their original module for backward compatibility

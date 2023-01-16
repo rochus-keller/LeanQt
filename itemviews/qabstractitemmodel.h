@@ -418,6 +418,8 @@ inline uint qHash(const QModelIndex &index) Q_DECL_NOTHROW
 
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QModelIndex)
+Q_DECLARE_METATYPE(QPersistentModelIndex)
 Q_DECLARE_METATYPE(QModelIndexList)
 
 #endif // QABSTRACTITEMMODEL_H

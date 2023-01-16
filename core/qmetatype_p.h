@@ -189,10 +189,6 @@ template<> struct TypeDefinition<QJsonDocument> { static const bool IsAvailable 
 template<> struct TypeDefinition<QJsonObject> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QJsonValue> { static const bool IsAvailable = false; };
 #endif
-#if !defined(NOT_SUPPORTED_BY_LEANQT) || defined(QT_BOOTSTRAPPED)
-template<> struct TypeDefinition<QModelIndex> { static const bool IsAvailable = false; };
-template<> struct TypeDefinition<QPersistentModelIndex> { static const bool IsAvailable = false; };
-#endif
 #ifdef QT_NO_GEOM_VARIANT
 template<> struct TypeDefinition<QRect> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QRectF> { static const bool IsAvailable = false; };
@@ -202,9 +198,6 @@ template<> struct TypeDefinition<QLine> { static const bool IsAvailable = false;
 template<> struct TypeDefinition<QLineF> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QPoint> { static const bool IsAvailable = false; };
 template<> struct TypeDefinition<QPointF> { static const bool IsAvailable = false; };
-#endif
-#if !defined(NOT_SUPPORTED_BY_LEANQT) || defined(QT_BOOTSTRAPPED)
-template<> struct TypeDefinition<QEasingCurve> { static const bool IsAvailable = false; };
 #endif
 #ifdef QT_NO_QOBJECT
 template<> struct TypeDefinition<QObject*> { static const bool IsAvailable = false; };

@@ -830,6 +830,7 @@ void QAbstractItemView::setItemDelegate(QAbstractItemDelegate *delegate)
             connect(delegate, SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),
                     this, SLOT(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
             connect(delegate, SIGNAL(commitData(QWidget*)), this, SLOT(commitData(QWidget*)));
+            qMetaTypeId<QModelIndex>(); // for some reason we have to call this here, including qabstractitemmodel.h alone doens't help
             connect(delegate, SIGNAL(sizeHintChanged(QModelIndex)), this, SLOT(doItemsLayout()), Qt::QueuedConnection);
         }
     }

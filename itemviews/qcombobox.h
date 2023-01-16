@@ -26,6 +26,7 @@
 #define QCOMBOBOX_H
 
 #include <QtWidgets/qwidget.h>
+#include <QtWidgets/qabstractitemmodel.h>
 #include <QtCore/qvariant.h>
 #include <QValidator>
 #include <QIcon>

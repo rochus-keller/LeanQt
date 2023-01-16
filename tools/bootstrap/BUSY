@@ -32,7 +32,7 @@ let config * : Config {
 	if !^HAVE_PLUGINS {
 		.defines += "QT_NO_JSON"
 	}
-	if !^HAVE_DEBUG {
+	if build_mode != `debug {
 		.defines += "NDEBUG"
 	}
 	if target_os == `win32 {

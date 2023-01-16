@@ -29,6 +29,7 @@
 #include <QtCore/qpoint.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qrect.h>
+#include <QtWidgets/qabstractitemmodel.h>
 
 QT_BEGIN_NAMESPACE
 

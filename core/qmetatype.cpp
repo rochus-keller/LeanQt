@@ -269,13 +269,10 @@ struct DefinedTypesFilter {
     \value QVector3D QVector3D
     \value QVector4D QVector4D
     \value QQuaternion QQuaternion
-    \value QEasingCurve QEasingCurve
     \value QJsonValue QJsonValue
     \value QJsonObject QJsonObject
     \value QJsonArray QJsonArray
     \value QJsonDocument QJsonDocument
-    \value QModelIndex QModelIndex
-    \value QPersistentModelIndex QPersistentModelIndex (since 5.5)
     \value QUuid QUuid
     \value QByteArrayList QByteArrayList
 
@@ -1254,10 +1251,6 @@ bool QMetaType::save(QDataStream &stream, int type, const void *data)
 #ifndef QT_NO_QOBJECT
     case QMetaType::QObjectStar:
 #endif
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    case QMetaType::QModelIndex:
-    case QMetaType::QPersistentModelIndex:
-#endif
 #ifndef QT_NO_JSON
     case QMetaType::QJsonValue:
     case QMetaType::QJsonObject:
@@ -1396,11 +1389,7 @@ bool QMetaType::save(QDataStream &stream, int type, const void *data)
         stream << *static_cast<const NS(QRegularExpression)*>(data);
         break;
 #endif // QT_NO_REGULAREXPRESSION
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    case QMetaType::QEasingCurve:
-        stream << *static_cast<const NS(QEasingCurve)*>(data);
-        break;
-#endif
+
 #endif // QT_BOOTSTRAPPED
     case QMetaType::QFont:
     case QMetaType::QPixmap:
@@ -1482,10 +1471,6 @@ bool QMetaType::load(QDataStream &stream, int type, void *data)
     case QMetaType::VoidStar:
 #ifndef QT_NO_QOBJECT
     case QMetaType::QObjectStar:
-#endif
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    case QMetaType::QModelIndex:
-    case QMetaType::QPersistentModelIndex:
 #endif
 #ifndef QT_NO_JSON
     case QMetaType::QJsonValue:
@@ -1631,11 +1616,6 @@ bool QMetaType::load(QDataStream &stream, int type, void *data)
         stream >> *static_cast< NS(QRegularExpression)*>(data);
         break;
 #endif // QT_NO_REGULAREXPRESSION
-#ifdef NOT_SUPPORTED_BY_LEANQT
-    case QMetaType::QEasingCurve:
-        stream >> *static_cast< NS(QEasingCurve)*>(data);
-        break;
-#endif
 #endif // QT_BOOTSTRAPPED
     case QMetaType::QFont:
     case QMetaType::QPixmap:
