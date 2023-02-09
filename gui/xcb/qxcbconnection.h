@@ -716,7 +716,7 @@ union q_padded_xcb_event {
 // unrelated memory.
 #define Q_DECLARE_XCB_EVENT(event_var, event_type) \
     q_padded_xcb_event<event_type> store = q_padded_xcb_event<event_type>(); \
-    auto &event_var = store.event;
+    event_type &event_var = store.event;
 
 #ifdef Q_XCB_DEBUG
 template <typename cookie_t>

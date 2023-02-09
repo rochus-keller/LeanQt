@@ -72,7 +72,8 @@ let sources * : SourceSet {
 		../../thirdparty/freetype/include
 	]
 	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
-		.cflags_cc += "-std=c++11"
+		# .cflags_cc += "-std=c++11"
+		# the only reason this was necessary was "auto &" in qxcbconnection.h line 719!!!
 	}
 	.configs += [ ^_core_config ^_image_config config lib_xcb.config ]
 	.deps += [ run_moc lib_xcb.sources lib_xkb.sources ]
