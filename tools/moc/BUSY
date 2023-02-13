@@ -6,6 +6,7 @@ let err : Message {
 }
 
 let exe * : Executable {
+    .to_host = true
 	.name = "moc"
 	.sources += [
 		./generator.cpp  ./main.cpp  ./token.cpp
@@ -14,10 +15,10 @@ let exe * : Executable {
 	if target_os == `macos {
 		# not required, leads to errors: .sources += ./mwerks_mac.cpp
 	}
-	if ^HAVE_OBJECT {
+    if ^HAVE_OBJECT || cross_compiling() {
 		# use the bootstrap version, since we need moc to compile ^sources with QObject support
 		.deps += ^bootstrap.sources;
-		.configs += [ ^bootstrap.config ^_core_linker_config ]
+        .configs += [ ^bootstrap.config ^bootstrap.linker_config ]
 	}else{
 		if !^HAVE_FILEIO || !^HAVE_COREAPP {
 			#

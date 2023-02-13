@@ -35,17 +35,18 @@ let config * : Config {
 	if build_mode != `debug {
 		.defines += "NDEBUG"
 	}
-	if target_os == `win32 {
+    if host_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
-		if target_toolchain == `msvc {
+        if host_toolchain == `msvc {
 			.cflags_cc += [ "/EHsc" "/Zc:wchar_t" "/GR" ]
 		}
-	}else if target_os == `macos {
+    }else if host_os == `macos {
         .defines += "QT_NO_THREADSAFE_CLOEXEC"
     }
 }
 
 let sources* : SourceSet {
+    .to_host = true
 	.sources += [
 		../../core/qbytearray.cpp
 		../../core/qarraydata.cpp
@@ -141,13 +142,13 @@ let sources* : SourceSet {
 		../../core/qtemporarydir.cpp
 		../../core/qfileselector.cpp
 	]
-	if target_os == `win32 {
+    if host_os == `win32 {
 		.sources += [ ../../core/qfilesystemengine_win.cpp ../../core/qfsfileengine_win.cpp ../../core/qfilesystemiterator_win.cpp 
 					  ../../core/qstandardpaths_win.cpp ../../core/qsettings_win.cpp ../../core/qlockfile_win.cpp ]
 	}else{
 	    .sources += [ ../../core/qfilesystemengine_unix.cpp ../../core/qfsfileengine_unix.cpp 
 	    			  ../../core/qfilesystemiterator_unix.cpp ../../core/qlockfile_unix.cpp ]
-		if target_os == `macos {
+        if host_os == `macos {
 			.sources += [ ../../core/qstandardpaths_mac.mm ../../core/qsettings_mac.cpp ]
 	    }else{
 	        .sources += ../../core/qstandardpaths_unix.cpp
@@ -158,9 +159,9 @@ let sources* : SourceSet {
 	.sources += [
 		../../core/qcoreapplication.cpp
 	]
-	if target_os == `win32 {
+    if host_os == `win32 {
 		.sources += ../../core/qcoreapplication_win.cpp
-	}else if target_os == `macos {
+    }else if host_os == `macos {
 		.sources += ../../core/qcoreapplication_mac.cpp
 	}
 	
@@ -168,7 +169,7 @@ let sources* : SourceSet {
 	.sources += [ ../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp ]
 
 
-	if target_os == `linux {
+    if host_os == `linux {
 		.sources += [ 
 			../../core/qtimezoneprivate_tz.cpp
 			../../core/qlocale_unix.cpp
@@ -177,7 +178,7 @@ let sources* : SourceSet {
 			../../core/qcore_unix.cpp
 			../../core/qelapsedtimer_unix.cpp
 		]
-	}else if target_os == `win32 {
+    }else if host_os == `win32 {
 		.sources += [ 
 			../../core/qsystemlibrary.cpp
 			../../core/qwindowscodec.cpp
@@ -186,12 +187,12 @@ let sources* : SourceSet {
 			../../core/qelapsedtimer_win.cpp
 			../../core/qtimezoneprivate_win.cpp
 		]
-		if target_toolchain == `msvc {
+        if host_toolchain == `msvc {
 			.sources += [
 				../../core/qvector_msvc.cpp
 			]
 		}
-	}else if target_os == `macos {
+    }else if host_os == `macos {
         .sources += [
             ../../core/qelapsedtimer_mac.cpp
             ../../core/qdatetime_mac.mm
@@ -204,4 +205,29 @@ let sources* : SourceSet {
         ]
     }
     .configs += config
+}
+
+let linker_config * : Config { # same as _core_linker_config but depending on host instead of target
+    if host_os == `win32 {
+        .lib_names = [
+            "Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
+        ]
+        if host_toolchain != `msvc {
+            # gcc and clang on windows
+            .lib_names += [ "stdc++" "m" ]
+            .ldflags += "-shared-libgcc"
+        }
+    } else {
+        .lib_names += [ "stdc++" "m" ]
+        .ldflags += "-shared-libgcc"
+        if ^HAVE_THREADS || ^HAVE_PROCESS {
+            .lib_names += "pthread"
+        }
+        if ^HAVE_LIBRARY {
+            .lib_names += "dl"
+        }
+        if host_os == `macos {
+            .frameworks += [ "IOKit" "Foundation" "CoreServices" "AppKit" "ApplicationServices" "CoreFoundation" ]
+        }
+    }
 }

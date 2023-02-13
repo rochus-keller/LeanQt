@@ -6,6 +6,7 @@ let err : Message {
 }
 
 let exe * : Executable {
+    .to_host = true
 	.name = "uic"
 	.sources += [
 		./cppextractimages.cpp            ./cppwriteincludes.cpp        ./main.cpp
@@ -14,10 +15,10 @@ let exe * : Executable {
 		./cppwriteicondeclaration.cpp     ./databaseinfo.cpp            ./uic.cpp
 		./cppwriteiconinitialization.cpp  ./driver.cpp                  ./validator.cpp
 	]
-	if ^HAVE_OBJECT || (^HAVE_SHARED && ( target_toolchain == `msvc )) {
+    if ^HAVE_OBJECT || (^HAVE_SHARED && ( target_toolchain == `msvc )) || cross_compiling() {
 		# use this with OBJECT because otherwise we have issues with missing moced objects
 		.deps += ^bootstrap.sources;
-		.configs += [ ^bootstrap.config ^_core_linker_config ]
+        .configs += [ ^bootstrap.config ^bootstrap.linker_config ]
 		.sources += [
 			../../core/qxmlstream.cpp ../../core/qxmlutils.cpp
 		]

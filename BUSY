@@ -53,7 +53,7 @@ param HAVE_ALL = false		   # enbles all features
 # NOTE: not all possible combinations on all platforms have been tested; 
 #       patches are welcome, in case you find a combination which doesn't work
 
-if busy_version < "2023-01-15" {
+if busy_version < "2023-02-12" {
 	error("this version of BUSY is not compatible with this build")
 }
 

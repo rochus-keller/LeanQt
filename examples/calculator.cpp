@@ -125,6 +125,9 @@ Calculator::Calculator(QWidget *parent)
     mainLayout->addWidget(powerButton, 3, 5);
     mainLayout->addWidget(reciprocalButton, 4, 5);
     mainLayout->addWidget(equalButton, 5, 5);
+
+    // TEST mainLayout->addWidget(new QLineEdit(this), 6, 0, 1, 6);
+
     setLayout(mainLayout);
 
     setWindowTitle(tr("Calculator"));

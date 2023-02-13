@@ -32,6 +32,10 @@
 #include "qdebug.h"
 #include <stdlib.h>
 
+#ifdef Q_OS_LINUX
+#include "xcb/qcomposeplatforminputcontext.h"
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #if !defined(QT_NO_PLUGINS) && !defined(QT_NO_SETTINGS)
@@ -56,19 +60,26 @@ QString QPlatformInputContextFactory::requested()
 
 QPlatformInputContext *QPlatformInputContextFactory::create(const QString& key)
 {
-#if !defined(QT_NO_PLUGINS) && !defined(QT_NO_SETTINGS)
     if (!key.isEmpty()) {
         QStringList paramList = key.split(QLatin1Char(':'));
         const QString platform = paramList.takeFirst().toLower();
 
-        QPlatformInputContext *ic = qLoadPlugin1<QPlatformInputContext, QPlatformInputContextPlugin>
+        QPlatformInputContext *ic = 0;
+
+#if !defined(QT_NO_PLUGINS) && !defined(QT_NO_SETTINGS)
+        ic = qLoadPlugin1<QPlatformInputContext, QPlatformInputContextPlugin>
                                                  (loader(), platform, paramList);
+#endif
         if (ic && ic->isValid())
             return ic;
 
         delete ic;
-    }
+
+#ifdef Q_OS_LINUX
+        if( platform == "compose" )
+            return new QComposeInputContext();
 #endif
+    }
     return 0;
 }
 

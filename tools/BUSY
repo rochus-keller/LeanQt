@@ -2,6 +2,7 @@
 # licensed under GPL/LGPL
 
 submod bootstrap -
+
 submod rcc * else ../missing.busy
 submod moc * else ../missing.busy
 submod uic * else ../missing.busy

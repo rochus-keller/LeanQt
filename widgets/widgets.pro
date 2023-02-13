@@ -9,7 +9,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui ./includes/QtWidgets
+INCLUDEPATH += ../includes ../includes/QtCore ../includes/QtGui ../includes/QtWidgets
 
 HEADERS += \
     qabstractbutton_p.h \

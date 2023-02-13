@@ -219,9 +219,11 @@
 #if !defined(QT_NO_IMAGEFORMATPLUGIN) && (defined(QT_NO_LIBRARY))
 #  define QT_NO_IMAGEFORMATPLUGIN
 #endif
+/*
 #if !defined(QT_NO_IM) && (defined(QT_NO_LIBRARY))
 #  define QT_NO_IM
 #endif
+*/
 #if !defined(QT_NO_TOOLBUTTON) && (defined(QT_NO_ACTION))
 #  define QT_NO_TOOLBUTTON
 #endif
