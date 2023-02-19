@@ -265,7 +265,8 @@ let sources* : SourceSet {
 
 	if ^HAVE_RE {
 		.sources += ./qregularexpression.cpp
-		.deps += pcre16.sources
+		.deps += pcre16.sources;
+		.defines += pcre16.sources.defines
 	}
 	
 	if ^HAVE_JSON {

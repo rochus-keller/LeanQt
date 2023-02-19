@@ -22,7 +22,7 @@ let exe * : Executable {
 		.sources += [
 			../../core/qxmlstream.cpp ../../core/qxmlutils.cpp
 		]
-	}else{
+    }else{
 		.deps += ^_core_sources;
 		.configs += ^core_client_config
 		if !^HAVE_FILEIO || !^HAVE_COREAPP {
@@ -32,14 +32,14 @@ let exe * : Executable {
 			.sources += [
 				../../core/qxmlstream.cpp ../../core/qxmlutils.cpp
 			]
-		}
+        }
 		if !^HAVE_CMDLINE {
 			.sources += [
 				../../core/qcommandlineoption.cpp ../../core/qcommandlineparser.cpp
 			]
 		}
 	}
-	.defines += [ "QT_FORCE_XMLSTREAM" "QT_UIC_CPP_GENERATOR" ]
+    .defines += [ "QT_FORCE_XMLSTREAM" "QT_UIC_CPP_GENERATOR" ]
 	.include_dirs += .
 	uic_path = root_build_dir + ^root_path
 }
