@@ -9,7 +9,6 @@ let config * : Config {
 	]
 	.defines += [
 		# these are official Qt defines
-		"QT_NO_COMPRESS"
 		"QT_NO_LIBRARY"
 		"QT_BUILD_CORE_LIB" 
 		"QT_NO_ITEMMODELS"
@@ -29,6 +28,9 @@ let config * : Config {
 		"QT_CRYPTOGRAPHICHASH_ONLY_SHA1" 
 		*/
 	]
+	if !^HAVE_ZLIB {
+		.defines += "QT_NO_COMPRESS"
+	}
 	if !^HAVE_PLUGINS {
 		.defines += "QT_NO_JSON"
 	}
@@ -112,6 +114,18 @@ let sources* : SourceSet {
 		.sources += [
 			../../core/qjsonarray.cpp  ../../core/qjsondocument.cpp  ../../core/qjsonparser.cpp  ../../core/qjsonwriter.cpp
 			../../core/qjson.cpp       ../../core/qjsonobject.cpp    ../../core/qjsonvalue.cpp
+		]
+	}
+	
+	if ^HAVE_ZLIB {
+		.sources += [
+			../../thirdparty/zlib/adler32.c   ../../thirdparty/zlib/deflate.c  ../../thirdparty/zlib/gzread.c   
+			../../thirdparty/zlib/inffast.c   ../../thirdparty/zlib/trees.c
+			../../thirdparty/zlib/compress.c  ../../thirdparty/zlib/gzclose.c  ../../thirdparty/zlib/gzwrite.c  
+			../../thirdparty/zlib/inflate.c   ../../thirdparty/zlib/uncompr.c
+			../../thirdparty/zlib/crc32.c     ../../thirdparty/zlib/gzlib.c    ../../thirdparty/zlib/infback.c  
+			../../thirdparty/zlib/inftrees.c  ../../thirdparty/zlib/zutil.c
+			../../core/qcompress.cpp
 		]
 	}
 
