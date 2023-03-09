@@ -235,8 +235,8 @@ let _core_linker_config - : Config {
 		.lib_names = [
 			"Gdi32" "User32" "Shell32" "Comdlg32" "Advapi32" "Ole32" "Ws2_32"
 		]
-		if target_toolchain != `msvc {
-			# gcc and clang on windows
+        if target_toolchain == `gcc {
+            # gcc on windows
 			.lib_names += [ "stdc++" "m" ]
 			.ldflags += "-shared-libgcc"
 		}

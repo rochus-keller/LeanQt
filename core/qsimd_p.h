@@ -445,7 +445,7 @@ static __forceinline unsigned long _bit_scan_forward(uint val)
     _BitScanForward(&result, val);
     return result;
 }
-#  elif (defined(Q_CC_CLANG) || (defined(Q_CC_GNU) && Q_CC_GNU < 405)) \
+#  elif ((defined(Q_CC_CLANG) && Q_CC_CLANG < 500) || (defined(Q_CC_GNU) && !defined(Q_CC_CLANG) && Q_CC_GNU < 405)) \
     && !defined(Q_CC_INTEL)
 // Clang is missing the intrinsic for _bit_scan_reverse
 // GCC only added it in version 4.5

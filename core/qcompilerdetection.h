@@ -76,7 +76,7 @@
 #    error "Compiler not supported"
 #  endif
 
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) && !defined(__clang__)
 #  define Q_CC_MSVC (_MSC_VER)
 #  define Q_CC_MSVC_NET
 #  define Q_OUTOFLINE_TEMPLATE inline
@@ -140,7 +140,7 @@
 #    define Q_DECL_IMPORT     __declspec(dllimport)
 #  endif
 
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
 #  define Q_CC_GNU          (__GNUC__ * 100 + __GNUC_MINOR__)
 #  if defined(__MINGW32__)
 #    define Q_CC_MINGW

@@ -37,6 +37,9 @@
 #elif defined(Q_OS_DARWIN) && defined(Q_CC_GNU)
 #include "qplatformdefs_darwin.h"
 
+#elif defined(Q_OS_WIN32) && defined(Q_CC_CLANG)
+#include "qplatformdefs_win32_clang.h"
+
 #elif defined(Q_OS_WIN32) && ( defined(Q_CC_MSVC) || defined(Q_CC_INTEL) )
 #include "qplatformdefs_win32_msvc.h"
 
