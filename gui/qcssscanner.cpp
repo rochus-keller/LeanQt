@@ -32,7 +32,7 @@ public:
     inline QChar next() {
         return (pos < input.length()) ? input.at(pos++) : QChar();
     }
-    int handleCommentStart();
+    int handleCommentStart(); 
     int lex();
 
     QString input;
@@ -64,7 +64,7 @@ int QCssScanner_Generated::lex()
             goto state_1;
         if (ch.unicode() >= 12 && ch.unicode() <= 13)
             goto state_1;
-        if (ch.unicode() == 32)
+        if (ch.unicode() == 32 || ch.unicode() == 0xa0 )
             goto state_1;
         if (ch.unicode() == 33) {
             token = QCss::EXCLAMATION_SYM;

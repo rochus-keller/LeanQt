@@ -23,7 +23,7 @@
 **
 ****************************************************************************/
 
-#include "qcssparser_p.h"
+#include "qcssparser_p.h" 
 
 #include <qdebug.h>
 #include <qicon.h>
@@ -2475,8 +2475,15 @@ bool Parser::parseAttrib(AttributeSelector *attr)
     attr->name = lexem();
     skipSpace();
 
+	bool hadStar = false;
+    if (test(STAR))
+		hadStar = true;
+
     if (test(EQUAL)) {
-        attr->valueMatchCriterium = AttributeSelector::MatchEqual;
+    	if( hadStar )
+        	attr->valueMatchCriterium = AttributeSelector::MatchBeginsWith;
+        else
+        	attr->valueMatchCriterium = AttributeSelector::MatchEqual;
     } else if (test(INCLUDES)) {
         attr->valueMatchCriterium = AttributeSelector::MatchContains;
     } else if (test(DASHMATCH)) {
