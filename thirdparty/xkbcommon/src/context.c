@@ -142,7 +142,7 @@ XKB_EXPORT const char *
 xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
 {
     if (idx >= xkb_context_num_include_paths(ctx))
-        return NULL;
+        return ""; /* RK: was NULL; */
 
     return darray_item(ctx->includes, idx);
 }
