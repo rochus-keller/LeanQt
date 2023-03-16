@@ -39,6 +39,9 @@
 XKB_EXPORT int
 xkb_context_include_path_append(struct xkb_context *ctx, const char *path)
 {
+    if( path == NULL )
+        return 0;
+
     struct stat stat_buf;
     int err;
     char *tmp;
@@ -144,7 +147,10 @@ xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
     if (idx >= xkb_context_num_include_paths(ctx))
         return ""; /* RK: was NULL; */
 
-    return darray_item(ctx->includes, idx);
+    const char * res = darray_item(ctx->includes, idx);
+    if( res == NULL )
+        res = "";
+    return res;
 }
 
 /**
