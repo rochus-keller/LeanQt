@@ -116,6 +116,8 @@ NOTES:
 
 ### How to build the Oberon+ command line compiler version with LeanQt
 
+Note that compiling LeanQt on Linux requires the build essentials, xcb, libxcb1-dev and libx11-dev packages. On Mac and Windows there are no additional requirements than a toolchain.
+
 1. Create a new directory; we call it the root directory here
 1. Download https://github.com/rochus-keller/Oberon/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "Oberon".
 1. Download https://github.com/rochus-keller/PeLib/archive/refs/heads/OBX.zip and unpack it to the root directory; rename the resulting directory to "PeLib".

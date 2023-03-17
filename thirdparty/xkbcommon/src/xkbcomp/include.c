@@ -128,7 +128,7 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
     tmp = strchr(str, ':');
     if (tmp != NULL) {
         *tmp++ = '\0';
-        *extra_data = strdup(tmp);
+        *extra_data = mystrdup(tmp);
     }
     else {
         *extra_data = NULL;
@@ -138,7 +138,7 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
     tmp = strchr(str, '(');
     if (tmp == NULL) {
         /* No map. */
-        *file_rtrn = strdup(str);
+        *file_rtrn = mystrdup(str);
         *map_rtrn = NULL;
     }
     else if (str[0] == '(') {
@@ -149,7 +149,7 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
     else {
         /* Got a map; separate the file and the map for the strdup's. */
         *tmp++ = '\0';
-        *file_rtrn = strdup(str);
+        *file_rtrn = mystrdup(str);
         str = tmp;
         tmp = strchr(str, ')');
         if (tmp == NULL || tmp[1] != '\0') {
@@ -158,7 +158,7 @@ ParseIncludeMap(char **str_inout, char **file_rtrn, char **map_rtrn,
             return false;
         }
         *tmp++ = '\0';
-        *map_rtrn = strdup(str);
+        *map_rtrn = mystrdup(str);
     }
 
     /* Set up the next file for the next call, if any. */

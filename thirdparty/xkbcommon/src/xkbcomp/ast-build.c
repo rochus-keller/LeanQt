@@ -521,7 +521,7 @@ XkbFileCreate(enum xkb_file_type type, char *name, ParseCommon *defs,
 
     XkbEscapeMapName(name);
     file->file_type = type;
-    file->name = name ? name : strdup("(unnamed)");
+    file->name = name ? name : mystrdup("(unnamed)");
     file->defs = defs;
     file->flags = flags;
 

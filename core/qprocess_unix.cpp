@@ -284,6 +284,15 @@ QProcessEnvironment QProcessEnvironment::systemEnvironment()
     return env;
 }
 
+static inline char*
+mystrdup(const char* s)
+{
+    // RK: on Debian 11 x64 strdup() returns an invalid pointer!
+    char* t = (char*)malloc(strlen(s)+1);
+    strcpy(t,s);
+    return t;
+}
+
 static char **_q_dupEnvironment(const QProcessEnvironmentPrivate::Hash &environment, int *envc)
 {
     *envc = 0;
@@ -303,7 +312,7 @@ static char **_q_dupEnvironment(const QProcessEnvironmentPrivate::Hash &environm
         key.append('=');
         key.append(value);
 
-        envp[(*envc)++] = ::strdup(key.constData());
+        envp[(*envc)++] = mystrdup(key.constData());
     }
 
     return envp;
@@ -372,12 +381,12 @@ void QProcessPrivate::startProcess()
 #endif
 
     // Add the program name to the argument list.
-    char *dupProgramName = ::strdup(encodedProgramName.constData());
+    char *dupProgramName = mystrdup(encodedProgramName.constData());
     argv[0] = dupProgramName;
 
     // Add every argument to the list
     for (int i = 0; i < arguments.count(); ++i)
-        argv[i + 1] = ::strdup(QFile::encodeName(arguments.at(i)).constData());
+        argv[i + 1] = mystrdup(QFile::encodeName(arguments.at(i)).constData());
 
     // Duplicate the environment.
     int envc = 0;
@@ -412,7 +421,7 @@ void QProcessPrivate::startProcess()
                     QByteArray tmp = QFile::encodeName(pathEntries.at(k));
                     if (!tmp.endsWith('/')) tmp += '/';
                     tmp += encodedProgramName;
-                    path[k] = ::strdup(tmp.constData());
+                    path[k] = mystrdup(tmp.constData());
                 }
             }
         }
@@ -1006,7 +1015,7 @@ bool QProcessPrivate::startDetached(const QString &program, const QStringList &a
 
             char **argv = new char *[arguments.size() + 2];
             for (int i = 0; i < arguments.size(); ++i)
-                argv[i + 1] = ::strdup(QFile::encodeName(arguments.at(i)).constData());
+                argv[i + 1] = mystrdup(QFile::encodeName(arguments.at(i)).constData());
             argv[arguments.size() + 1] = 0;
 
             if (!program.contains(QLatin1Char('/'))) {

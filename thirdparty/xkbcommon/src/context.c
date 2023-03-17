@@ -40,13 +40,14 @@ XKB_EXPORT int
 xkb_context_include_path_append(struct xkb_context *ctx, const char *path)
 {
     if( path == NULL )
-        return 0;
+        return 0; // RK: avoid that a NULL path gets into the list (original issue assumption
+                  // before strdup issue was discovered and solved)
 
     struct stat stat_buf;
     int err;
     char *tmp;
 
-    tmp = strdup(path);
+    tmp = mystrdup(path);
     if (!tmp)
         goto err;
 
@@ -147,10 +148,7 @@ xkb_context_include_path_get(struct xkb_context *ctx, unsigned int idx)
     if (idx >= xkb_context_num_include_paths(ctx))
         return ""; /* RK: was NULL; */
 
-    const char * res = darray_item(ctx->includes, idx);
-    if( res == NULL )
-        res = "";
-    return res;
+    return darray_item(ctx->includes, idx);
 }
 
 /**

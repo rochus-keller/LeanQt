@@ -205,7 +205,7 @@ xkb_keysym_from_name(const char *s, enum xkb_keysym_flags flags)
     if (strncmp(s, "XF86_", 5) == 0 ||
         (icase && strncasecmp(s, "XF86_", 5) == 0)) {
         xkb_keysym_t ret;
-        tmp = strdup(s);
+        tmp = mystrdup(s);
         if (!tmp)
             return XKB_KEY_NoSymbol;
         memmove(&tmp[4], &tmp[5], strlen(s) - 5 + 1);

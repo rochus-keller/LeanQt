@@ -107,7 +107,7 @@ skip_more_whitespace_and_comments:
             scanner_err(s, "unterminated string literal");
             return ERROR_TOK;
         }
-        yylval->str = strdup(s->buf);
+        yylval->str = mystrdup(s->buf);
         if (!yylval->str)
             return ERROR_TOK;
         return STRING;
@@ -158,7 +158,7 @@ skip_more_whitespace_and_comments:
         tok = keyword_to_token(s->buf, s->buf_pos - 1);
         if (tok != -1) return tok;
 
-        yylval->str = strdup(s->buf);
+        yylval->str = mystrdup(s->buf);
         if (!yylval->str)
             return ERROR_TOK;
         return IDENT;

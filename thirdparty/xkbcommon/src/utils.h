@@ -78,10 +78,19 @@ istreq_prefix(const char *s1, const char *s2)
     return istrncmp(s1, s2, strlen(s1)) == 0;
 }
 
+static inline char*
+mystrdup(const char* s)
+{
+    // RK: on Debian 11 x64 strdup() returns an invalid pointer!
+    char* t = malloc(strlen(s)+1);
+    strcpy(t,s);
+    return t;
+}
+
 static inline char *
 strdup_safe(const char *s)
 {
-    return s ? strdup(s) : NULL;
+    return s ? mystrdup(s) : NULL;
 }
 
 static inline size_t

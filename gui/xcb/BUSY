@@ -79,7 +79,7 @@ let sources * : SourceSet {
 		# .cflags_cc += "-std=c++11"
 		# the only reason this was necessary was "auto &" in qxcbconnection.h line 719!!!
 	}
-	.configs += [ ^_core_config ^_image_config config lib_xcb.config ]
+    .configs += [ ^_core_config ^_image_config config lib_xcb.config lib_xkb.config ]
 	.deps += [ run_moc lib_xcb.sources lib_xkb.sources ]
 	.include_dirs += build_dir()
 }
