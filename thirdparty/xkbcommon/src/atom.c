@@ -183,6 +183,22 @@ atom_lookup(struct atom_table *table, const char *string, size_t len)
     return *atomp;
 }
 
+static char *mystrndup(char *str, int chars)
+{
+    // RK: on Debian 11 x64 strndup() returns an invalid pointer!
+    char *buffer;
+    int n;
+
+    buffer = (char *) malloc(chars +1);
+    if (buffer)
+    {
+        for (n = 0; ((n < chars) && (str[n] != 0)) ; n++) buffer[n] = str[n];
+        buffer[n] = 0;
+    }
+
+    return buffer;
+}
+
 /*
  * If steal is true, we do not strdup @string; therefore it must be
  * dynamically allocated, NUL-terminated, not be free'd by the caller
@@ -209,7 +225,7 @@ atom_intern(struct atom_table *table, const char *string, size_t len,
         node.string = UNCONSTIFY(string);
     }
     else {
-        node.string = strndup(string, len);
+        node.string = mystrndup(string, len);
         if (!node.string)
             return XKB_ATOM_NONE;
     }
