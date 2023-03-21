@@ -238,11 +238,16 @@ let _core_linker_config - : Config {
         if target_toolchain == `gcc {
             # gcc on windows
 			.lib_names += [ "stdc++" "m" ]
-			.ldflags += "-shared-libgcc"
+            .ldflags += "-shared-libgcc"
 		}
 	} else {
 		.lib_names += [ "stdc++" "m" ]
-		.ldflags += "-shared-libgcc"
+        .ldflags += "-shared-libgcc"
+        if ((target_toolchain == `gcc) && (target_toolchain_ver >= 0600))
+            || ((target_toolchain == `clang) && (target_toolchain_ver >= 080000)) {
+            # some Linux with more recent gcc require to recognize an executable
+            .ldflags += "-no-pie"
+        }
 		if HAVE_THREADS || HAVE_PROCESS {
 			.lib_names += "pthread"
 		}

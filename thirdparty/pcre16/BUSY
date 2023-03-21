@@ -27,4 +27,7 @@ let sources * : SourceSet {
     	./pcre16_xclass.c
    	]
 	.defines += [ "PCRE_STATIC" "HAVE_CONFIG_H" ] # also available: PCRE_DISABLE_JIT
+    if (target_os == `linux) && ^HAVE_SHARED {
+        .cflags += "-fPIC"
+    }
 }
