@@ -346,6 +346,7 @@ public:
 #ifndef QT_NO_URL_VARIANT
     QUrl baseUrl;
 #endif
+    static int initialDocumentMargin;
 
     void mergeCachedResources(const QTextDocumentPrivate *priv);
 

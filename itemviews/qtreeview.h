@@ -204,7 +204,7 @@ protected:
     QSize viewportSizeHint() const Q_DECL_OVERRIDE;
 
     int sizeHintForColumn(int column) const Q_DECL_OVERRIDE;
-    int indexRowSizeHint(const QModelIndex &index) const;
+    virtual int indexRowSizeHint(const QModelIndex &index) const;
     int rowHeight(const QModelIndex &index) const;
 
     void horizontalScrollbarAction(int action) Q_DECL_OVERRIDE;

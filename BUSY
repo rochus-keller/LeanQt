@@ -42,6 +42,7 @@ param HAVE_GUI = false		   # takes care that core is compiled with HAVE_IMAGE an
 
 param HAVE_FONTCONFIG = false  # Linux GUI option; use fontconfig to locate fonts; otherwise use the path provided via QT_QPA_FONTDIR
 							   # environment variable, or applicationDirPath() + "/fonts", or QStandardPaths::FontsLocation; requires -lfontconfig
+param HAVE_SYS_FT = false      # Use the freetype library of the system instead of the integrated one; only relevant on Linuy
 
 param HAVE_WIDGETS = false     # takes care that GUI is enabled
 param HAVE_ITEMVIEWS = false   # takes care that WIDGETS is enabled
@@ -281,6 +282,8 @@ submod net else ./missing.busy
 
 let net_sources * = net.sources 
 
+let _net_config - = net.config
+
 let _net_linker_config - : Config {
 	if target_os == `win32 {
 		.lib_names = [
@@ -296,7 +299,7 @@ let _net_linker_config - : Config {
 }
 
 let net_client_config * : Config {
-	.configs += [ net.config _net_linker_config ]
+    .configs += [ _net_config _net_linker_config ]
 }
 
 ######################################################################
@@ -325,6 +328,9 @@ let _gui_config - = gui.config
 
 let gui_client_config * : Config {
 	.configs += [ image_client_config _gui_config ]
+    if (target_os == `linux) && HAVE_SYS_FT {
+        .lib_names += "freetype"
+    }
 }
 
 ######################################################################
@@ -560,6 +566,15 @@ let libqt * : Library {
 		.lib_type = `static
 	}
 	.name = "qt"
+}
+
+######################################################################
+submod addons
+
+let libqtsingleapp * : Library {
+    .lib_type = `static
+    .name = "qtsingleapp"
+    .deps += addons.singleapp.sources
 }
 
 ######################################################################

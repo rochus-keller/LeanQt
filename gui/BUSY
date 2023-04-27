@@ -200,12 +200,17 @@ let sources* : SourceSet {
 	.include_dirs += build_dir() # for the embedded .moc files
 	.include_dirs += .. # thirdparty/harfbuzz
 	.include_dirs += .  # platform integrations
-	.include_dirs += ../thirdparty/freetype/include
 	.deps += harfbuzz.sources
 	if target_os == `linux {
-		.deps += [ xcb.sources freetype.sources ]
-		.configs += xcb.config
-		# TODO: in case of HAVE_PLUGIN should we switch to xcb plugin shared library or just stick with static platforms?
+        .deps += xcb.sources;
+        .configs += xcb.config
+        # TODO: in case of HAVE_PLUGIN should we switch to xcb plugin shared library or just stick with static platforms?
+        if !^HAVE_SYS_FT {
+            .include_dirs += ../thirdparty/freetype/include
+            .deps += freetype.sources;
+        }else{
+            .include_dirs += //usr/include/freetype2
+        }
 	}else if target_os == `win32 {
 		.deps += windows.sources;
 		.configs += windows.config

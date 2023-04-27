@@ -922,7 +922,15 @@ void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef 
         if (antialias) {
             QFontEngine::SubpixelAntialiasingType subpixelType = QFontEngine::Subpixel_None;
             if (!(fontDef.styleStrategy & QFont::NoSubpixelAntialias))
+            {
                 subpixelType = subpixelTypeFromMatch(match, useXftConf);
+                // added by RK because subpixelTypeFromMatch seems to always return Subpixel_None
+                if( subpixelType == QFontEngine::Subpixel_None )
+                    subpixelType = subpixelAntialiasingTypeHint();
+                if( subpixelType == QFontEngine::Subpixel_None )
+                    subpixelType = QFontEngine::Subpixel_RGB; // best guess so far
+                // Subpixel_RGB with Format_A32 delivers the closest result to Qt4.4
+            }
             engine->subpixelType = subpixelType;
 
             format = (subpixelType == QFontEngine::Subpixel_None)

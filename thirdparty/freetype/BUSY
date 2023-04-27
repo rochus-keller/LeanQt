@@ -3,14 +3,14 @@
 
 let sources* : SourceSet {
 	.sources += [
-		#./src/autofit/afangles.c
-		#./src/autofit/afdummy.c
-		#./src/autofit/afglobal.c
-		#./src/autofit/afhints.c
-		#./src/autofit/aflatin.c
-		#./src/autofit/afloader.c
-		#./src/autofit/afmodule.c
-		./src/autofit/autofit.c
+        #./src/autofit/afangles.c
+        #./src/autofit/afdummy.c
+        #./src/autofit/afglobal.c
+        #./src/autofit/afhints.c
+        #./src/autofit/aflatin.c
+        #./src/autofit/afloader.c
+        #./src/autofit/afmodule.c
+        ./src/autofit/autofit.c
 		./src/base/ftbase.c
 		./src/base/ftbitmap.c
 		./src/base/ftbbox.c

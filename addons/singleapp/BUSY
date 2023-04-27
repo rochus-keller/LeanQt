@@ -1,0 +1,48 @@
+# Copyright (C) 2023 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+let err : Message {
+    .text = "The singleapp module requires HAVE_LOCALSOCK, HAVE_FILEIO, HAVE_DSTREAM and HAVE_OBJECT"
+}
+
+let run_moc : Moc {
+	.tool_dir = root_build_dir + ^root_path;
+	.sources += [
+        ./qtlocalpeer.h
+        ./qtsinglecoreapplication.h
+	]
+
+    if ^HAVE_WIDGETS {
+        .sources += ./qtsingleapplication.h
+    }
+}
+
+let sources* : SourceSet {
+	.sources += [
+		./qtlockedfile.cpp
+		./qtsinglecoreapplication.cpp
+		./qtlocalpeer.cpp
+	]
+
+    if target_os == `win32 {
+        .sources += ./qtlockedfile_win.cpp
+    }else{
+        .sources += ./qtlockedfile_unix.cpp
+    }
+
+    .configs += [ ^_core_config ^_net_config ]
+
+	if ^HAVE_WIDGETS {
+		.sources += ./qtsingleapplication.cpp
+        .configs += [ ^_gui_config ^_widgets_config ]
+	}
+
+    if !^HAVE_LOCALSOCK || !^HAVE_FILEIO || !^HAVE_DSTREAM || !^HAVE_OBJECT { # HAVE_OBJECT includes HAVE_COREAPP
+		.deps += err
+	}
+		
+    .deps += run_moc;
+	
+}
+
+

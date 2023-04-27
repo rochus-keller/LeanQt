@@ -102,6 +102,9 @@ QFontEngine *QBasicFontDatabase::fontEngine(const QFontDef &fontDef, void *usrPt
     QFontEngineFT::GlyphFormat format = QFontEngineFT::Format_Mono;
     if (antialias) {
         QFontEngine::SubpixelAntialiasingType subpixelType = subpixelAntialiasingTypeHint();
+        // added by RK because subpixelAntialiasingTypeHint return Subpixel_None if QT_SUBPIXEL_AA_TYPE env not set
+        if( subpixelType == QFontEngine::Subpixel_None )
+            subpixelType = QFontEngine::Subpixel_RGB; // best guess so far
         if (subpixelType == QFontEngine::Subpixel_None || (fontDef.styleStrategy & QFont::NoSubpixelAntialias)) {
             format = QFontEngineFT::Format_A8;
             engine->subpixelType = QFontEngine::Subpixel_None;

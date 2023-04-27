@@ -1,0 +1,4 @@
+# Copyright (C) 2023 Rochus Keller (me@rochus-keller.ch) for LeanQt
+# licensed under GPL/LGPL
+
+submod singleapp * else ../missing.busy

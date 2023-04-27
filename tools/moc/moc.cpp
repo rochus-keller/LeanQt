@@ -1333,7 +1333,12 @@ void Moc::parseInterfaces(ClassDef *def)
         for (int i = 0; i < iface.count(); ++i) {
             const QByteArray iid = interface2IdMap.value(iface.at(i).className);
             if (iid.isEmpty())
-                error("Undefined interface");
+            {
+                const QString msg = QString("Undefined interface: %1 %2")
+                        .arg(iface.at(i).className.constData())
+                        .arg(iface.at(i).interfaceId.constData());
+                error(msg.toUtf8().constData());
+            }
 
             iface[i].interfaceId = iid;
         }

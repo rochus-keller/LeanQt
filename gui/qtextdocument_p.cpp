@@ -172,6 +172,8 @@ bool QTextUndoCommand::tryMerge(const QTextUndoCommand &other)
     return false;
 }
 
+int QTextDocumentPrivate::initialDocumentMargin = 4;
+
 QTextDocumentPrivate::QTextDocumentPrivate()
     : wasUndoAvailable(false),
     wasRedoAvailable(false),
@@ -202,7 +204,7 @@ QTextDocumentPrivate::QTextDocumentPrivate()
     defaultCursorMoveStyle = Qt::LogicalMoveStyle;
 
     indentWidth = 40;
-    documentMargin = 4;
+    documentMargin = initialDocumentMargin;
 
     maximumBlockCount = 0;
     needsEnsureMaximumBlockCount = false;
