@@ -244,8 +244,9 @@ let _core_linker_config - : Config {
 	} else {
 		.lib_names += [ "stdc++" "m" ]
         .ldflags += "-shared-libgcc"
-        if ((target_toolchain == `gcc) && (target_toolchain_ver >= 0600))
-            || ((target_toolchain == `clang) && (target_toolchain_ver >= 080000)) {
+        if (target_os == `linux) && (
+            ((target_toolchain == `gcc) && (target_toolchain_ver >= 0600))
+            || ((target_toolchain == `clang) && (target_toolchain_ver >= 080000))) {
             # some Linux with more recent gcc require to recognize an executable
             .ldflags += "-no-pie"
         }

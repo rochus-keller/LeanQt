@@ -48,6 +48,19 @@
 #include <qt_windows.h>
 #include <QtCore/QFileInfo>
 
+#ifdef UNICODE
+#define QT_WA(uni, ansi) if (QSysInfo::WindowsVersion) \
+                            if (!(QSysInfo::WindowsVersion & QSysInfo::WV_DOS_based)) { uni } else { ansi } \
+                         else  \
+                            if (!(QSysInfo::windowsVersion() & QSysInfo::WV_DOS_based)) { uni } else { ansi }
+
+#define QT_WA_INLINE(uni, ansi) ((QSysInfo::WindowsVersion) ? (!(QSysInfo::WindowsVersion & QSysInfo::WV_DOS_based) ? uni : ansi) : \
+						(!(QSysInfo::windowsVersion() & QSysInfo::WV_DOS_based) ? uni : ansi))
+#else
+#define QT_WA(uni, ansi) ansi
+#define QT_WA_INLINE(uni, ansi) ansi
+#endif
+
 #define MUTEX_PREFIX "QtLockedFile mutex "
 // Maximum number of concurrent read locks. Must not be greater than MAXIMUM_WAIT_OBJECTS
 #define MAX_READERS MAXIMUM_WAIT_OBJECTS
