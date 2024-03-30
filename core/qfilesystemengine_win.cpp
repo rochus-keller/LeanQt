@@ -619,10 +619,12 @@ typedef struct _FILE_ID_128 {
 } FILE_ID_128, *PFILE_ID_128;
 #    endif // !(Q_CC_MINGW && FILE_SUPPORTS_INTEGRITY_STREAMS)
 
+#    if !(defined(Q_CC_MINGW))
 typedef struct _FILE_ID_INFO {
     ULONGLONG VolumeSerialNumber;
     FILE_ID_128 FileId;
 } FILE_ID_INFO, *PFILE_ID_INFO;
+#endif
 #  endif // if defined (Q_CC_MINGW) || (defined(Q_CC_MSVC) && (_MSC_VER < 1700 || WINVER <= 0x0601))
 
 // File ID for Windows up to version 7.
