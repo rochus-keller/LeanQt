@@ -27,6 +27,6 @@ let sources * : SourceSet {
 		./libxcb/xinerama.c
 		./libxcb/xkb.c
 	]
-	.defines += "XCB_USE_RENDER"
+	.defines += [ "XCB_USE_RENDER" "HAVE_VASPRINTF" ]
 	.configs += [ ^_core_config config ]
 }

@@ -24,6 +24,7 @@
 ****************************************************************************/
 
 #include <qglobal.h>
+#include <cstdint>
 
 #include <qatomic.h>
 #include <private/qdrawhelper_p.h>
