@@ -93,9 +93,16 @@ xkb_context_include_path_append_default(struct xkb_context *ctx)
     home = secure_getenv("HOME");
     if (!home)
         return ret;
+#ifdef _GNU_SOURCE
     err = asprintf(&user_path, "%s/.xkb", home);
     if (err <= 0)
         return ret;
+#else
+    user_path = malloc(strlen(home)+10);
+    if( user_path == 0 )
+        return ret;
+    sprintf(user_path,"%s/.xkb", home);
+#endif
     ret |= xkb_context_include_path_append(ctx, user_path);
     free(user_path);
 
