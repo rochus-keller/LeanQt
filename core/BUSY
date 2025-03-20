@@ -14,6 +14,7 @@ let config * : Config {
 	]
 	# NOTE: most of the defines are visible in the public API and therefore have to be used by client apps
 	.defines += [
+	    "LEANQT"
 		# these are official Qt defines
 		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]

@@ -93,6 +93,7 @@ class Q_GUI_EXPORT QTextDocument : public QObject
     Q_PROPERTY(QSizeF size READ size)
     Q_PROPERTY(qreal textWidth READ textWidth WRITE setTextWidth)
     Q_PROPERTY(int blockCount READ blockCount)
+    Q_PROPERTY(int layoutTimeout READ layoutTimeout WRITE setLayoutTimeout)
     Q_PROPERTY(qreal indentWidth READ indentWidth WRITE setIndentWidth)
 #ifndef QT_NO_CSSPARSER
     Q_PROPERTY(QString defaultStyleSheet READ defaultStyleSheet WRITE setDefaultStyleSheet)
@@ -232,6 +233,9 @@ public:
     int blockCount() const;
     int lineCount() const;
     int characterCount() const;
+
+    int layoutTimeout() const;
+    void setLayoutTimeout(int seconds);
 
 #ifndef QT_NO_CSSPARSER
     void setDefaultStyleSheet(const QString &sheet);

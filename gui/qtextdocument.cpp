@@ -882,6 +882,27 @@ int QTextDocument::characterCount() const
 }
 
 /*!
+  \since LeanQt
+
+  Sets the timeout in seconds after which the layout process stops.
+  This is a required features since Qt doesn't support the layout to happen
+  in a separate thread. A zero or negative value disables timeout.
+
+ */
+
+int QTextDocument::layoutTimeout() const
+{
+    Q_D(const QTextDocument);
+    return d->layoutTimeout;
+}
+
+void QTextDocument::setLayoutTimeout(int seconds)
+{
+    Q_D(QTextDocument);
+    d->layoutTimeout = seconds;
+}
+
+/*!
   \since 4.5
 
   Returns the character at position \a pos, or a null character if the
@@ -1093,7 +1114,8 @@ QAbstractTextDocumentLayout *QTextDocument::documentLayout() const
     Q_D(const QTextDocument);
     if (!d->lout) {
         QTextDocument *that = const_cast<QTextDocument *>(this);
-        that->d_func()->setLayout(new QTextDocumentLayout(that));
+        QTextDocumentLayout* l = new QTextDocumentLayout(that, d->layoutTimeout > 0 ? d->layoutTimeout : 0);
+        that->d_func()->setLayout(l);
     }
     return d->lout;
 }

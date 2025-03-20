@@ -30,8 +30,6 @@ let config * : Config {
 					"QT_NO_SORTFILTERPROXYMODEL" "QT_NO_CALENDARWIDGET" "QT_NO_COMBOBOX"
 					"QT_NO_FILEDIALOG" ]
 	}
-	
-	#.defines += "QT_NO_GUI"
 }
 
 let err : Message {

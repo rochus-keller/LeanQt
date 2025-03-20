@@ -62,6 +62,10 @@
 #include <iostream>
 #endif
 
+namespace Txt {
+class TextHtmlExporter;
+}
+
 QT_BEGIN_NAMESPACE
 
 class QTextFormatCollection;
@@ -335,6 +339,7 @@ public:
     QCss::StyleSheet parsedDefaultStyleSheet;
 #endif
     int maximumBlockCount;
+    int layoutTimeout;
     uint needsEnsureMaximumBlockCount : 1;
     uint inContentsChange : 1;
     uint blockCursorAdjustment : 1;
@@ -352,6 +357,7 @@ public:
 
     friend class QTextHtmlExporter;
     friend class QTextCursor;
+    friend class Txt::TextHtmlExporter;
 };
 
 class QTextTable;

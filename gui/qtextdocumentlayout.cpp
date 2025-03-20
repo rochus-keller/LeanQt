@@ -427,12 +427,16 @@ class QTextDocumentLayoutPrivate : public QAbstractTextDocumentLayoutPrivate
 {
     Q_DECLARE_PUBLIC(QTextDocumentLayout)
 public:
-    QTextDocumentLayoutPrivate();
+    QTextDocumentLayoutPrivate(quint32 timeout);
 
     QTextOption::WrapMode wordWrapMode;
 #ifdef LAYOUT_DEBUG
     mutable QString debug_indent;
 #endif
+
+    int timeout;
+    quint64 start;
+    bool timeoutHit;
 
     int fixedColumnWidth;
     int cursorWidth;
@@ -515,10 +519,12 @@ public:
 
     qreal scaleToDevice(qreal value) const;
     QFixed scaleToDevice(QFixed value) const;
+
+    inline void checkTime();
 };
 
-QTextDocumentLayoutPrivate::QTextDocumentLayoutPrivate()
-    : fixedColumnWidth(-1),
+QTextDocumentLayoutPrivate::QTextDocumentLayoutPrivate(quint32 timeout)
+    : start(0), timeout(timeout), timeoutHit(false), fixedColumnWidth(-1),
       cursorWidth(1),
       currentLazyLayoutPosition(-1),
       lazyLayoutStepSize(1000),
@@ -1591,6 +1597,7 @@ QTextLayoutStruct QTextDocumentLayoutPrivate::layoutCell(QTextTable *t, const QT
 
 QRectF QTextDocumentLayoutPrivate::layoutTable(QTextTable *table, int layoutFrom, int layoutTo, QFixed parentY)
 {
+    checkTime();
     LDEBUG << "layoutTable";
     QTextTableData *td = static_cast<QTextTableData *>(data(table));
     Q_ASSERT(td->sizeDirty);
@@ -2080,6 +2087,7 @@ QRectF QTextDocumentLayoutPrivate::layoutFrame(QTextFrame *f, int layoutFrom, in
 
 QRectF QTextDocumentLayoutPrivate::layoutFrame(QTextFrame *f, int layoutFrom, int layoutTo, QFixed frameWidth, QFixed frameHeight, QFixed parentY)
 {
+    checkTime();
     LDEBUG << "layoutFrame from=" << layoutFrom << "to=" << layoutTo;
     Q_ASSERT(data(f)->sizeDirty);
 //     qDebug("layouting frame (%d--%d), parent=%p", f->firstPosition(), f->lastPosition(), f->parentFrame());
@@ -2838,8 +2846,8 @@ QFixed QTextDocumentLayoutPrivate::findY(QFixed yFrom, const QTextLayoutStruct *
     return yFrom;
 }
 
-QTextDocumentLayout::QTextDocumentLayout(QTextDocument *doc)
-    : QAbstractTextDocumentLayout(*new QTextDocumentLayoutPrivate, doc)
+QTextDocumentLayout::QTextDocumentLayout(QTextDocument *doc, quint32 timeout)
+    : QAbstractTextDocumentLayout(*new QTextDocumentLayoutPrivate(timeout), doc)
 {
     registerHandler(QTextFormat::ImageObject, new QTextImageHandler(this));
 }
@@ -2850,6 +2858,13 @@ void QTextDocumentLayout::draw(QPainter *painter, const PaintContext &context)
     Q_D(QTextDocumentLayout);
     QTextFrame *frame = d->document->rootFrame();
     QTextFrameData *fd = data(frame);
+
+    if( d->timeoutHit )
+    {
+        const int off = document()->documentMargin();
+        painter->drawText(off,painter->fontMetrics().ascent() + off, tr("(a timeout occurred)"));
+        return;
+    }
 
     if(fd->sizeDirty)
         return;
@@ -2987,7 +3002,21 @@ QRectF QTextDocumentLayout::doLayout(int from, int oldLength, int length)
 
     QTextFrame *root = d->docPrivate->rootFrame();
     if(data(root)->sizeDirty)
-        updateRect = d->layoutFrame(root, from, from + length);
+    {
+        d->timeoutHit = false;
+        if( d->timeout )
+            d->start = time(0);
+        try
+        {
+            updateRect = d->layoutFrame(root, from, from + length);
+        }catch(...)
+        {
+            // a timeout occurred during layout
+            d->currentLazyLayoutPosition = -1;
+            d->timeoutHit = true;
+            emit timeoutOccurred();
+        }
+    }
     data(root)->layoutDirty = false;
 
     if (d->currentLazyLayoutPosition == -1)
@@ -3001,6 +3030,8 @@ QRectF QTextDocumentLayout::doLayout(int from, int oldLength, int length)
 int QTextDocumentLayout::hitTest(const QPointF &point, Qt::HitTestAccuracy accuracy) const
 {
     Q_D(const QTextDocumentLayout);
+    if( d->timeoutHit )
+        return 0;
     d->ensureLayouted(QFixed::fromReal(point.y()));
     QTextFrame *f = d->docPrivate->rootFrame();
     int position = 0;
@@ -3124,6 +3155,8 @@ QSizeF QTextDocumentLayout::dynamicDocumentSize() const
 int QTextDocumentLayout::pageCount() const
 {
     Q_D(const QTextDocumentLayout);
+    if( d->timeoutHit )
+        return 1;
     d->ensureLayoutFinished();
     return dynamicPageCount();
 }
@@ -3131,6 +3164,8 @@ int QTextDocumentLayout::pageCount() const
 QSizeF QTextDocumentLayout::documentSize() const
 {
     Q_D(const QTextDocumentLayout);
+    if( d->timeoutHit )
+        return QSizeF();
     d->ensureLayoutFinished();
     return dynamicDocumentSize();
 }
@@ -3157,9 +3192,11 @@ void QTextDocumentLayoutPrivate::ensureLayoutedByPosition(int position) const
         return;
     if (position < currentLazyLayoutPosition)
         return;
-    while (currentLazyLayoutPosition != -1
-           && currentLazyLayoutPosition < position) {
-        const_cast<QTextDocumentLayout *>(q_func())->doLayout(currentLazyLayoutPosition, 0, INT_MAX - currentLazyLayoutPosition);
+    while (currentLazyLayoutPosition != -1 && currentLazyLayoutPosition < position) {
+        QTextDocumentLayout* l = const_cast<QTextDocumentLayout *>(q_func());
+        l->doLayout(currentLazyLayoutPosition, 0, INT_MAX - currentLazyLayoutPosition);
+        if( l->timeoutHit() )
+            break;
     }
 }
 
@@ -3230,7 +3267,7 @@ QRectF QTextDocumentLayout::tableBoundingRect(QTextTable *table) const
 QRectF QTextDocumentLayout::frameBoundingRect(QTextFrame *frame) const
 {
     Q_D(const QTextDocumentLayout);
-    if (d->docPrivate->pageSize.isNull())
+    if (d->docPrivate->pageSize.isNull() || d->timeoutHit)
         return QRectF();
     d->ensureLayoutFinished();
     return d->frameBoundingRectInternal(frame);
@@ -3259,7 +3296,7 @@ QRectF QTextDocumentLayoutPrivate::frameBoundingRectInternal(QTextFrame *frame) 
 QRectF QTextDocumentLayout::blockBoundingRect(const QTextBlock &block) const
 {
     Q_D(const QTextDocumentLayout);
-    if (d->docPrivate->pageSize.isNull() || !block.isValid() || !block.isVisible())
+    if (d->docPrivate->pageSize.isNull() || !block.isValid() || !block.isVisible() || d->timeoutHit)
         return QRectF();
     d->ensureLayoutedByPosition(block.position() + block.length());
     QTextFrame *frame = d->document->frameAt(block.position());
@@ -3345,6 +3382,12 @@ bool QTextDocumentLayout::contentHasAlignment() const
     return d->contentHasAlignment;
 }
 
+bool QTextDocumentLayout::timeoutHit() const
+{
+    Q_D(const QTextDocumentLayout);
+    return d->timeoutHit;
+}
+
 qreal QTextDocumentLayoutPrivate::scaleToDevice(qreal value) const
 {
     if (!paintDevice)
@@ -3357,6 +3400,15 @@ QFixed QTextDocumentLayoutPrivate::scaleToDevice(QFixed value) const
     if (!paintDevice)
         return value;
     return value * QFixed(paintDevice->logicalDpiY()) / QFixed(qt_defaultDpi());
+}
+
+void QTextDocumentLayoutPrivate::checkTime()
+{
+    if( timeout == 0 )
+        return;
+    const quint64 diff = time(0) - start;
+    if( diff > timeout )
+        throw "layout timeout";
 }
 
 QT_END_NAMESPACE
