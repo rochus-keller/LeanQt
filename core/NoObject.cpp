@@ -50,7 +50,9 @@ QObject::QObject(QObjectPrivate &dd, QObject *parent):d_ptr(&dd)
  
 QObject::~QObject()
 {
-	foreach( QObject* sub, d_ptr->children )
+    Q_D(QObject);
+    d->setParent_helper(0);
+    foreach( QObject* sub, d_ptr->children )
 		delete sub;
 }
 
