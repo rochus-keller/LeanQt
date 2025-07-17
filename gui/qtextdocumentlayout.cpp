@@ -46,6 +46,7 @@
 #include "private/qfunctions_p.h"
 
 #include <algorithm>
+#include <time.h>
 
 // #define LAYOUT_DEBUG
 
