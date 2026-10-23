@@ -118,6 +118,16 @@ NOTES:
 
 Note that compiling LeanQt on Linux requires the build essentials, xcb, libxcb1-dev and libx11-dev packages. On Mac and Windows there are no additional requirements than a toolchain.
 
+Note that compiling LeanQt requires only a C/C++ toolchain. 
+
+On Linux, the build-essential package is sufficient. The xcb and X11 client code is bundled, so no X11 development packages are needed.
+The optional `HAVE_FONTCONFIG` and `HAVE_SYS_FT` builds additionally require libfontconfig1-dev and libfreetype-dev. 
+
+On macOS, the toolchain is Apple clang (Xcode Command Line Tools). 
+
+On Windows, use a GCC-based toolchain, i.e. MinGW-w64 (e.g. from MSYS2 or WinLibs); there are no other requirements.
+Current MSVC and Clang versions are known to cause problems. Older MSVC versions (e.g. 2015) are known to work.
+
 1. Create a new directory; we call it the root directory here
 1. Download https://github.com/rochus-keller/Oberon/archive/refs/heads/master.zip and unpack it to the root directory; rename the resulting directory to "Oberon".
 1. Download https://github.com/rochus-keller/PeLib/archive/refs/heads/OBX.zip and unpack it to the root directory; rename the resulting directory to "PeLib".

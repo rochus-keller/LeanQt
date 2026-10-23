@@ -6,7 +6,6 @@ let config * : Config {
 	if ^HAVE_FONTCONFIG {
 		.defines += "Q_FONTCONFIGDATABASE"
 	}
-	.lib_names += "xcb"
 	if ^HAVE_FONTCONFIG {
 		.lib_names += "fontconfig"
 	}
@@ -74,6 +73,8 @@ let sources * : SourceSet {
 		.
 		../platformsupport
 		../../thirdparty/freetype/include
+		../../thirdparty/xcb/xorgproto/include
+		../../thirdparty/xcb/x11-compat/include
 	]
 	if (target_toolchain == `gcc) || (target_toolchain == `clang) {
 		# .cflags_cc += "-std=c++11"

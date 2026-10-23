@@ -268,6 +268,8 @@ void QXcbIntegration::initialize()
     if (icStr.isNull())
         icStr = QLatin1String("compose");
     m_inputContext.reset(QPlatformInputContextFactory::create(icStr));
+    if (!m_inputContext && icStr != QLatin1String("compose") && icStr != QLatin1String("none"))
+        m_inputContext.reset(QPlatformInputContextFactory::create(QLatin1String("compose")));
 }
 
 void QXcbIntegration::moveToScreen(QWindow *window, int screen)

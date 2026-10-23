@@ -18,6 +18,10 @@ let config * : Config {
 		# these are official Qt defines
 		#"QT_USE_QSTRINGBUILDER" # public, not used in the Qt installations I'm using; can be put locally in a file (before includes) if needed
 	]
+
+	if target_os == `linux {
+		.defines += "_LARGEFILE64_SOURCE"
+	}
 	
 	if build_mode != `debug {
 		.defines += "NDEBUG"

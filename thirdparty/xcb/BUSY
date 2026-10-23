@@ -3,6 +3,11 @@
 
 let config * : Config {
 	.include_dirs += [
+		./libxcb-core/include
+		./libxcb-core/src
+		./libxau/include
+		./xorgproto/include
+		./x11-compat/include
 		./include
 		./sysinclude
 		./include/xcb
@@ -10,7 +15,25 @@ let config * : Config {
 }
 
 let sources * : SourceSet {
+	.cflags_c += "-std=gnu99"
 	.sources += [
+		./libxcb-core/src/xcb_conn.c
+		./libxcb-core/src/xcb_out.c
+		./libxcb-core/src/xcb_in.c
+		./libxcb-core/src/xcb_ext.c
+		./libxcb-core/src/xcb_xid.c
+		./libxcb-core/src/xcb_list.c
+		./libxcb-core/src/xcb_util.c
+		./libxcb-core/src/xcb_auth.c
+		./libxcb-core/src/xproto.c
+		./libxcb-core/src/bigreq.c
+		./libxcb-core/src/xc_misc.c
+		./libxau/src/AuDispose.c
+		./libxau/src/AuFileName.c
+		./libxau/src/AuGetAddr.c
+		./libxau/src/AuGetBest.c
+		./libxau/src/AuRead.c
+		./libxau/src/AuWrite.c
 		./xcb-util-wm/icccm.c
 		./xcb-util-renderutil/util.c
 		./xcb-util-keysyms/keysyms.c
@@ -27,6 +50,13 @@ let sources * : SourceSet {
 		./libxcb/xinerama.c
 		./libxcb/xkb.c
 	]
-	.defines += "XCB_USE_RENDER"
+	.defines += [
+		"HAVE_CONFIG_H"
+		"XCB_USE_RENDER"
+		"HAVE_SENDMSG"
+		"HAVE_GETADDRINFO"
+		"HAVE_ABSTRACT_SOCKETS"
+		"USE_POLL"
+	]
 	.configs += [ ^_core_config config ]
 }

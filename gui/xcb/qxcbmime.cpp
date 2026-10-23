@@ -38,8 +38,6 @@
 #include <QtCore/QBuffer>
 #include <qdebug.h>
 
-#include <X11/Xutil.h>
-
 #undef XCB_ATOM_STRING
 #undef XCB_ATOM_PIXMAP
 #undef XCB_ATOM_BITMAP

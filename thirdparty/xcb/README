@@ -13,3 +13,31 @@ They have been tested to run also with libxcb 1.5 (the oldest version we support
 
 Use the -qt-xcb configure option to use the files instead of system xcb libraries.
 See src/plugins/platforms/xcb/README for details.
+
+Core XCB and Xau sources are bundled so the XCB backend does not link the system libxcb or libXau:
+
+libxcb-core:
+      Source: https://xorg.freedesktop.org/archive/individual/lib/libxcb-1.14.tar.xz
+      Version: 1.14
+      Generated protocol sources and headers use xcb-proto 1.14.1:
+      https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-1.14.1.tar.xz
+   libxau:
+      Source: https://xorg.freedesktop.org/archive/individual/lib/libXau-1.0.9.tar.bz2
+      Version: 1.0.9
+
+The generated xproto.c/xproto.h, bigreq.c/bigreq.h, and xc_misc.c/xc_misc.h
+are included in libxcb-core/src and libxcb-core/include/xcb; generation is not
+required when building LeanQt. HASXDMAUTH is not defined, so libXdmcp is not
+needed. The Xau authentication routines used by libxcb are built from the
+bundled libXau sources; its optional lock/unlock routines are not needed by
+libxcb. The checked-in libxcb-core/src/config.h freezes the upstream
+configure defaults for XCB_QUEUE_BUFFER_SIZE (16384) and its IOV_MAX fallback (16).
+
+Protocol and cursor headers needed by the XCB backend are bundled instead of copied into the target sysroot:
+
+   Source: https://xorg.freedesktop.org/archive/individual/proto/xorgproto-2021.5.tar.bz2
+   Version: 2021.5
+
+The minimal X11 compatibility headers needed by the bundled libXau build and
+the XCB cursor glyph names are from Ubuntu's libx11-dev 2:1.7.5-1ubuntu0.4
+package. They do not add any Xlib linkage. 

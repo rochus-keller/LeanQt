@@ -200,6 +200,7 @@ let sources* : SourceSet {
 	.include_dirs += build_dir() # for the embedded .moc files
 	.include_dirs += .. # thirdparty/harfbuzz
 	.include_dirs += .  # platform integrations
+	.include_dirs += ../thirdparty/xcb/libxcb-core/include
 	.deps += harfbuzz.sources
 	if target_os == `linux {
         .deps += xcb.sources;
@@ -220,4 +221,3 @@ let sources* : SourceSet {
 	}
 	.deps += run_moc
 }
-
