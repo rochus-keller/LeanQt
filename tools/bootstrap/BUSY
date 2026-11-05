@@ -37,6 +37,9 @@ let config * : Config {
 	if build_mode != `debug {
 		.defines += "NDEBUG"
 	}
+	if host_os == `linux {
+		.defines += "_LARGEFILE64_SOURCE"
+	}
     if host_os == `win32 {
 		.defines += [ "UNICODE" "_UNICODE" ]
         if host_toolchain == `msvc {
